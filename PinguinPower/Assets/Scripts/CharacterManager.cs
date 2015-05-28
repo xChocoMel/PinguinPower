@@ -35,7 +35,7 @@ public class CharacterManager : MonoBehaviour {
         this.walkSpeed1 = 5;
         this.walkSpeed2 = 10;
         this.turnSpeed = 2;
-        this.jumpForce = 250;
+        this.jumpForce = 500;
         this.jumpTimer = 0.3f;
     }
 	
@@ -46,43 +46,12 @@ public class CharacterManager : MonoBehaviour {
         Vector3 rotation = Vector3.zero;
 
         //Movement
-        switch (this.movementMode) {
-            case MovementMode.Walk:
-
-                switch (this.moveDirection) {
-                    case MoveDirection.Stop: break;
-                    case MoveDirection.Forward1: force = Vector3.forward * walkSpeed1; break;
-                    case MoveDirection.Forward2: force = Vector3.forward * walkSpeed2; break;
-                }
-                rigidBody.AddRelativeForce(force);
-                
-
-                /*
-                switch (this.turnDirection)
-                {
-                    case TurnDirection.Stop: break;
-                    case TurnDirection.Left: rotation = rotation = new Vector3(0, -turnSpeed, 0); break;
-                    case TurnDirection.Right: rotation = rotation = new Vector3(0, turnSpeed, 0); break;  
-                }
-
-                this.rigidBody.transform.Rotate(rotation);
-
-                //Reset turndirection (to have players hold the arrow keys instead of pressing)
-                this.turnDirection = TurnDirection.Stop;
-
-
-*/
-                
-                break;
-
-            case MovementMode.Glide: 
-                
-                break;
-
-            case MovementMode.Swim: break;
+        switch (this.moveDirection) {
+            case MoveDirection.Stop: break;
+            case MoveDirection.Forward1: force = Vector3.forward * walkSpeed1; break;
+            case MoveDirection.Forward2: force = Vector3.forward * walkSpeed2; break;
         }
-
-
+        rigidBody.AddRelativeForce(force); 
 
         //Timers
         if (this.jumpTimer > 0) {
@@ -120,16 +89,38 @@ public class CharacterManager : MonoBehaviour {
     /// </summary>
     public void Turn(TurnDirection turnDirection) {
         Debug.Log("--Penguin > Turn " + turnDirection.ToString());
+        
         this.turnDirection = turnDirection;
         Vector3 rotation = Vector3.zero;
-        switch (this.turnDirection)
+        if (this.movementMode == MovementMode.Walk)
         {
-            case TurnDirection.Stop: break;
-            case TurnDirection.Left: rotation += transform.up * -turnSpeed; break;
-            case TurnDirection.Right: rotation += transform.up * turnSpeed; break;
-        }
+            switch (this.turnDirection)
+            {
+                case TurnDirection.Stop: break;
+                case TurnDirection.Left: rotation += transform.up * -turnSpeed; break;
+                case TurnDirection.Right: rotation += transform.up * turnSpeed; break;
+            }
 
-        this.rigidBody.transform.Rotate(rotation);
+            this.rigidBody.transform.Rotate(rotation);
+        } else if (this.movementMode == MovementMode.Glide) {
+            switch (this.turnDirection)
+            {
+                case TurnDirection.Stop: break;
+                case TurnDirection.Left: rotation += -Vector3.right * turnSpeed * 10; break;
+                case TurnDirection.Right: rotation += Vector3.right * turnSpeed * 10; break;
+            }
+
+            this.rigidBody.AddRelativeForce(rotation);
+
+            if (this.rigidBody.velocity.y != 0)
+            {
+                this.rigidBody.drag = 0.5f;
+            }
+            else
+            {
+                this.rigidBody.drag = 1f;
+            }
+        }
     }
 
     /// <summary>
@@ -137,8 +128,8 @@ public class CharacterManager : MonoBehaviour {
     /// Swim up (swim mode)
     /// </summary>
     public void Jump() {
-        Debug.Log("--Penguin > Jump");
         if (this.IsGrounded() && this.jumpTimer <= 0) {
+            Debug.Log("--Penguin > Jump");
             this.rigidBody.velocity = new Vector3(this.rigidBody.velocity.x, 0, this.rigidBody.velocity.z);
             this.jumpTimer = 0.1f;
             this.rigidBody.AddRelativeForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
@@ -151,5 +142,23 @@ public class CharacterManager : MonoBehaviour {
 
     public void Kick() {
         Debug.Log("--Penguin > Kick ");
+    }
+
+    public void SwitchMovementMode(MovementMode m)
+    {
+        this.movementMode = m;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            Destroy(collision.gameObject);
+        }
+        if (collision.gameObject.CompareTag("GlidingBlock"))
+        {
+            this.SwitchMovementMode(MovementMode.Glide);
+        }
+
     }
 }

@@ -40,5 +40,15 @@ public class InputController : MonoBehaviour {
             //Kick
             this.characterManager.Kick();
         }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            //Switch Movement mode
+            this.characterManager.SwitchMovementMode(MovementMode.Walk);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            //Switch Movement mode
+            this.characterManager.SwitchMovementMode(MovementMode.Glide);
+        }
 	}
 }
