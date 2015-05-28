@@ -37,6 +37,7 @@ public class CharacterManager : MonoBehaviour {
 	void Update () {
 	
         Vector3 force = Vector3.zero;
+        Vector3 rotation = Vector3.zero;
 
         //Movement
         switch (this.movementMode) {
@@ -44,24 +45,27 @@ public class CharacterManager : MonoBehaviour {
 
                 switch (this.moveDirection) {
                     case MoveDirection.Stop: break;
-                    case MoveDirection.Forward1: force = Vector3.forward * walkSpeed1; break;
-                    case MoveDirection.Forward2: force = Vector3.forward * walkSpeed2; break;
+                    case MoveDirection.Forward1: force = transform.forward * walkSpeed1; break;
+                    case MoveDirection.Forward2: force = transform.forward * walkSpeed2; break;
                 }
+                rigidBody.AddRelativeForce(force);
+                //this.rigidBody.velocity = force;
 
-                this.rigidBody.velocity = force;
-
+                /*
                 switch (this.turnDirection)
                 {
                     case TurnDirection.Stop: break;
-                    case TurnDirection.Left: break;
-                    case TurnDirection.Right: break;  
+                    case TurnDirection.Left: rotation += -transform.right * 90;  break;
+                    case TurnDirection.Right: rotation += transform.right * 90;  break;  
                 }
-                
-                //this.rigidBody.rotation = 
+
+                this.transform.Rotate(rotation);*/
                 
                 break;
 
-            case MovementMode.Glide: break;
+            case MovementMode.Glide: 
+                
+                break;
 
             case MovementMode.Swim: break;
         }
@@ -98,6 +102,15 @@ public class CharacterManager : MonoBehaviour {
     public void Turn(TurnDirection turnDirection) {
         Debug.Log("--Penguin > Turn " + turnDirection.ToString());
         this.turnDirection = turnDirection;
+        Vector3 rotation = Vector3.zero;
+        switch (this.turnDirection)
+        {
+            case TurnDirection.Stop: break;
+            case TurnDirection.Left: rotation += transform.up * -2; break;
+            case TurnDirection.Right: rotation += transform.up * 2; break;
+        }
+
+        this.transform.Rotate(rotation);
     }
 
     /// <summary>
