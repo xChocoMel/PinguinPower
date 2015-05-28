@@ -49,6 +49,15 @@ public class CharacterManager : MonoBehaviour {
         switch (this.movementMode) {
             case MovementMode.Walk:
 
+                switch (this.moveDirection) {
+                    case MoveDirection.Stop: break;
+                    case MoveDirection.Forward1: force = Vector3.forward * walkSpeed1; break;
+                    case MoveDirection.Forward2: force = Vector3.forward * walkSpeed2; break;
+                }
+                rigidBody.AddRelativeForce(force);
+                
+
+                /*
                 switch (this.turnDirection)
                 {
                     case TurnDirection.Stop: break;
@@ -61,17 +70,14 @@ public class CharacterManager : MonoBehaviour {
                 //Reset turndirection (to have players hold the arrow keys instead of pressing)
                 this.turnDirection = TurnDirection.Stop;
 
-                switch (this.moveDirection) {
-                    case MoveDirection.Stop: break;
-                    case MoveDirection.Forward1: force = Vector3.forward * walkSpeed1; break;
-                    case MoveDirection.Forward2: force = Vector3.forward * walkSpeed2; break;
-                }
 
-                this.rigidBody.AddRelativeForce(force);
+*/
                 
                 break;
 
-            case MovementMode.Glide: break;
+            case MovementMode.Glide: 
+                
+                break;
 
             case MovementMode.Swim: break;
         }
@@ -115,6 +121,15 @@ public class CharacterManager : MonoBehaviour {
     public void Turn(TurnDirection turnDirection) {
         Debug.Log("--Penguin > Turn " + turnDirection.ToString());
         this.turnDirection = turnDirection;
+        Vector3 rotation = Vector3.zero;
+        switch (this.turnDirection)
+        {
+            case TurnDirection.Stop: break;
+            case TurnDirection.Left: rotation += transform.up * -turnSpeed; break;
+            case TurnDirection.Right: rotation += transform.up * turnSpeed; break;
+        }
+
+        this.rigidBody.transform.Rotate(rotation);
     }
 
     /// <summary>
