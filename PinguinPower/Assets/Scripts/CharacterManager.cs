@@ -63,12 +63,11 @@ public class CharacterManager : MonoBehaviour {
 
                 switch (this.moveDirection) {
                     case MoveDirection.Stop: break;
-                    case MoveDirection.Forward1: force = this.transform.forward * walkSpeed1; break;
-                    case MoveDirection.Forward2: force = this.transform.forward * walkSpeed2; break;
+                    case MoveDirection.Forward1: force = Vector3.forward * walkSpeed1; break;
+                    case MoveDirection.Forward2: force = Vector3.forward * walkSpeed2; break;
                 }
 
-                this.rigidBody.velocity = force + new Vector3(0, this.rigidBody.velocity.y, 0);
-                //this.rigidBody.AddRelativeForce(force);
+                this.rigidBody.AddRelativeForce(force);
                 
                 break;
 
