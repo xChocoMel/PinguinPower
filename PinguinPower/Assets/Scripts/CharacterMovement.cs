@@ -20,10 +20,11 @@ public class CharacterMovement : MonoBehaviour
     private MovementMode movementMode;
     private MoveDirection moveDirection;
     private TurnDirection turnDirection;
-    private float walkSpeed1;
-    private float walkSpeed2;
-    private float turnSpeed;
-    private float jumpForce;
+
+    public float walkSpeed1 = 5f;
+    public float walkSpeed2 = 10f;
+    public float turnSpeed = 2f;
+    public float jumpForce = 500f;
     private float jumpTimer;
 
     // Use this for initialization
@@ -38,10 +39,6 @@ public class CharacterMovement : MonoBehaviour
         this.moveDirection = MoveDirection.Stop;
         this.turnDirection = TurnDirection.Stop;
 
-        this.walkSpeed1 = 5;
-        this.walkSpeed2 = 10;
-        this.turnSpeed = 2;
-        this.jumpForce = 500;
         this.jumpTimer = 0.3f;
     }
 

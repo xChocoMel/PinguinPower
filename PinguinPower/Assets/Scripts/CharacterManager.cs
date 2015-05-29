@@ -13,8 +13,16 @@ public class CharacterManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+        StartCoroutine(InitUI());
 	}
+
+    private IEnumerator InitUI()
+    {
+        yield return new WaitForFixedUpdate();
+        menuManager.UpdateFish(fish.ToString());
+        menuManager.UpdateFriends(friends.ToString());
+        menuManager.UpdateLives(lives.ToString());
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -29,6 +37,14 @@ public class CharacterManager : MonoBehaviour {
             case "Obstacle":
                 this.CollideObstacle(other);
                 break;
+        }
+    }
+
+    void OnTriggerEnter(Collider collider)
+    {
+        GameObject other = collider.gameObject;
+        switch (other.tag)
+        {
             case "Fish":
                 this.CollideFish(other);
                 break;
@@ -52,11 +68,10 @@ public class CharacterManager : MonoBehaviour {
             // TODO fancy stuff - extra live
             this.lives++;
             this.fish = 0;
-            // TODO update HUD
+            
             menuManager.UpdateLives(this.lives.ToString());
         }
 
-        // TODO update HUD
         menuManager.UpdateFish(this.fish.ToString());
         // TODO fancy destroy?
         Destroy(fish);
@@ -68,7 +83,6 @@ public class CharacterManager : MonoBehaviour {
         // TODO fancy stuff - friend collect
         this.friends++;
 
-        // TODO update HUD
         menuManager.UpdateFriends(this.friends.ToString());
         // TODO fancy destroy?
         Destroy(friend);
