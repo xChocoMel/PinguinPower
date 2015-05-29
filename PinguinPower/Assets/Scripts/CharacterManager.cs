@@ -5,9 +5,7 @@ using System.Collections;
 public class CharacterManager : MonoBehaviour {
     public int FishPerLife = 50;
 
-    public Text livesText;
-    public Text fishText;
-    public Text friendsText;
+    public MenuManager menuManager;
 
     private int lives = 3;
     private int fish = 0;
@@ -54,9 +52,15 @@ public class CharacterManager : MonoBehaviour {
             // TODO fancy stuff - extra live
             this.lives++;
             this.fish = 0;
+            // TODO update HUD
+            menuManager.UpdateLives(this.lives.ToString());
         }
+
+        // TODO update HUD
+        menuManager.UpdateFish(this.fish.ToString());
         // TODO fancy destroy?
         Destroy(fish);
+
     }
 
     private void CollideFriend(GameObject friend)
@@ -64,6 +68,8 @@ public class CharacterManager : MonoBehaviour {
         // TODO fancy stuff - friend collect
         this.friends++;
 
+        // TODO update HUD
+        menuManager.UpdateFriends(this.friends.ToString());
         // TODO fancy destroy?
         Destroy(friend);
     }
