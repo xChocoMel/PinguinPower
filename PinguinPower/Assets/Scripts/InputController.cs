@@ -3,11 +3,10 @@ using System.Collections;
 
 public class InputController : MonoBehaviour {
 
-    CharacterManager characterManager;
+    public CharacterMovement characterMovement;
 
 	// Use this for initialization
 	void Start () {
-        this.characterManager = GameObject.Find("Penguin").GetComponent<CharacterManager>();
 	}
 	
 	// Update is called once per frame
@@ -15,40 +14,40 @@ public class InputController : MonoBehaviour {
         
         if (Input.GetKeyDown(KeyCode.UpArrow)) {
             //Move forward
-            this.characterManager.ForwardMovementUp();
+            this.characterMovement.ForwardMovementUp();
         } else if (Input.GetKeyDown(KeyCode.DownArrow)) {
             //Stop
-            this.characterManager.ForwardMovementDown();
+            this.characterMovement.ForwardMovementDown();
         }
 
         if (Input.GetKey(KeyCode.LeftArrow)) {
             //[Hold]
             //Turn left
-            this.characterManager.Turn(TurnDirection.Left);
+            this.characterMovement.Turn(TurnDirection.Left);
         } else if (Input.GetKey(KeyCode.RightArrow)){
             //[Hold]
             //Turn right
-            this.characterManager.Turn(TurnDirection.Right);
+            this.characterMovement.Turn(TurnDirection.Right);
         }
 
         if (Input.GetKey(KeyCode.Z)) {
             //Jump
-            this.characterManager.Jump();
+            this.characterMovement.Jump();
         }
 
         if (Input.GetKeyDown(KeyCode.X)) {
             //Kick
-            this.characterManager.Kick();
+            this.characterMovement.Kick();
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             //Switch Movement mode
-            this.characterManager.SwitchMovementMode(MovementMode.Walk);
+            this.characterMovement.SwitchMovementMode(MovementMode.Walk);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             //Switch Movement mode
-            this.characterManager.SwitchMovementMode(MovementMode.Glide);
+            this.characterMovement.SwitchMovementMode(MovementMode.Glide);
         }
 	}
 }
