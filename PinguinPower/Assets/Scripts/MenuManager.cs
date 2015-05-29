@@ -70,6 +70,7 @@ public class MenuManager : MonoBehaviour {
 	}
 
     private void ClickStart() {
+        this.Pause(false);
         Application.LoadLevel(1);
     }
 
