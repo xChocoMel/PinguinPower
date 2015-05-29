@@ -14,6 +14,9 @@ public class CharacterMovement : MonoBehaviour
     public Rigidbody rigidBody;
     public Collider penguinCollider;
 
+    public float glideDrag = 0.5f;
+    public float walkDrag = 1f;
+
     private MovementMode movementMode;
     private MoveDirection moveDirection;
     private TurnDirection turnDirection;
@@ -50,7 +53,7 @@ public class CharacterMovement : MonoBehaviour
         //Movementmode & Drag
         if (this.rigidBody.velocity.y < -0.5f)
         {
-            this.rigidBody.drag = 0.5f;
+            this.rigidBody.drag = glideDrag;
             if (this.movementMode == MovementMode.Walk)
             {
                 if (IsGrounded())
@@ -61,7 +64,7 @@ public class CharacterMovement : MonoBehaviour
         }
         else
         {
-            this.rigidBody.drag = 1f;
+            this.rigidBody.drag = walkDrag;
 
             SwitchMovementMode(MovementMode.Walk);
         }
