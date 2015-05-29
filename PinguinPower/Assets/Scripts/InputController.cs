@@ -42,5 +42,10 @@ public class InputController : MonoBehaviour {
             //Kick
             this.characterMovement.Kick();
 		}
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            menuManager.OpenCloseMenu();
+        }
 	}
 }
