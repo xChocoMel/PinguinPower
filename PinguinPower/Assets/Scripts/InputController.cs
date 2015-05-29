@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class InputController : MonoBehaviour {
 
+    MenuManager menuManager;
     public CharacterMovement characterMovement;
 
 	// Use this for initialization
 	void Start () {
+        this.menuManager = this.GetComponent<MenuManager>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        
+
         if (Input.GetKeyDown(KeyCode.UpArrow)) {
             //Move forward
             this.characterMovement.ForwardMovementUp();
@@ -38,16 +41,6 @@ public class InputController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.X)) {
             //Kick
             this.characterMovement.Kick();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            //Switch Movement mode
-            this.characterMovement.SwitchMovementMode(MovementMode.Walk);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            //Switch Movement mode
-            this.characterMovement.SwitchMovementMode(MovementMode.Glide);
-        }
+		}
 	}
 }
