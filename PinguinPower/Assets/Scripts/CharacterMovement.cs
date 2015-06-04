@@ -25,7 +25,8 @@ public class CharacterMovement : MonoBehaviour
     public float walkSpeed2 = 10f;
     public float turnSpeed = 2f;
     public float jumpForce = 500f;
-    private float jumpTimer;
+
+    private bool jumping;
 
     // Use this for initialization
     void Start()
@@ -38,32 +39,29 @@ public class CharacterMovement : MonoBehaviour
         this.movementMode = MovementMode.Walk;
         this.moveDirection = MoveDirection.Stop;
         this.turnDirection = TurnDirection.Stop;
-
-        this.jumpTimer = 0.3f;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        print(this.rigidBody.velocity.y);
 
         //Movementmode & Drag
-        if (this.rigidBody.velocity.y < -0.5f)
+        if ((this.rigidBody.velocity.y < -0.1f || (this.rigidBody.velocity.y > 0f && this.rigidBody.velocity.y < (walkSpeed1 / 2))) && !jumping)
         {
-            this.rigidBody.drag = glideDrag;
-            if (this.movementMode == MovementMode.Walk)
+            if (this.movementMode == MovementMode.Walk && IsGrounded())
             {
-                if (IsGrounded())
-                {
-                    SwitchMovementMode(MovementMode.Glide);
-                }
+                this.rigidBody.drag = glideDrag;
+                SwitchMovementMode(MovementMode.Glide);
             }
         }
-        else
+        else //if (this.rigidBody.velocity.y == 0f && !jumping)
         {
-            this.rigidBody.drag = walkDrag;
-
-            SwitchMovementMode(MovementMode.Walk);
+            if (this.movementMode == MovementMode.Glide && IsGrounded())
+            {
+                this.rigidBody.drag = walkDrag;
+                SwitchMovementMode(MovementMode.Walk);
+            }
         }
 
         //Movement
@@ -79,16 +77,11 @@ public class CharacterMovement : MonoBehaviour
             rigidBody.AddRelativeForce(force);
         }
 
-        //Timers
-        if (this.jumpTimer > 0)
-        {
-            this.jumpTimer -= Time.deltaTime;
-        }
-
         //Lookat falling direction
         if (this.movementMode == MovementMode.Glide && this.turnDirection == TurnDirection.Stop)
         {
-            this.transform.rotation = new Quaternion(this.transform.rotation.x, Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(this.rigidBody.velocity), 0.1f).y, this.transform.rotation.z, this.transform.rotation.w);
+            Quaternion lookRotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(this.rigidBody.velocity), 0.1f);
+            this.transform.rotation = new Quaternion(this.transform.rotation.x, lookRotation.y, this.transform.rotation.z, lookRotation.w);
         }
     }
 
@@ -143,11 +136,17 @@ public class CharacterMovement : MonoBehaviour
                 case TurnDirection.Left:
                     rotation += transform.up * -turnSpeed;
                     if (this.moveDirection != MoveDirection.Stop)
-                        sidewaysMovement += -Vector3.right * turnSpeed * 10; break;
+                    {
+                        sidewaysMovement += -Vector3.right * turnSpeed * 10;
+                    }
+                    break;
                 case TurnDirection.Right:
                     rotation += transform.up * turnSpeed;
                     if (this.moveDirection != MoveDirection.Stop)
-                        sidewaysMovement += Vector3.right * turnSpeed * 10; break;
+                    {
+                        sidewaysMovement += Vector3.right * turnSpeed * 10;
+                    }
+                    break;
             }
 
             this.rigidBody.transform.Rotate(rotation);
@@ -156,16 +155,18 @@ public class CharacterMovement : MonoBehaviour
         else if (this.movementMode == MovementMode.Glide)
         {
 
-
             switch (this.turnDirection)
             {
-                case TurnDirection.Stop: break;
+                case TurnDirection.Stop: 
+                    break;
                 case TurnDirection.Left:
                     rotation += transform.up * -turnSpeed;
-                    sidewaysMovement += -Vector3.right * turnSpeed * 10; break;
+                    sidewaysMovement += -Vector3.right * turnSpeed * 10;
+                    break;
                 case TurnDirection.Right:
                     rotation += transform.up * turnSpeed;
-                    sidewaysMovement += Vector3.right * turnSpeed * 10; break;
+                    sidewaysMovement += Vector3.right * turnSpeed * 10;
+                    break;
             }
 
             this.rigidBody.transform.Rotate(rotation);
@@ -181,11 +182,11 @@ public class CharacterMovement : MonoBehaviour
     /// </summary>
     public void Jump()
     {
-        if (this.movementMode == MovementMode.Walk && this.IsGrounded() && this.jumpTimer <= 0)
+        if (this.movementMode == MovementMode.Walk && this.IsGrounded() && !jumping)
         {
             Debug.Log("--Penguin > Jump");
             this.rigidBody.velocity = new Vector3(this.rigidBody.velocity.x, 0, this.rigidBody.velocity.z);
-            this.jumpTimer = 0.1f;
+            this.jumping = true;
             this.rigidBody.AddRelativeForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
         }
     }
