@@ -47,19 +47,21 @@ public class CharacterMovement : MonoBehaviour
         print(this.rigidBody.velocity.y);
 
         //Movementmode & Drag
-        if (Mathf.Abs(this.rigidBody.velocity.y) > 0.01f && !jumping)
+        if ((this.rigidBody.velocity.y < -0.1f || (this.rigidBody.velocity.y > 0f && this.rigidBody.velocity.y < (walkSpeed1 / 2))) && !jumping)
         {
-            this.rigidBody.drag = glideDrag;
             if (this.movementMode == MovementMode.Walk && IsGrounded())
             {
+                this.rigidBody.drag = glideDrag;
                 SwitchMovementMode(MovementMode.Glide);
             }
         }
-        else
+        else //if (this.rigidBody.velocity.y == 0f && !jumping)
         {
-            this.rigidBody.drag = walkDrag;
-
-            SwitchMovementMode(MovementMode.Walk);
+            if (this.movementMode == MovementMode.Glide && IsGrounded())
+            {
+                this.rigidBody.drag = walkDrag;
+                SwitchMovementMode(MovementMode.Walk);
+            }
         }
 
         //Movement
@@ -78,7 +80,8 @@ public class CharacterMovement : MonoBehaviour
         //Lookat falling direction
         if (this.movementMode == MovementMode.Glide && this.turnDirection == TurnDirection.Stop)
         {
-            this.transform.rotation = new Quaternion(this.transform.rotation.x, Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(this.rigidBody.velocity), 0.1f).y, this.transform.rotation.z, this.transform.rotation.w);
+            Quaternion lookRotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(this.rigidBody.velocity), 0.1f);
+            this.transform.rotation = new Quaternion(this.transform.rotation.x, lookRotation.y, this.transform.rotation.z, lookRotation.w);
         }
     }
 
