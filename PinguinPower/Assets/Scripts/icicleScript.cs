@@ -7,16 +7,15 @@ public class icicleScript : MonoBehaviour {
 	public AudioClip fallingSound;
 	public AudioClip shatterSound;
 	public GameObject Player;
-	public float colliderheight;
-	public float colliderradius;
+	//public float colliderheight;
+	//public float colliderradius;
 	 
 	// Use this for initialization
 	void Start () {
 		collider=gameObject.GetComponent<CapsuleCollider>();
 		//transform.position = new Vector3 (transform.position.x,height,transform.position.z);
 		collider.center = new Vector3 (0,height*-1,0);
-		collider.radius = colliderradius ;
-		collider.height=colliderheight;
+		 
 	}
 	
 	// Update is called once per frame
@@ -30,8 +29,7 @@ public class icicleScript : MonoBehaviour {
 		{
 			print (1);
 			GetComponent<AudioSource>().PlayOneShot(shatterSound);
-			collider.radius = colliderradius ;
-			collider.height=colliderheight;
+		 
 			collider.center=new Vector3 (0,0,0);
 			GetComponent<Rigidbody>().useGravity=true;
 			GetComponent<CapsuleCollider>().isTrigger=false;
