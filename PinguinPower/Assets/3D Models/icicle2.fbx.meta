@@ -1,29 +1,50 @@
 fileFormatVersion: 2
-guid: adacb983f65f24f44ae914daff863432
+guid: b19c0cd20ef499b48b8b984c3b3282aa
+timeCreated: 1433427898
+licenseType: Free
 ModelImporter:
-  serializedVersion: 16
+  serializedVersion: 18
   fileIDToRecycleName:
     100000: Camera
-    100002: Cube
+    100002: Camera.001
     100004: Cylinder
-    100006: Lamp
-    100008: //RootNode
+    100006: Cylinder.001
+    100008: Cylinder.002
+    100010: Cylinder.003
+    100012: //RootNode
+    100014: Lamp
+    100016: Lamp.001
+    100018: Landscape
+    100020: Sphere.002
     400000: Camera
-    400002: Cube
+    400002: Camera.001
     400004: Cylinder
-    400006: Lamp
-    400008: //RootNode
-    2300000: Cube
-    2300002: Cylinder
-    3300000: Cube
-    3300002: Cylinder
-    4300000: Cube
-    4300002: Cylinder
-    7400000: Cube|CylinderAction
-    7400002: Cylinder|CylinderAction
-    7400004: Lamp|CylinderAction
-    7400006: Camera|CylinderAction
-    9500000: //RootNode
+    400006: Cylinder.001
+    400008: Cylinder.002
+    400010: Cylinder.003
+    400012: //RootNode
+    400014: Lamp
+    400016: Lamp.001
+    400018: Landscape
+    400020: Sphere.002
+    2300000: Cylinder
+    2300002: Cylinder.001
+    2300004: Cylinder.002
+    2300006: Cylinder.003
+    2300008: Landscape
+    2300010: Sphere.002
+    3300000: Cylinder
+    3300002: Cylinder.001
+    3300004: Cylinder.002
+    3300006: Cylinder.003
+    3300008: Landscape
+    3300010: Sphere.002
+    4300000: Cylinder.002
+    4300002: Landscape
+    4300004: Cylinder.003
+    4300006: Cylinder.001
+    4300008: Cylinder
+    4300010: Sphere.002
   materials:
     importMaterials: 1
     materialName: 0
@@ -51,11 +72,13 @@ ModelImporter:
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
+    keepQuads: 0
     weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
+    useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     splitTangentsAcrossUV: 1
@@ -75,6 +98,8 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   additionalBone: 0
   userData: 
+  assetBundleName: 
+  assetBundleVariant: 

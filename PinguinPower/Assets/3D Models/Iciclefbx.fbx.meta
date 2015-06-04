@@ -1,29 +1,21 @@
 fileFormatVersion: 2
-guid: 47bffd1727e6fc44095d3ffa984f59cd
+guid: 7a7d10f28645a0945b50da4126e3ffd8
+timeCreated: 1433427898
+licenseType: Free
 ModelImporter:
-  serializedVersion: 16
+  serializedVersion: 18
   fileIDToRecycleName:
     100000: Camera
-    100002: Cube
-    100004: Cylinder
+    100002: Cylinder
+    100004: //RootNode
     100006: Lamp
-    100008: //RootNode
     400000: Camera
-    400002: Cube
-    400004: Cylinder
+    400002: Cylinder
+    400004: //RootNode
     400006: Lamp
-    400008: //RootNode
-    2300000: Cube
-    2300002: Cylinder
-    3300000: Cube
-    3300002: Cylinder
-    4300000: Cube
-    4300002: Cylinder
-    7400000: Cube|CylinderAction
-    7400002: Cylinder|CylinderAction
-    7400004: Lamp|CylinderAction
-    7400006: Camera|CylinderAction
-    9500000: //RootNode
+    2300000: Cylinder
+    3300000: Cylinder
+    4300000: Cylinder
   materials:
     importMaterials: 1
     materialName: 0
@@ -51,11 +43,13 @@ ModelImporter:
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
+    keepQuads: 0
     weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
+    useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     splitTangentsAcrossUV: 1
@@ -75,6 +69,8 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   additionalBone: 0
   userData: 
+  assetBundleName: 
+  assetBundleVariant: 
