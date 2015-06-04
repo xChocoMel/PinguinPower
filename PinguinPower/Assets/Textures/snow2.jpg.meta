@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:PinguinPower/Assets/Textures/snow2.jpg.meta
 guid: 66400696c068f1446ae4daff782e6ef4
 timeCreated: 1433427884
+=======
+guid: ceba1450223884641905f7905ebab785
+timeCreated: 1433427738
+>>>>>>> origin/master:PinguinPower/Assets/Textures/snow2.jpg.meta
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
