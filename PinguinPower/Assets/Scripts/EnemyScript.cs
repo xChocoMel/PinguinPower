@@ -111,7 +111,7 @@ public class EnemyScript : MonoBehaviour {
 		{
 			if(status!=Status.waiting)
 			{		 
-				audio.PlayOneShot(hitsound);
+				GetComponent<AudioSource>().PlayOneShot(hitsound);
 				status=Status.waiting;
 				print ("colliding");
 				StartCoroutine(Wait());
@@ -122,7 +122,7 @@ public class EnemyScript : MonoBehaviour {
 
 	void LoseLife(int attackpoint)
 	{
-		audio.PlayOneShot (loselife);
+		GetComponent<AudioSource>().PlayOneShot (loselife);
 		amountoflives-=attackpoint;
 		if(amountoflives<1)
 		{
@@ -136,7 +136,7 @@ public class EnemyScript : MonoBehaviour {
 		enemyRigidbody.velocity = v3;
 	}
 	IEnumerator Dying(){
-		audio.PlayOneShot (dying);
+		GetComponent<AudioSource>().PlayOneShot (dying);
 		yield return new WaitForSeconds(3.0F);
 		Destroy (gameObject);
 	}

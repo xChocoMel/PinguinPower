@@ -4,21 +4,23 @@ using System.Collections;
 public class MovingObjectScript : MonoBehaviour {
 
 	public GameObject button;
-	private LeverCode leverscript;
+	//private LeverCode leverscript;
 	public Vector3[] routes;
 	public int routeindex=0;
 
 	// Use this for initialization
 	void Start () {
-		if(button!=null)
+		/*if(button!=null)
 		 {
 			leverscript=button.GetComponent<LeverCode>();
-		 }
+		 }*/
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(leverscript==null)
+
+        Moving();
+		/*if(leverscript==null)
 		{
 			Moving();
 		}
@@ -29,21 +31,24 @@ public class MovingObjectScript : MonoBehaviour {
 				Moving();
 
 			}
-		}
+		}*/
 
 	}
 	void Moving()
 	{
-		transform.position= Vector3.Lerp(transform.position, routes[routeindex],1*Time.deltaTime);
-		if(Vector3.Distance (transform.position, routes[routeindex])<1)
-		{
-			routeindex++;
-			
-		}
-		if(routeindex==routes.Length)
-		{
-			routeindex=0;
-		}
+        if (routes.Length > 0)
+        {
+            transform.position = Vector3.Lerp(transform.position, routes[routeindex], 1 * Time.deltaTime);
+            if (Vector3.Distance(transform.position, routes[routeindex]) < 1)
+            {
+                routeindex++;
+
+            }
+            if (routeindex == routes.Length)
+            {
+                routeindex = 0;
+            }
+        }
 	}
 	void OnCollisionEnter(Collision collision) 
 	{
@@ -69,6 +74,5 @@ public class MovingObjectScript : MonoBehaviour {
 	{
 		print ("collsionexit");
 		collision.gameObject.transform.parent = null;
-	}
-	 
+	}	 
 }
