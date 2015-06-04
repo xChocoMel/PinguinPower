@@ -13,9 +13,12 @@ public class CharacterMovement : MonoBehaviour
 
     public Rigidbody rigidBody;
     public Collider penguinCollider;
+    public Transform glidingDirection;
+    public Transform graphics;
 
     public float glideDrag = 0.5f;
     public float walkDrag = 1f;
+    private float jumpDrag = 0f;
 
     private MovementMode movementMode;
     private MoveDirection moveDirection;
@@ -26,7 +29,12 @@ public class CharacterMovement : MonoBehaviour
     public float turnSpeed = 2f;
     public float jumpForce = 500f;
 
-    private bool jumping;
+    private bool jumping = false;
+
+    private float currentRotation = 0f;
+    private float maxRotation = 45f;
+
+    private bool turningPart = false;
 
     // Use this for initialization
     void Start()
@@ -44,18 +52,26 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print(this.rigidBody.velocity.y);
         Vector3 velocity = this.rigidBody.velocity;
 
         //Jumping
         if (jumping && this.IsGrounded())
         {
             jumping = false;
+            if (this.movementMode == MovementMode.Glide)
+            {
+                this.rigidBody.drag = glideDrag;
+            }
+            else if (this.movementMode == MovementMode.Walk)
+            {
+                this.rigidBody.drag = walkDrag;
+            }
         }
-
+        //print(this.rigidBody.velocity.y);
         //Movementmode & Drag
-        if ((velocity.y < -0.1f || (velocity.y > 0f && velocity.y < (walkSpeed1 / 2))) && !jumping)
+        if (velocity.y < -0.01f && !jumping)
         {
+            
             if (this.movementMode == MovementMode.Walk && IsGrounded())
             {
                 this.rigidBody.drag = glideDrag;
@@ -83,13 +99,35 @@ public class CharacterMovement : MonoBehaviour
             }
             rigidBody.AddRelativeForce(force);
         }
+        
 
         //Lookat falling direction
-        if (this.movementMode == MovementMode.Glide && this.turnDirection == TurnDirection.Stop)
+        if (turningPart)
         {
-            Quaternion lookRotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(this.rigidBody.velocity), 0.1f);
-            this.transform.rotation = new Quaternion(this.transform.rotation.x, lookRotation.y, this.transform.rotation.z, lookRotation.w);
+            if (this.movementMode == MovementMode.Glide)
+            {
+                float smooth = 0.1f;
+                Quaternion lookRotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(this.rigidBody.velocity), smooth);
+                //lookRotation.
+                float angle = Quaternion.Angle(lookRotation, transform.rotation);
+                //this.currentRotation -= angle;
+                this.transform.rotation = new Quaternion(this.transform.rotation.x, lookRotation.y, this.transform.rotation.z, lookRotation.w);
+            }
         }
+        else
+        {
+            if (this.movementMode == MovementMode.Glide)
+            {
+                float smooth = 0.1f;
+                Quaternion lookRotation = Quaternion.Lerp(graphics.rotation, Quaternion.LookRotation(this.rigidBody.velocity), smooth);
+                //lookRotation.
+                float angle = Quaternion.Angle(lookRotation, graphics.rotation);
+                //this.currentRotation -= angle;
+                this.graphics.rotation = new Quaternion(this.graphics.rotation.x, lookRotation.y, this.graphics.rotation.z, lookRotation.w);
+            }
+        }
+        
+        print(this.currentRotation);
     }
 
     /// <summary>
@@ -161,22 +199,60 @@ public class CharacterMovement : MonoBehaviour
         }
         else if (this.movementMode == MovementMode.Glide)
         {
+            glidingDirection.rotation = Quaternion.LookRotation(this.rigidBody.velocity);
 
             switch (this.turnDirection)
             {
                 case TurnDirection.Stop: 
                     break;
                 case TurnDirection.Left:
-                    rotation += transform.up * -turnSpeed;
+                    if (Mathf.Abs(currentRotation) < maxRotation)
+                    {
+                        rotation += transform.up * -turnSpeed;
+                        currentRotation += -turnSpeed;
+                    }
                     sidewaysMovement += -Vector3.right * turnSpeed * 10;
                     break;
                 case TurnDirection.Right:
-                    rotation += transform.up * turnSpeed;
+                    if (Mathf.Abs(currentRotation) < maxRotation)
+                    {
+                        rotation += transform.up * turnSpeed;
+                        currentRotation += turnSpeed;
+                    }
                     sidewaysMovement += Vector3.right * turnSpeed * 10;
                     break;
             }
+            /*
+            float angle;
+            Vector3 axis;
+            Quaternion.LookRotation(this.rigidBody.velocity).ToAngleAxis(out angle, out axis);
+            float angleBetween = Vector3.Angle(axis, Vector3.forward);
+            float wantedAngle = 90 - angleBetween;
+            Quaternion wantedRotation = Quaternion.AngleAxis(90, Vector3.up);
 
-            this.rigidBody.transform.Rotate(rotation);
+            Transform axisTransform = Transform.Instantiate(this.transform);
+            axisTransform.rotation = Quaternion.LookRotation(this.rigidBody.velocity);
+            
+
+
+
+
+            float sin = Mathf.Sin(90);
+            float cos = Mathf.Cos(90);
+
+            float tx = axis.x;
+            float tz = axis.z;
+            axis.x = (cos * tx) + (sin * tz);
+            axis.z = (cos * tz) - (sin * tx);
+            
+
+            Vector3 right = axis * Vector3.forward / Vector3.right;
+            print(Quaternion.Angle(this.transform.rotation, Quaternion.LookRotation(this.rigidBody.velocity)));*/
+
+            if (Mathf.Abs(currentRotation) < maxRotation)
+            {
+                //this.rigidBody.transform.Rotate(rotation);
+            }
             this.rigidBody.AddRelativeForce(sidewaysMovement);
         }
 
@@ -192,8 +268,8 @@ public class CharacterMovement : MonoBehaviour
         if (this.movementMode == MovementMode.Walk && this.IsGrounded() && !jumping)
         {
             Debug.Log("--Penguin > Jump");
-            this.rigidBody.velocity = new Vector3(this.rigidBody.velocity.x, 0, this.rigidBody.velocity.z);
             this.jumping = true;
+            this.rigidBody.drag = jumpDrag;
             this.rigidBody.AddRelativeForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
         }
     }
@@ -218,5 +294,25 @@ public class CharacterMovement : MonoBehaviour
         //{
         //    this.moveDirection = MoveDirection.Stop;
         //}
+    }
+
+    void OnCollisionEnter(Collision coll)
+    {
+        GameObject other = coll.gameObject;
+        switch (other.tag)
+        {
+            case "TurningPart":
+                if (this.movementMode == MovementMode.Glide)
+                {
+                    turningPart = true;
+                }
+                break;
+            case "StraightPart":
+                if (this.movementMode == MovementMode.Glide)
+                {
+                    turningPart = false;
+                }
+                break;
+        }
     }
 }
