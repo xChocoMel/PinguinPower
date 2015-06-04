@@ -45,9 +45,16 @@ public class CharacterMovement : MonoBehaviour
     void Update()
     {
         print(this.rigidBody.velocity.y);
+        Vector3 velocity = this.rigidBody.velocity;
+
+        //Jumping
+        if (jumping && this.IsGrounded())
+        {
+            jumping = false;
+        }
 
         //Movementmode & Drag
-        if ((this.rigidBody.velocity.y < -0.1f || (this.rigidBody.velocity.y > 0f && this.rigidBody.velocity.y < (walkSpeed1 / 2))) && !jumping)
+        if ((velocity.y < -0.1f || (velocity.y > 0f && velocity.y < (walkSpeed1 / 2))) && !jumping)
         {
             if (this.movementMode == MovementMode.Walk && IsGrounded())
             {
@@ -55,7 +62,7 @@ public class CharacterMovement : MonoBehaviour
                 SwitchMovementMode(MovementMode.Glide);
             }
         }
-        else //if (this.rigidBody.velocity.y == 0f && !jumping)
+        else if (!jumping)
         {
             if (this.movementMode == MovementMode.Glide && IsGrounded())
             {
