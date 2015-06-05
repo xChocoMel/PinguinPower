@@ -9,7 +9,7 @@ public class EnemyScript : MonoBehaviour {
 	 
 	public Status status= Status.patrolling;
 	public int routeindex;
-	public Vector3[] routes;
+	public GameObject[] routes;
 	public int maxDistance;
 	//how far the enemy can go
 
@@ -23,6 +23,10 @@ public class EnemyScript : MonoBehaviour {
 	void Start () {
 		enemyRigidbody=GetComponent<Rigidbody>();
 		amountoflives = 2;
+		if(maxDistance==0)
+		{
+			maxDistance=10;
+		}
 	}
 	
 	// Update is called once per frame
@@ -65,12 +69,12 @@ public class EnemyScript : MonoBehaviour {
 	void Patrolling(){
         if (routes.Length > 0)
         {
-            Quaternion toRotation = Quaternion.LookRotation(new Vector3(routes[routeindex].x, transform.position.y, routes[routeindex].z) - transform.position);
+			Quaternion toRotation = Quaternion.LookRotation(new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z) - transform.position);
             transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 3 * Time.deltaTime);
 
             Moveforward(2);
 
-            if (Vector3.Distance(transform.position, new Vector3(routes[routeindex].x, transform.position.y, routes[routeindex].z)) < 1)
+			if (Vector3.Distance(transform.position, new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z)) < 0.1)
             {
                 routeindex++;
             }
