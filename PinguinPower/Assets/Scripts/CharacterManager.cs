@@ -7,12 +7,15 @@ public class CharacterManager : MonoBehaviour {
 
     public MenuManager menuManager;
 
+    private Animator animator;
+
     private int lives = 3;
     private int fish = 0;
     private int friends = 0;
 
 	// Use this for initialization
 	void Start () {
+        this.animator = this.GetComponentInChildren<Animator>();
         StartCoroutine(InitUI());
 	}
 
@@ -38,14 +41,36 @@ public class CharacterManager : MonoBehaviour {
                 this.CollideObstacle(other);
                 break;
 			case "Icicle":
+                this.Damage();
+                break;
 			case "Seal":
-				lives--;
-				if(lives==0)
-				{
-				menuManager.ShowGameOverMenu();
-				}
+                this.Damage();
 				break;
         }
+    }
+
+    private IEnumerator GameOver()
+    {
+        yield return new WaitForSeconds(1f);
+        menuManager.ShowGameOverMenu();
+    }
+
+    private void Damage()
+    {
+        this.animator.SetTrigger("Damage");
+        lives--;
+        menuManager.UpdateLives(this.lives.ToString());
+        if (lives == 0)
+        {
+            StartCoroutine(Die());
+        }
+    }
+
+    private IEnumerator Die()
+    {
+        yield return new WaitForSeconds(1f);
+        this.animator.SetTrigger("Dead");
+        StartCoroutine(GameOver());
     }
 
     void OnTriggerEnter(Collider collider)
@@ -65,6 +90,7 @@ public class CharacterManager : MonoBehaviour {
     private void CollideObstacle(GameObject obstacle)
     {
         Destroy(obstacle);
+        this.animator.SetTrigger("Damage");
     }
 
     private void CollideFish(GameObject fish)
