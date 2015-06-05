@@ -23,14 +23,6 @@ public class EnemyScript : MonoBehaviour {
 	void Start () {
 		enemyRigidbody=GetComponent<Rigidbody>();
 		amountoflives = 3;
-		if(maxDistance==0)
-		{
-			maxDistance=16;
-		}
-		if(sightRange==0)
-		{
-			sightRange=6;
-		}
 	}
 	
 	// Update is called once per frame
