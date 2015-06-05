@@ -55,7 +55,11 @@ public class MovingObjectScript : MonoBehaviour {
 	//	if (collision.gameObject.name == "Player") 
 		//{
 				//print ("collisionenter");
-				collision.transform.parent = gameObject.transform;
+				//collision.transform.parent = gameObject.transform;
+
+                var emptyObject = new GameObject();
+                emptyObject.transform.parent = gameObject.transform;
+                collision.transform.parent = emptyObject.transform;
 		//}
 
 	}
