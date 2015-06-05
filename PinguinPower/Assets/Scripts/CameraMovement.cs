@@ -8,10 +8,10 @@ public class CameraMovement : MonoBehaviour {
     public Camera cam;
 
     public float minFieldOfView = 60f;
-    public float maxFieldOfView = 100f;
+    public float maxFieldOfView = 90f;
     public float maxSpeed = 10f;
 
-    public float aimZ = -5.4f;
+    public float aimZ = -2f;
     public float aimY = 4f;
 
     private float smooth = 0.02f;
