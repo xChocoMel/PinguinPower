@@ -37,6 +37,10 @@ public class CharacterManager : MonoBehaviour {
             case "Obstacle":
                 this.CollideObstacle(other);
                 break;
+			case "Seal":
+				lives--;
+				
+				break;
         }
     }
 
