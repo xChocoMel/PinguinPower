@@ -5,7 +5,7 @@ public class CameraMovement : MonoBehaviour {
     public Transform graphics;
     public Transform lookAt;
     public Rigidbody charRigidbody;
-    public Camera cam;
+    private Camera cam;
 
     public float minFieldOfView = 60f;
     public float maxFieldOfView = 90f;
@@ -18,6 +18,7 @@ public class CameraMovement : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        this.cam = this.GetComponent<Camera>();
         transform.position = graphics.position + (graphics.forward * aimZ) + (graphics.up * aimY);
         cam.fieldOfView = minFieldOfView;
 	}

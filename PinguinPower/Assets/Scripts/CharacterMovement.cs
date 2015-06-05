@@ -11,8 +11,8 @@ public class CharacterMovement : MonoBehaviour
     public Text Text1;
     public Text Text2;
 
-    public Rigidbody myRigidBody;
-    public Collider penguinCollider;
+    private Rigidbody myRigidBody;
+    private CapsuleCollider penguinCollider;
     public Transform graphics;
 
     public Material glidingMaterial;
@@ -38,6 +38,9 @@ public class CharacterMovement : MonoBehaviour
 
     private bool turningPart = false;
 
+    private float colliderYWalking = 0.8f;
+    private float colliderYGliding = 0.44f;
+
     // Use this for initialization
     void Start()
     {
@@ -46,6 +49,9 @@ public class CharacterMovement : MonoBehaviour
 
     private void Setup()
     {
+        this.myRigidBody = this.GetComponent<Rigidbody>();
+        this.penguinCollider = this.GetComponent<CapsuleCollider>();
+
         this.movementMode = MovementMode.Walk;
         this.moveDirection = MoveDirection.Stop;
         this.turnDirection = TurnDirection.Stop;
@@ -259,7 +265,21 @@ public class CharacterMovement : MonoBehaviour
         {
             transform.rotation = graphics.rotation;
             graphics.localRotation = Quaternion.identity;
+
+            // Change collider
+            this.penguinCollider.center = new Vector3(this.penguinCollider.center.x, colliderYWalking, this.penguinCollider.center.z);
+            this.penguinCollider.direction = 1;
         }
+        else if (m == MovementMode.Glide)
+        {
+            // Change collider
+            this.penguinCollider.center = new Vector3(this.penguinCollider.center.x, colliderYGliding, this.penguinCollider.center.z);
+            this.penguinCollider.direction = 2;
+        }
+
+        /*0.8 > lopen op y-axis
+0.44 > glijden op z-axis
+^y collider*/
 
         this.ResetDrag();
     }

@@ -4,23 +4,23 @@ using System.Collections;
 public class MovingObjectScript : MonoBehaviour {
 
 	public GameObject button;
-	//private LeverCode leverscript;
+	private LeverCode leverscript;
 	public Vector3[] routes;
 	public int routeindex=0;
 
 	// Use this for initialization
 	void Start () {
-		/*if(button!=null)
+		 if(button!=null)
 		 {
 			leverscript=button.GetComponent<LeverCode>();
-		 }*/
+		 } 
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        Moving();
-		/*if(leverscript==null)
+        //Moving();
+		if(leverscript==null)
 		{
 			Moving();
 		}
@@ -31,7 +31,7 @@ public class MovingObjectScript : MonoBehaviour {
 				Moving();
 
 			}
-		}*/
+		} 
 
 	}
 	void Moving()
