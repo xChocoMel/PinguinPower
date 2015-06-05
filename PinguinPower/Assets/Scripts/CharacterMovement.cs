@@ -34,6 +34,7 @@ public class CharacterMovement : MonoBehaviour
     public float jumpForce = 500f;
 
     private bool jumping = false;
+    private float jumpTimer;
 
     private bool turningPart = false;
 
@@ -48,6 +49,8 @@ public class CharacterMovement : MonoBehaviour
         this.movementMode = MovementMode.Walk;
         this.moveDirection = MoveDirection.Stop;
         this.turnDirection = TurnDirection.Stop;
+
+        this.jumpTimer = 0.3f;
     }
 
     // Update is called once per frame
@@ -56,7 +59,7 @@ public class CharacterMovement : MonoBehaviour
         Vector3 velocity = this.myRigidBody.velocity;
 
         //Jumping
-        if (jumping && this.IsGrounded())
+        if (jumping && this.IsGrounded() && this.jumpTimer <= 0)
         {
             jumping = false;
             this.ResetDrag();
@@ -114,6 +117,12 @@ public class CharacterMovement : MonoBehaviour
                 Quaternion lookRotation = Quaternion.Lerp(graphics.rotation, Quaternion.LookRotation(this.myRigidBody.velocity), smooth);
                 this.graphics.rotation = new Quaternion(this.graphics.rotation.x, lookRotation.y, this.graphics.rotation.z, lookRotation.w);
             }
+        }
+
+        //Timers
+        if (this.jumpTimer > 0)
+        {
+            this.jumpTimer -= Time.deltaTime;
         }
     }
 
@@ -223,7 +232,7 @@ public class CharacterMovement : MonoBehaviour
     /// </summary>
     public void Jump()
     {
-        if (this.movementMode == MovementMode.Walk && this.IsGrounded() && !jumping)
+        if (this.movementMode == MovementMode.Walk && !jumping)
         {
             this.jumping = true;
             this.myRigidBody.drag = jumpDrag;
