@@ -22,7 +22,7 @@ public class CharacterMovement : MonoBehaviour
 
     public float glideDrag = 0.5f;
     public float walkDrag = 1f;
-    private float jumpDrag = 0f;
+    private float jumpDrag = 1f;
 
     private MovementMode movementMode;
     private MoveDirection moveDirection;

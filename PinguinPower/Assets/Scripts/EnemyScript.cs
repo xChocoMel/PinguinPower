@@ -80,7 +80,7 @@ public class EnemyScript : MonoBehaviour {
 
             Moveforward(2);
 
-			if (Vector3.Distance(transform.position, new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z)) < 0.1)
+			if (Vector3.Distance(transform.position, new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z)) < 1)
             {
                 routeindex++;
             }
