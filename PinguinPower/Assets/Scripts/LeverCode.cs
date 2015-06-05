@@ -2,50 +2,36 @@
 using System.Collections;
 
 public class LeverCode : MonoBehaviour {
-	public enum Status {enabled,enabling,disabled,disabling};
+	public enum Status {enabled,disabled};
 	// Use this for initialization
-//	public GameObject handle;
-	public Status status= Status.disabled;
-
+	private bool canBePressed;
+	public Status status;
+	public Animator animationcontroller;
 	void Start () {
-	
+		animationcontroller = GetComponent<Animator>();
+		status= Status.disabled;
+		canBePressed = true;
 	}
 	//ForceMode.Impulse
 	// Update is called once per frame
 	void Update () 
 	{
-		//print (handle.transform.localRotation.eulerAngles .z);
-		if(status== Status.enabling)
-		{
-		//	handle.transform.Rotate(0, 0, 80*Time.deltaTime );
-
-			//if(handle.transform.localRotation.eulerAngles.z>180)
-			//{
-
-				status=Status.enabled;
-			//}
-		}
-		else if(status== Status.disabling)
-		{
-			//handle.transform.Rotate(0, 0, -80*Time.deltaTime );
-		 
-			//if(handle.transform.localRotation.eulerAngles .z <90)
-			//{
-
-			status=Status.disabled;
-			//}
-			print (2);
-		}
 	}
 	void OnCollisionEnter(Collision collision) {
-		if(status== Status.disabled)
+		 
+		if(status== Status.disabled&&canBePressed )
 		{
-			status= Status.enabling;
-			print (3);
+			StartCoroutine(Wait());
+			animationcontroller.SetTrigger("EnableTrigger");
+			status=  Status.enabled;
+	 
+			 
 		}
-		else if(status== Status.enabled)
+		else if(status== Status.enabled&&canBePressed)
 		{
-			status= Status.disabling;
+			animationcontroller.SetTrigger("DisableTrigger");
+			status= Status.disabled;
+			 
 		}
 	}
  
@@ -56,5 +42,11 @@ public class LeverCode : MonoBehaviour {
 			return true;
 		}
 		return false;
+	}
+	public IEnumerator Wait()
+	{
+		canBePressed = false;
+		yield return new WaitForSeconds(2);
+		canBePressed = true;
 	}
 }

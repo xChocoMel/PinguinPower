@@ -9,7 +9,7 @@ public class EnemyScript : MonoBehaviour {
 	 
 	public Status status= Status.patrolling;
 	public int routeindex;
-	public Vector3[] routes;
+	public GameObject[] routes;
 	public int maxDistance;
 	//how far the enemy can go
 
@@ -22,7 +22,15 @@ public class EnemyScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		enemyRigidbody=GetComponent<Rigidbody>();
-		amountoflives = 2;
+		amountoflives = 3;
+		if(maxDistance==0)
+		{
+			maxDistance=16;
+		}
+		if(sightRange==0)
+		{
+			sightRange=6;
+		}
 	}
 	
 	// Update is called once per frame
@@ -41,11 +49,13 @@ public class EnemyScript : MonoBehaviour {
 				float distance = Vector3.Distance (transform.position, playerobject.transform.position);
 				if(distance<sightRange&&(Mathf.Abs(angel) > 90 && Mathf.Abs(angel) < 270))
 				{ 
+				 
 					RaycastHit hit ;
-					if(Physics.Raycast(transform.position,playerobject.transform.position-transform.position,out hit, 10))
+				if(Physics.Raycast(transform.position,playerobject.transform.position-transform.position,out hit, sightRange+3))
 					{
 						if(hit.collider.gameObject.name==playerobject.name)
 						{
+						 
 							returnPosition=transform.position;
 							status= Status.attacking;
 						} 
@@ -65,12 +75,12 @@ public class EnemyScript : MonoBehaviour {
 	void Patrolling(){
         if (routes.Length > 0)
         {
-            Quaternion toRotation = Quaternion.LookRotation(new Vector3(routes[routeindex].x, transform.position.y, routes[routeindex].z) - transform.position);
+			Quaternion toRotation = Quaternion.LookRotation(new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z) - transform.position);
             transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 3 * Time.deltaTime);
 
             Moveforward(2);
 
-            if (Vector3.Distance(transform.position, new Vector3(routes[routeindex].x, transform.position.y, routes[routeindex].z)) < 1)
+			if (Vector3.Distance(transform.position, new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z)) < 0.1)
             {
                 routeindex++;
             }
