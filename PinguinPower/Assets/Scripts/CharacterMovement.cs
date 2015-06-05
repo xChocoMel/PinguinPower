@@ -138,7 +138,6 @@ public class CharacterMovement : MonoBehaviour
     /// </summary>
     public void ForwardMovementUp()
     {
-        Debug.Log("--Penguin > Forwardmovement++");
         switch (this.moveDirection)
         {
             case MoveDirection.Stop: this.moveDirection = MoveDirection.Forward1; break;
@@ -169,8 +168,6 @@ public class CharacterMovement : MonoBehaviour
     /// </summary>
     public void Turn(TurnDirection turnDirection)
     {
-        Debug.Log("--Penguin > Turn " + turnDirection.ToString());
-
         this.turnDirection = turnDirection;
         Vector3 rotation = Vector3.zero;
         Vector3 sidewaysMovement = Vector3.zero;
@@ -228,7 +225,6 @@ public class CharacterMovement : MonoBehaviour
     {
         if (this.movementMode == MovementMode.Walk && this.IsGrounded() && !jumping)
         {
-            Debug.Log("--Penguin > Jump");
             this.jumping = true;
             this.myRigidBody.drag = jumpDrag;
             this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
@@ -242,7 +238,6 @@ public class CharacterMovement : MonoBehaviour
 
     public void Kick()
     {
-        Debug.Log("--Penguin > Kick ");
     }
 
     public void SwitchMovementMode(MovementMode m)

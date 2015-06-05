@@ -61,18 +61,15 @@ public class MovingObjectScript : MonoBehaviour {
 	}
 	void OnCollisionExit(Collision collision) 
 	{
-		print ("collsionexit");
 		collision.transform.parent = null;
 		
 	}
 	void OnTriggerEnter(Collider collision) 
 	{
-		print ("collisionenter");
 		collision.gameObject.transform.parent=gameObject.transform;
 	}
 	void OnTriggerExit(Collider collision) 
 	{
-		print ("collsionexit");
 		collision.gameObject.transform.parent = null;
 	}	 
 }
