@@ -63,20 +63,26 @@ public class EnemyScript : MonoBehaviour {
 		 
 	}
 	void Patrolling(){
+        if (routes.Length > 0)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(new Vector3(routes[routeindex].x, transform.position.y, routes[routeindex].z) - transform.position);
+            transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 3 * Time.deltaTime);
 
-		Quaternion toRotation= Quaternion.LookRotation (new Vector3(routes[routeindex].x,transform.position.y,routes[routeindex].z)- transform.position );
-		transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 3 * Time.deltaTime);
+            Moveforward(2);
 
-		Moveforward(2);
-
-		if(Vector3.Distance (transform.position, new Vector3(routes[routeindex].x,transform.position.y,routes[routeindex].z))<1)
-		{
-			routeindex++;
-		}
-		if(routeindex==routes.Length)
-		{
-			routeindex=0;
-		}
+            if (Vector3.Distance(transform.position, new Vector3(routes[routeindex].x, transform.position.y, routes[routeindex].z)) < 1)
+            {
+                routeindex++;
+            }
+            if (routeindex == routes.Length)
+            {
+                routeindex = 0;
+            }
+        }
+        else
+        {
+            Moveforward(0);
+        }
 	}
 	void Returning()
 	{
