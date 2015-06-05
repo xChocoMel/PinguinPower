@@ -37,6 +37,14 @@ public class CharacterManager : MonoBehaviour {
             case "Obstacle":
                 this.CollideObstacle(other);
                 break;
+			case "Icicle":
+			case "Seal":
+				lives--;
+				if(lives==0)
+				{
+				menuManager.ShowGameOverMenu();
+				}
+				break;
         }
     }
 
