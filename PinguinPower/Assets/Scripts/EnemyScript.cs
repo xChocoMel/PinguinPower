@@ -107,7 +107,7 @@ public class EnemyScript : MonoBehaviour {
 		status=Status.returning;
 	}
 	void OnCollisionEnter(Collision collision) {
-		if ( collision.gameObject.name=="Player") 
+		if ( collision.gameObject.name==playerobject.name) 
 		{
 			if(status!=Status.waiting)
 			{		 

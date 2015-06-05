@@ -6,13 +6,16 @@ public class icicleScript : MonoBehaviour {
 	public int height;
 	public AudioClip fallingSound;
 	public AudioClip shatterSound;
-	bool falling=false;
+	public GameObject Player;
+	//public float colliderheight;
+	//public float colliderradius;
+	 
 	// Use this for initialization
 	void Start () {
 		collider=gameObject.GetComponent<CapsuleCollider>();
 		//transform.position = new Vector3 (transform.position.x,height,transform.position.z);
-		collider.center = new Vector3 (collider.center.x,height*-1,collider.center.z);
-		collider.radius = 2;
+		collider.center = new Vector3 (0,height*-1,0);
+		 
 	}
 	
 	// Update is called once per frame
@@ -21,22 +24,24 @@ public class icicleScript : MonoBehaviour {
 	}
 	void OnTriggerEnter(Collider other) {
 
-		if(falling==true)
+		 
+		if(other.gameObject.name==Player.name)
 		{
-			StartCoroutine(Shatter());
+			print (1);
+			GetComponent<AudioSource>().PlayOneShot(shatterSound);
+		 
+			collider.center=new Vector3 (0,0,0);
+			GetComponent<Rigidbody>().useGravity=true;
+			GetComponent<CapsuleCollider>().isTrigger=false;
 		}
-		if(other.gameObject.name=="Player")
-		{
-			audio.PlayOneShot(shatterSound);
-			collider.radius = 0.5F;
-			collider.center=transform.position;
-			rigidbody.useGravity=true;
-			falling=true;
-		}
+	}
+	void OnCollisionEnter(Collision other)
+	{
+		StartCoroutine(Shatter());
 	}
 	IEnumerator Shatter()
 	{
-		audio.PlayOneShot (fallingSound);
+		GetComponent<AudioSource>().PlayOneShot (fallingSound);
 		yield return new WaitForSeconds(0.1F);
 		Destroy (gameObject);
 	}

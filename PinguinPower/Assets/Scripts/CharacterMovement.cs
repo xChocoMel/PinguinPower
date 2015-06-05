@@ -11,11 +11,18 @@ public class CharacterMovement : MonoBehaviour
     public Text Text1;
     public Text Text2;
 
-    public Rigidbody rigidBody;
+    public Rigidbody myRigidBody;
     public Collider penguinCollider;
+    public Transform graphics;
+
+    public Material glidingMaterial;
+    public Material walkingMaterial;
+    public Texture glidingTexture;
+    public Texture walkingTexture;
 
     public float glideDrag = 0.5f;
     public float walkDrag = 1f;
+    private float jumpDrag = 0f;
 
     private MovementMode movementMode;
     private MoveDirection moveDirection;
@@ -26,7 +33,9 @@ public class CharacterMovement : MonoBehaviour
     public float turnSpeed = 2f;
     public float jumpForce = 500f;
 
-    private bool jumping;
+    private bool jumping = false;
+
+    private bool turningPart = false;
 
     // Use this for initialization
     void Start()
@@ -44,32 +53,34 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print(this.rigidBody.velocity.y);
-        Vector3 velocity = this.rigidBody.velocity;
+        Vector3 velocity = this.myRigidBody.velocity;
 
         //Jumping
         if (jumping && this.IsGrounded())
         {
             jumping = false;
+            this.ResetDrag();
         }
-
+        //print(this.rigidBody.velocity.y);
         //Movementmode & Drag
-        if ((velocity.y < -0.1f || (velocity.y > 0f && velocity.y < (walkSpeed1 / 2))) && !jumping)
+        /*
+        if (velocity.y < -0.1f && !jumping)
         {
+            
             if (this.movementMode == MovementMode.Walk && IsGrounded())
             {
-                this.rigidBody.drag = glideDrag;
-                SwitchMovementMode(MovementMode.Glide);
+                //this.myRigidBody.drag = glideDrag;
+                //SwitchMovementMode(MovementMode.Glide);
             }
         }
         else if (!jumping)
         {
             if (this.movementMode == MovementMode.Glide && IsGrounded())
             {
-                this.rigidBody.drag = walkDrag;
-                SwitchMovementMode(MovementMode.Walk);
+                //this.myRigidBody.drag = walkDrag;
+                //SwitchMovementMode(MovementMode.Walk);
             }
-        }
+        }*/
 
         //Movement
         if (this.movementMode == MovementMode.Walk)
@@ -81,14 +92,43 @@ public class CharacterMovement : MonoBehaviour
                 case MoveDirection.Forward1: force = Vector3.forward * walkSpeed1; break;
                 case MoveDirection.Forward2: force = Vector3.forward * walkSpeed2; break;
             }
-            rigidBody.AddRelativeForce(force);
+            myRigidBody.AddRelativeForce(force);
         }
 
+        float smooth = 0.2f;
         //Lookat falling direction
-        if (this.movementMode == MovementMode.Glide && this.turnDirection == TurnDirection.Stop)
+        if (turningPart)
         {
-            Quaternion lookRotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(this.rigidBody.velocity), 0.1f);
-            this.transform.rotation = new Quaternion(this.transform.rotation.x, lookRotation.y, this.transform.rotation.z, lookRotation.w);
+            if (this.movementMode == MovementMode.Glide)
+            {
+                // Turn transform
+                Quaternion lookRotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(this.myRigidBody.velocity), smooth);
+                this.transform.rotation = new Quaternion(this.transform.rotation.x, lookRotation.y, this.transform.rotation.z, lookRotation.w);
+            }
+        }
+        else
+        {
+            if (this.movementMode == MovementMode.Glide)
+            {
+                // Turn graphics
+                Quaternion lookRotation = Quaternion.Lerp(graphics.rotation, Quaternion.LookRotation(this.myRigidBody.velocity), smooth);
+                this.graphics.rotation = new Quaternion(this.graphics.rotation.x, lookRotation.y, this.graphics.rotation.z, lookRotation.w);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Reset drag depending on MovementMode
+    /// </summary>
+    private void ResetDrag()
+    {
+        if (this.movementMode == MovementMode.Glide)
+        {
+            this.myRigidBody.drag = glideDrag;
+        }
+        else if (this.movementMode == MovementMode.Walk)
+        {
+            this.myRigidBody.drag = walkDrag;
         }
     }
 
@@ -156,12 +196,11 @@ public class CharacterMovement : MonoBehaviour
                     break;
             }
 
-            this.rigidBody.transform.Rotate(rotation);
-            this.rigidBody.AddRelativeForce(sidewaysMovement);
+            this.myRigidBody.transform.Rotate(rotation);
+            this.myRigidBody.AddRelativeForce(sidewaysMovement);
         }
         else if (this.movementMode == MovementMode.Glide)
         {
-
             switch (this.turnDirection)
             {
                 case TurnDirection.Stop: 
@@ -175,9 +214,7 @@ public class CharacterMovement : MonoBehaviour
                     sidewaysMovement += Vector3.right * turnSpeed * 10;
                     break;
             }
-
-            this.rigidBody.transform.Rotate(rotation);
-            this.rigidBody.AddRelativeForce(sidewaysMovement);
+            this.myRigidBody.AddRelativeForce(sidewaysMovement);
         }
 
         this.turnDirection = TurnDirection.Stop;
@@ -192,9 +229,9 @@ public class CharacterMovement : MonoBehaviour
         if (this.movementMode == MovementMode.Walk && this.IsGrounded() && !jumping)
         {
             Debug.Log("--Penguin > Jump");
-            this.rigidBody.velocity = new Vector3(this.rigidBody.velocity.x, 0, this.rigidBody.velocity.z);
             this.jumping = true;
-            this.rigidBody.AddRelativeForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
+            this.myRigidBody.drag = jumpDrag;
+            this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
         }
     }
 
@@ -214,9 +251,62 @@ public class CharacterMovement : MonoBehaviour
 
         this.Text1.text = this.movementMode.ToString();
 
-        //if (m == MovementMode.Glide)
-        //{
-        //    this.moveDirection = MoveDirection.Stop;
-        //}
+        if (m == MovementMode.Walk)
+        {
+            transform.rotation = graphics.rotation;
+            graphics.localRotation = Quaternion.identity;
+        }
+
+        this.ResetDrag();
+    }
+
+    void OnCollisionEnter(Collision coll)
+    {
+        GameObject other = coll.gameObject;
+        switch (other.tag)
+        {
+            case "TurningPart":
+                if (this.movementMode == MovementMode.Glide)
+                {
+                    turningPart = true;
+                    transform.rotation = graphics.rotation;
+                    graphics.localRotation = Quaternion.identity;
+                }
+                break;
+            case "StraightPart":
+                if (this.movementMode == MovementMode.Glide)
+                {
+                    turningPart = false;
+                }
+                break;
+        }
+        
+        // Switching gliding/walking
+        if (other.name.Contains("Terrain"))
+        {
+            Terrain terrain = (Terrain)other.GetComponent<Terrain>();
+            int mainTexture = TerrainSurface.GetMainTexture(this.transform.position, terrain);
+            string texturename = terrain.terrainData.splatPrototypes[mainTexture].texture.name;
+            if (texturename.Contains(glidingTexture.name))
+            {
+                this.SwitchMovementMode(MovementMode.Glide);
+            }
+            else if (texturename.Contains(walkingTexture.name))
+            {
+                this.SwitchMovementMode(MovementMode.Walk);
+            }
+        }
+        else
+        {
+            string materialname = other.GetComponent<Renderer>().material.name;
+            if (materialname.Contains(glidingMaterial.name))
+            {
+                this.SwitchMovementMode(MovementMode.Glide);
+            }
+            else if (materialname.Contains(walkingMaterial.name))
+            {
+                this.SwitchMovementMode(MovementMode.Walk);
+            }
+        }
     }
 }
