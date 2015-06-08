@@ -15,6 +15,8 @@ public class CharacterMovement : MonoBehaviour
     private CapsuleCollider penguinCollider;
     public Transform graphics;
 
+    private Animator animator;
+
     public Material glidingMaterial;
     public Material walkingMaterial;
     public Texture glidingTexture;
@@ -51,6 +53,7 @@ public class CharacterMovement : MonoBehaviour
     {
         this.myRigidBody = this.GetComponent<Rigidbody>();
         this.penguinCollider = this.GetComponent<CapsuleCollider>();
+        this.animator = this.GetComponentInChildren<Animator>();
 
         this.movementMode = MovementMode.Walk;
         this.moveDirection = MoveDirection.Stop;
@@ -65,7 +68,7 @@ public class CharacterMovement : MonoBehaviour
         Vector3 velocity = this.myRigidBody.velocity;
 
         //Jumping
-        if (jumping && this.IsGrounded() && this.jumpTimer <= 0)
+        if (jumping && this.jumpTimer <= 0 && this.IsGrounded())
         {
             jumping = false;
             this.ResetDrag();
@@ -97,9 +100,14 @@ public class CharacterMovement : MonoBehaviour
             Vector3 force = Vector3.zero;
             switch (this.moveDirection)
             {
-                case MoveDirection.Stop: break;
-                case MoveDirection.Forward1: force = Vector3.forward * walkSpeed1; break;
-                case MoveDirection.Forward2: force = Vector3.forward * walkSpeed2; break;
+                case MoveDirection.Stop:
+                    break;
+                case MoveDirection.Forward1:
+                    force = Vector3.forward * walkSpeed1;
+                    break;
+                case MoveDirection.Forward2: 
+                    force = Vector3.forward * walkSpeed2;
+                    break;
             }
             myRigidBody.AddRelativeForce(force);
         }
@@ -155,9 +163,14 @@ public class CharacterMovement : MonoBehaviour
     {
         switch (this.moveDirection)
         {
-            case MoveDirection.Stop: this.moveDirection = MoveDirection.Forward1; break;
-            case MoveDirection.Forward1: this.moveDirection = MoveDirection.Forward2; break;
+            case MoveDirection.Stop: 
+                this.moveDirection = MoveDirection.Forward1; 
+                break;
+            case MoveDirection.Forward1: 
+                this.moveDirection = MoveDirection.Forward2; 
+                break;
         }
+        this.animator.SetBool("Walking", true);
 
         this.Text2.text = this.moveDirection.ToString();
     }
@@ -168,11 +181,15 @@ public class CharacterMovement : MonoBehaviour
     /// </summary>
     public void ForwardMovementDown()
     {
-        Debug.Log("--Penguin > Forwardmovement--");
         switch (this.moveDirection)
         {
-            case MoveDirection.Forward1: this.moveDirection = MoveDirection.Stop; break;
-            case MoveDirection.Forward2: this.moveDirection = MoveDirection.Forward1; break;
+            case MoveDirection.Forward1: 
+                this.moveDirection = MoveDirection.Stop;
+                this.animator.SetBool("Walking", false);
+                break;
+            case MoveDirection.Forward2: 
+                this.moveDirection = MoveDirection.Forward1; 
+                break;
         }
 
         this.Text2.text = this.moveDirection.ToString();
@@ -240,7 +257,10 @@ public class CharacterMovement : MonoBehaviour
     {
         if (this.movementMode == MovementMode.Walk && !jumping)
         {
+            this.jumpTimer = 0.3f;
             this.jumping = true;
+            this.animator.SetTrigger("Jump");
+            
             this.myRigidBody.drag = jumpDrag;
             this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
         }
@@ -253,10 +273,21 @@ public class CharacterMovement : MonoBehaviour
 
     public void Kick()
     {
+        this.animator.SetTrigger("Kick");
     }
 
     public void SwitchMovementMode(MovementMode m)
     {
+        // Play animations
+        if (this.movementMode == MovementMode.Walk && m == MovementMode.Glide)
+        {
+            animator.SetTrigger("StartGliding");
+        }
+        else if (this.movementMode == MovementMode.Glide && m == MovementMode.Walk)
+        {
+            animator.SetTrigger("StopGliding");
+        }
+
         this.movementMode = m;
 
         this.Text1.text = this.movementMode.ToString();
@@ -276,10 +307,6 @@ public class CharacterMovement : MonoBehaviour
             this.penguinCollider.center = new Vector3(this.penguinCollider.center.x, colliderYGliding, this.penguinCollider.center.z);
             this.penguinCollider.direction = 2;
         }
-
-        /*0.8 > lopen op y-axis
-0.44 > glijden op z-axis
-^y collider*/
 
         this.ResetDrag();
     }

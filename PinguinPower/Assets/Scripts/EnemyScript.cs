@@ -23,6 +23,11 @@ public class EnemyScript : MonoBehaviour {
 	void Start () {
 		enemyRigidbody=GetComponent<Rigidbody>();
 		amountoflives = 3;
+<<<<<<< HEAD
+=======
+		returnPosition=transform.position;
+	
+>>>>>>> origin/master
 	}
 	
 	// Update is called once per frame
@@ -47,9 +52,12 @@ public class EnemyScript : MonoBehaviour {
 					{
 						if(hit.collider.gameObject.name==playerobject.name)
 						{
-						 
-							returnPosition=transform.position;
-							status= Status.attacking;
+							if(routes.Length > 0)
+							{
+								returnPosition=transform.position;
+							}
+								status= Status.attacking;
+							
 						} 
 					}
 				}
@@ -112,7 +120,8 @@ public class EnemyScript : MonoBehaviour {
 	IEnumerator Wait(){
 		Moveforward (0);
 		yield return new WaitForSeconds(2.0F);
-		status=Status.returning;
+		status=Status.attacking;
+		 
 	}
 	void OnCollisionEnter(Collision collision) {
 		if ( collision.gameObject.name==playerobject.name) 
