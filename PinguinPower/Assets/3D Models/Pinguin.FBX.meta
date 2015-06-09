@@ -187,8 +187,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Kick
       takeName: Take 001
-      firstFrame: 270
-      lastFrame: 270
+      firstFrame: 100
+      lastFrame: 120
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
