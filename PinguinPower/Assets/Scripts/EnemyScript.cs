@@ -23,11 +23,7 @@ public class EnemyScript : MonoBehaviour {
 	void Start () {
 		enemyRigidbody=GetComponent<Rigidbody>();
 		amountoflives = 3;
-<<<<<<< HEAD
-=======
 		returnPosition=transform.position;
-	
->>>>>>> origin/master
 	}
 	
 	// Update is called once per frame
