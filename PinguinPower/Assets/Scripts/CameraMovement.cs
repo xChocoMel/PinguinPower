@@ -14,7 +14,7 @@ public class CameraMovement : MonoBehaviour {
     public float aimZ = -2f;
     public float aimY = 4f;
 
-    private float smooth = 0.02f;
+    public float smooth = 0.02f;
 
 	// Use this for initialization
 	void Start () {
