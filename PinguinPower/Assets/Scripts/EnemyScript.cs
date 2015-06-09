@@ -19,11 +19,15 @@ public class EnemyScript : MonoBehaviour {
 	public int amountoflives;
 	public int sightRange;
 	Rigidbody enemyRigidbody;
+
+    private Animator animator;
+
 	// Use this for initialization
 	void Start () {
 		enemyRigidbody=GetComponent<Rigidbody>();
 		amountoflives = 3;
 		returnPosition=transform.position;
+        this.animator = this.GetComponentInChildren<Animator>();
 	}
 	
 	// Update is called once per frame
@@ -53,6 +57,7 @@ public class EnemyScript : MonoBehaviour {
 								returnPosition=transform.position;
 							}
 								status= Status.attacking;
+                                this.animator.SetTrigger("Attack");
 							
 						} 
 					}
@@ -71,6 +76,7 @@ public class EnemyScript : MonoBehaviour {
 	void Patrolling(){
         if (routes.Length > 0)
         {
+            animator.SetBool("Walking", true);
 			Quaternion toRotation = Quaternion.LookRotation(new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z) - transform.position);
             transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 3 * Time.deltaTime);
 
@@ -87,6 +93,7 @@ public class EnemyScript : MonoBehaviour {
         }
         else
         {
+            animator.SetBool("Walking", false);
             Moveforward(0);
         }
 	}
@@ -125,6 +132,7 @@ public class EnemyScript : MonoBehaviour {
 			if(status!=Status.waiting)
 			{		 
 				GetComponent<AudioSource>().PlayOneShot(hitsound);
+                this.animator.SetTrigger("Attack");
 				status=Status.waiting;
 				print ("colliding");
 				StartCoroutine(Wait());
@@ -136,6 +144,7 @@ public class EnemyScript : MonoBehaviour {
 	void LoseLife(int attackpoint)
 	{
 		GetComponent<AudioSource>().PlayOneShot (loselife);
+        this.animator.SetTrigger("Damage");
 		amountoflives-=attackpoint;
 		if(amountoflives<1)
 		{
@@ -150,6 +159,7 @@ public class EnemyScript : MonoBehaviour {
 	}
 	IEnumerator Dying(){
 		GetComponent<AudioSource>().PlayOneShot (dying);
+        this.animator.SetTrigger("Dead");
 		yield return new WaitForSeconds(3.0F);
 		Destroy (gameObject);
 	}
