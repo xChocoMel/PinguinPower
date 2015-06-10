@@ -19,12 +19,15 @@ public class CameraMovement : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         this.cam = this.GetComponent<Camera>();
-        transform.position = graphics.position + (graphics.forward * aimZ) + (graphics.up * aimY);
+        transform.position = graphics.position + (graphics.forward * aimZ * 3) + (graphics.up * aimY * 3);
         cam.fieldOfView = minFieldOfView;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        //Vector3 aimPos = graphics.position + (graphics.forward * aimZ) + (graphics.up * aimY);
+        //Vector3 translation = (aimPos - transform.position) * smooth;
+        //transform.Translate(translation, Space.World);
         Vector3 aimPos = graphics.position + (graphics.forward * aimZ) + (graphics.up * aimY);
         transform.position = Vector3.Lerp(transform.position, aimPos, smooth);
         transform.LookAt(lookAt);
