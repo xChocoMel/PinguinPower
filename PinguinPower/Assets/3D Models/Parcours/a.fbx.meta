@@ -1,16 +1,20 @@
 fileFormatVersion: 2
-guid: e04fcb8304c98c7448ce2683df5938d9
-timeCreated: 1434013437
+guid: fb8b91caa1b91634fa64e7b48e06e231
+timeCreated: 1434016455
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: Ground
-    100004: Wall
-    400000: //RootNode
-    400002: Ground
-    400004: Wall
+    100000: Camera
+    100002: //RootNode
+    100004: Ground
+    100006: Lamp
+    100008: Wall
+    400000: Camera
+    400002: //RootNode
+    400004: Ground
+    400006: Lamp
+    400008: Wall
     2300000: Ground
     2300002: Wall
     3300000: Ground
