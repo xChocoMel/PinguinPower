@@ -34,6 +34,7 @@ public class CharacterMovement : MonoBehaviour
     public float walkSpeed2 = 10f;
     public float turnSpeed = 2f;
     public float jumpForce = 500f;
+    public float constantGlidingForce = 6f;
 
     private bool jumping = false;
     private float jumpTimer;
@@ -113,6 +114,10 @@ public class CharacterMovement : MonoBehaviour
                     break;
             }
             myRigidBody.AddRelativeForce(force);
+        }
+        else if (this.movementMode == MovementMode.Glide)
+        {
+            myRigidBody.AddRelativeForce(Vector3.forward * constantGlidingForce);
         }
 
         float smooth = 0.2f;
