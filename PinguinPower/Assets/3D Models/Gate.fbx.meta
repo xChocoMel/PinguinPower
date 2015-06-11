@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 5eeb02ae1583a1449905cd17578ad544
-timeCreated: 1433488899
+guid: c569c4ccce8a9b34184ab38bab5eb999
+timeCreated: 1434019661
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -9,8 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Sphere002
-    9500000: //RootNode
+    4300000: Ground
   materials:
     importMaterials: 1
     materialName: 0
@@ -30,7 +29,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: .0253999997
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1
@@ -64,7 +63,7 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
