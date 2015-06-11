@@ -26,6 +26,9 @@ public class CharacterMovement : MonoBehaviour
     public float walkDrag = 1f;
     private float jumpDrag = 1f;
 
+    public float walkGravity = -9.81f;
+    public float glideGravity = -30f;
+
     private MovementMode movementMode;
     private MoveDirection moveDirection;
     private TurnDirection turnDirection;
@@ -308,12 +311,18 @@ public class CharacterMovement : MonoBehaviour
             // Change collider
             this.penguinCollider.center = new Vector3(this.penguinCollider.center.x, colliderYWalking, this.penguinCollider.center.z);
             this.penguinCollider.direction = 1;
+
+            // Change gravity
+            Physics.gravity = Vector3.up * walkGravity;
         }
         else if (m == MovementMode.Glide)
         {
             // Change collider
             this.penguinCollider.center = new Vector3(this.penguinCollider.center.x, colliderYGliding, this.penguinCollider.center.z);
             this.penguinCollider.direction = 2;
+
+            // Change gravity
+            Physics.gravity = Vector3.up * glideGravity;
         }
 
         this.ResetDrag();
@@ -346,6 +355,7 @@ public class CharacterMovement : MonoBehaviour
             Terrain terrain = (Terrain)other.GetComponent<Terrain>();
             int mainTexture = TerrainSurface.GetMainTexture(this.transform.position, terrain);
             string texturename = terrain.terrainData.splatPrototypes[mainTexture].texture.name;
+            print(texturename + " - " + glidingTexture.name);
             if (texturename.Contains(glidingTexture.name))
             {
                 this.SwitchMovementMode(MovementMode.Glide);
@@ -355,7 +365,40 @@ public class CharacterMovement : MonoBehaviour
                 this.SwitchMovementMode(MovementMode.Walk);
             }
         }
-        else
+        else if (IsGrounded())
+        {
+            string materialname = other.GetComponentInChildren<Renderer>().material.name;
+            if (materialname.Contains(glidingMaterial.name))
+            {
+                this.SwitchMovementMode(MovementMode.Glide);
+            }
+            else if (materialname.Contains(walkingMaterial.name))
+            {
+                this.SwitchMovementMode(MovementMode.Walk);
+            }
+        }
+    }
+    
+    void OnCollisionStay(Collision coll)
+    {
+        GameObject other = coll.gameObject;
+        
+        // Switching gliding/walking
+        if (other.name.Contains("Terrain"))
+        {
+            Terrain terrain = (Terrain)other.GetComponent<Terrain>();
+            int mainTexture = TerrainSurface.GetMainTexture(this.transform.position, terrain);
+            string texturename = terrain.terrainData.splatPrototypes[mainTexture].texture.name;
+            if (texturename.Contains(glidingTexture.name))
+            {
+                this.SwitchMovementMode(MovementMode.Glide);
+            }
+            else if (texturename.Contains(walkingTexture.name))
+            {
+                this.SwitchMovementMode(MovementMode.Walk);
+            }
+        }
+        else if (IsGrounded())
         {
             string materialname = other.GetComponentInChildren<Renderer>().material.name;
             if (materialname.Contains(glidingMaterial.name))
