@@ -1,27 +1,22 @@
 fileFormatVersion: 2
-guid: 9757be41a4811ac4c8e95bbd7f6a80a0
-timeCreated: 1433882237
+guid: e04fcb8304c98c7448ce2683df5938d9
+timeCreated: 1434013437
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
   fileIDToRecycleName:
     100000: //RootNode
     100002: Ground
-    100004: WallLeft
-    100006: WallRight
+    100004: Wall
     400000: //RootNode
     400002: Ground
-    400004: WallLeft
-    400006: WallRight
+    400004: Wall
     2300000: Ground
-    2300002: WallLeft
-    2300004: WallRight
+    2300002: Wall
     3300000: Ground
-    3300002: WallLeft
-    3300004: WallRight
-    4300000: WallLeft
-    4300002: WallRight
-    4300004: Ground
+    3300002: Wall
+    4300000: Wall
+    4300002: Ground
   materials:
     importMaterials: 1
     materialName: 0
@@ -41,7 +36,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 4
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1
