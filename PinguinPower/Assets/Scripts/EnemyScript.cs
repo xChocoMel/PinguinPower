@@ -33,7 +33,8 @@ public class EnemyScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		 
-		 
+		 	 
+			
 			if(status==Status.patrolling){
 				Patrolling();
 			}
@@ -110,14 +111,17 @@ public class EnemyScript : MonoBehaviour {
 	}
 	void Attacking()
 	{
-		Quaternion toRotation= Quaternion.LookRotation (new Vector3(playerobject.transform.position.x,transform.position.y ,playerobject.transform.position.z)- transform.position );
-		transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 4 * Time.deltaTime);
-		 		 
-		Moveforward(4);
-
-		if(Vector3.Distance (transform.position, returnPosition)>maxDistance)
+		if(playerobject.GetComponent<CharacterManager>().GetLives()>=1)
 		{
-			status=Status.returning;
+			Quaternion toRotation= Quaternion.LookRotation (new Vector3(playerobject.transform.position.x,transform.position.y ,playerobject.transform.position.z)- transform.position );
+			transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 4 * Time.deltaTime);
+			 		 
+			Moveforward(4);
+
+			if(Vector3.Distance (transform.position, returnPosition)>maxDistance)
+			{
+				status=Status.returning;
+			}
 		}
 	}
 	IEnumerator Wait(){
