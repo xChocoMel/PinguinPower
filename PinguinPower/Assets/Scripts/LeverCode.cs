@@ -7,6 +7,7 @@ public class LeverCode : MonoBehaviour {
 	private bool canBePressed;
 	public Status status;
 	public Animator animationcontroller;
+	public GameObject  playerobject;
 	void Start () {
 		animationcontroller = GetComponent<Animator>();
 		status= Status.disabled;
@@ -18,20 +19,18 @@ public class LeverCode : MonoBehaviour {
 	{
 	}
 	void OnCollisionEnter(Collision collision) {
-		 
-		if(status== Status.disabled&&canBePressed )
-		{
-			StartCoroutine(Wait());
-			animationcontroller.SetTrigger("EnableTrigger");
-			status=  Status.enabled;
+		if (playerobject.GetComponent<CharacterMovement> ().IsKicking ()&&collision.gameObject.name==playerobject.name) {
+			if (status == Status.disabled && canBePressed) {
+				StartCoroutine (Wait ());
+				animationcontroller.SetTrigger ("EnableTrigger");
+				status = Status.enabled;
 	 
 			 
-		}
-		else if(status== Status.enabled&&canBePressed)
-		{
-			animationcontroller.SetTrigger("DisableTrigger");
-			status= Status.disabled;
+			} else if (status == Status.enabled && canBePressed) {
+				animationcontroller.SetTrigger ("DisableTrigger");
+				status = Status.disabled;
 			 
+			}
 		}
 	}
  
