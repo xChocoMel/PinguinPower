@@ -18,7 +18,10 @@ public class CharacterManager : MonoBehaviour {
         this.animator = this.GetComponentInChildren<Animator>();
         StartCoroutine(InitUI());
 	}
-
+	public int GetLives()
+	{
+		return lives;
+	}
     private IEnumerator InitUI()
     {
         yield return new WaitForFixedUpdate();
