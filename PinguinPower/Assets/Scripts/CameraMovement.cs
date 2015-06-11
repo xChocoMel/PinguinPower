@@ -32,7 +32,8 @@ public class CameraMovement : MonoBehaviour {
         transform.position = Vector3.Lerp(transform.position, aimPos, smooth);
         transform.LookAt(lookAt);
         float aimFieldOfView = charRigidbody.velocity.magnitude * (maxFieldOfView) / maxSpeed;
-        cam.fieldOfView = cam.fieldOfView + (aimFieldOfView * smooth);
+        float deltaFieldOfView = aimFieldOfView - cam.fieldOfView;
+        cam.fieldOfView = cam.fieldOfView + (deltaFieldOfView * smooth);
         if (cam.fieldOfView > maxFieldOfView) { cam.fieldOfView = maxFieldOfView; }
         else if (cam.fieldOfView < minFieldOfView) { cam.fieldOfView = minFieldOfView; }
 	}
