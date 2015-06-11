@@ -1,15 +1,27 @@
 fileFormatVersion: 2
-guid: 0375427b96da65e418a8c374d48b247f
-timeCreated: 1433834154
+guid: fb1670ce289e5494aa47b5633d06cf0d
+timeCreated: 1434007265
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Ground
+    100004: WallLeft
+    100006: WallRight
     400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: WallLeft.003
+    400002: Ground
+    400004: WallLeft
+    400006: WallRight
+    2300000: Ground
+    2300002: WallLeft
+    2300004: WallRight
+    3300000: Ground
+    3300002: WallLeft
+    3300004: WallRight
+    4300000: WallLeft
+    4300002: WallRight
+    4300004: Ground
   materials:
     importMaterials: 1
     materialName: 0
