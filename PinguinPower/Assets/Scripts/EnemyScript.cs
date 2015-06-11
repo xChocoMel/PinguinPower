@@ -57,7 +57,7 @@ public class EnemyScript : MonoBehaviour {
 								returnPosition=transform.position;
 							}
 								status= Status.attacking;
-                                this.animator.SetTrigger("Attack");
+                               // this.animator.SetTrigger("Attack");
 							
 						} 
 					}
@@ -131,11 +131,17 @@ public class EnemyScript : MonoBehaviour {
 		{
 			if(status!=Status.waiting)
 			{		 
+				if(playerobject.GetComponent<CharacterMovement>().IsKicking())
+				{
+					LoseLife(1);
+				}
+				else{
 				GetComponent<AudioSource>().PlayOneShot(hitsound);
                 this.animator.SetTrigger("Attack");
 				status=Status.waiting;
 				print ("colliding");
 				StartCoroutine(Wait());
+				}
 			}
 		}
 

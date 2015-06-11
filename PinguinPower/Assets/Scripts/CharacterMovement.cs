@@ -42,13 +42,16 @@ public class CharacterMovement : MonoBehaviour
 
     private float colliderYWalking = 0.8f;
     private float colliderYGliding = 0.44f;
-
+	 
     // Use this for initialization
     void Start()
     {
         this.Setup();
     }
-
+	public bool IsKicking()
+	{
+		return animator.GetBool("Kick");
+	}
     private void Setup()
     {
         this.myRigidBody = this.GetComponent<Rigidbody>();
@@ -66,7 +69,7 @@ public class CharacterMovement : MonoBehaviour
     void Update()
     {
         Vector3 velocity = this.myRigidBody.velocity;
-
+		//this.animator.SetTrigger("Kick");
         //Jumping
         if (jumping && this.jumpTimer <= 0 && this.IsGrounded())
         {
