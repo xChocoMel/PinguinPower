@@ -8,8 +8,8 @@ using UnityEngine.UI;
 public class CharacterMovement : MonoBehaviour
 {
 
-    public Text Text1;
-    public Text Text2;
+    //public Text Text1;
+    //public Text Text2;
 
     private Rigidbody myRigidBody;
     private CapsuleCollider penguinCollider;
@@ -42,13 +42,16 @@ public class CharacterMovement : MonoBehaviour
 
     private float colliderYWalking = 0.8f;
     private float colliderYGliding = 0.44f;
-
+	 
     // Use this for initialization
     void Start()
     {
         this.Setup();
     }
-
+	public bool IsKicking()
+	{
+		return animator.GetBool("Kick");
+	}
     private void Setup()
     {
         this.myRigidBody = this.GetComponent<Rigidbody>();
@@ -66,14 +69,14 @@ public class CharacterMovement : MonoBehaviour
     void Update()
     {
         Vector3 velocity = this.myRigidBody.velocity;
-
+		//this.animator.SetTrigger("Kick");
         //Jumping
         if (jumping && this.jumpTimer <= 0 && this.IsGrounded())
         {
             jumping = false;
             this.ResetDrag();
         }
-        //print(this.rigidBody.velocity.y);
+       // print(this.myRigidBody.velocity.magnitude);
         //Movementmode & Drag
         /*
         if (velocity.y < -0.1f && !jumping)
@@ -172,7 +175,7 @@ public class CharacterMovement : MonoBehaviour
         }
         this.animator.SetBool("Walking", true);
 
-        this.Text2.text = this.moveDirection.ToString();
+        //this.Text2.text = this.moveDirection.ToString();
     }
 
     /// <summary>
@@ -192,7 +195,7 @@ public class CharacterMovement : MonoBehaviour
                 break;
         }
 
-        this.Text2.text = this.moveDirection.ToString();
+        //this.Text2.text = this.moveDirection.ToString();
     }
 
     /// <summary>
@@ -268,7 +271,7 @@ public class CharacterMovement : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics.Raycast(this.transform.position, -Vector3.up, 1.1f);
+        return Physics.Raycast(this.transform.position, -Vector3.up, 0.2f);
     }
 
     public void Kick()
@@ -290,7 +293,7 @@ public class CharacterMovement : MonoBehaviour
 
         this.movementMode = m;
 
-        this.Text1.text = this.movementMode.ToString();
+        //this.Text1.text = this.movementMode.ToString();
 
         if (m == MovementMode.Walk)
         {
@@ -349,7 +352,7 @@ public class CharacterMovement : MonoBehaviour
         }
         else
         {
-            string materialname = other.GetComponent<Renderer>().material.name;
+            string materialname = other.GetComponentInChildren<Renderer>().material.name;
             if (materialname.Contains(glidingMaterial.name))
             {
                 this.SwitchMovementMode(MovementMode.Glide);

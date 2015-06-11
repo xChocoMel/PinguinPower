@@ -21,7 +21,7 @@ public class MenuManager : MonoBehaviour {
             container.FindChild("BtnStart").GetComponent<Button>().onClick.AddListener(() => ClickStart());
             container.FindChild("BtnQuit").GetComponent<Button>().onClick.AddListener(() => ClickQuit());
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             this.MainMenu = null;
         }
@@ -33,7 +33,7 @@ public class MenuManager : MonoBehaviour {
             container.FindChild("BtnResume").GetComponent<Button>().onClick.AddListener(() => ClickResume());
             container.FindChild("BtnQuitToMainMenu").GetComponent<Button>().onClick.AddListener(() => ClickQuitToMainMenu());
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             this.PauseMenu = null;
         }
@@ -45,7 +45,7 @@ public class MenuManager : MonoBehaviour {
             container.FindChild("BtnRetry").GetComponent<Button>().onClick.AddListener(() => ClickStart());
             container.FindChild("BtnQuitToMainMenu").GetComponent<Button>().onClick.AddListener(() => ClickQuitToMainMenu());
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             this.GameOverMenu = null;
         }
@@ -53,10 +53,10 @@ public class MenuManager : MonoBehaviour {
         try
         {
             this.Hud = GameObject.Find("Canvas").transform.FindChild("HUD").gameObject;
-            Transform container = this.Hud.transform.GetChild(0).GetChild(1).GetChild(0);
-            this.HudValues = new Text[] { container.GetChild(0).GetComponent<Text>(), container.GetChild(1).GetComponent<Text>(), container.GetChild(2).GetComponent<Text>() };
+            Transform container = this.Hud.transform.GetChild(0).GetChild(0).GetChild(0);
+            this.HudValues = new Text[] { container.GetChild(0).GetChild(1).GetComponent<Text>(), container.GetChild(1).GetChild(1).GetComponent<Text>(), container.GetChild(2).GetChild(1).GetComponent<Text>() };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Debug.Log("No HUD :(");
             this.Hud = null;

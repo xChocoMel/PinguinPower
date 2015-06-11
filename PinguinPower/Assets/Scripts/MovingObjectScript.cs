@@ -7,7 +7,7 @@ public class MovingObjectScript : MonoBehaviour {
 	private LeverCode leverscript;
 	public Vector3[] routes;
 	public int routeindex=0;
-
+	public int speed;
 	// Use this for initialization
 	void Start () {
 		 if(button!=null)
@@ -29,7 +29,6 @@ public class MovingObjectScript : MonoBehaviour {
 			if(leverscript.LeverEnabled())
 			{
 				Moving();
-
 			}
 		} 
 
@@ -38,7 +37,8 @@ public class MovingObjectScript : MonoBehaviour {
 	{
         if (routes.Length > 0)
         {
-            transform.position = Vector3.Lerp(transform.position, routes[routeindex], 1 * Time.deltaTime);
+            //transform.position = Vector3.Lerp(transform.position, routes[routeindex], 1 * Time.deltaTime);
+			transform.position =Vector3.MoveTowards(transform.position, routes[routeindex],speed*Time.deltaTime);
             if (Vector3.Distance(transform.position, routes[routeindex]) < 1)
             {
                 routeindex++;
