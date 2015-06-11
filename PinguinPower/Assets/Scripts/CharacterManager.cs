@@ -47,7 +47,10 @@ public class CharacterManager : MonoBehaviour {
                 this.Damage();
                 break;
 			case "Seal":
+				if(this.GetComponent<CharacterMovement>().IsKicking ()==false)
+				{
                 this.Damage();
+				}
 				break;
         }
     }
