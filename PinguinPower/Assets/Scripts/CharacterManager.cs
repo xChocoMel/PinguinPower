@@ -12,6 +12,7 @@ public class CharacterManager : MonoBehaviour {
     private int lives = 3;
     private int fish = 0;
     private int friends = 0;
+	private bool canBeDamaged=true;
 
 	// Use this for initialization
 	void Start () {
@@ -63,13 +64,17 @@ public class CharacterManager : MonoBehaviour {
 
     private void Damage()
     {
-        this.animator.SetTrigger("Damage");
-        lives--;
+		if(canBeDamaged=true)
+		{
+       		this.animator.SetTrigger("Damage");
+        	lives--;
+		}
         menuManager.UpdateLives(this.lives.ToString());
-        if (lives == 0)
-        {
-            StartCoroutine(Die());
-        }
+        if (lives == 0) {
+			StartCoroutine (Die ());
+		} else {
+			StartCoroutine(Invunerable());
+		}
     }
 
     private IEnumerator Die()
@@ -127,4 +132,10 @@ public class CharacterManager : MonoBehaviour {
         // TODO fancy destroy?
         Destroy(friend);
     }
+	IEnumerator Invunerable()
+	{
+		canBeDamaged=false;
+		yield return new WaitForSeconds (2);
+		canBeDamaged=true;
+	}
 }
