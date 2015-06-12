@@ -46,7 +46,8 @@ public class CharacterMovement : MonoBehaviour
 
     private float colliderYWalking = 0.8f;
     private float colliderYGliding = 0.44f;
-	 
+	private bool isKicking;
+
     // Use this for initialization
     void Start()
     {
@@ -54,7 +55,7 @@ public class CharacterMovement : MonoBehaviour
     }
 	public bool IsKicking()
 	{
-		return animator.GetBool("Kick");
+		return isKicking;
 	}
     private void Setup()
     {
@@ -284,9 +285,18 @@ public class CharacterMovement : MonoBehaviour
 
     public void Kick()
     {
-        this.animator.SetTrigger("Kick");
+		this.animator.SetTrigger("Kick");
+		if(!isKicking)
+		{
+			StartCoroutine(Kicking());
+		}
     }
-
+	IEnumerator Kicking()
+	{
+		isKicking = true;
+		yield return new WaitForSeconds (1.0F);
+		isKicking = false;
+	}
     public void SwitchMovementMode(MovementMode m)
     {
         // Play animations

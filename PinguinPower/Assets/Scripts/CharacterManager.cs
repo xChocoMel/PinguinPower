@@ -16,7 +16,7 @@ public class CharacterManager : MonoBehaviour {
     private int lives = 3;
     private int fish = 0;
     private int friends = 0;
-	private bool canBeDamaged=true;
+	//private bool canBeDamaged=true;
 
 	// Use this for initialization
 	void Start () {
@@ -52,12 +52,13 @@ public class CharacterManager : MonoBehaviour {
 			case "Icicle":
                 this.Damage();
                 break;
+			/*
 			case "Seal":
 				if(this.GetComponent<CharacterMovement>().IsKicking ()==false)
 				{
-                this.Damage();
+                	this.Damage();
 				}
-				break;
+				break;*/
         }
     }
 
@@ -67,19 +68,17 @@ public class CharacterManager : MonoBehaviour {
         menuManager.ShowGameOverMenu();
     }
 
-    private void Damage()
+    public void Damage()
     {
-		if(canBeDamaged=true)
-		{
-       		this.animator.SetTrigger("Damage");
-        	lives--;
-		}
+		//if(canBeDamaged=true)
+		//{
+       	this.animator.SetTrigger("Damage");
+        lives--;
+		//}
         menuManager.UpdateLives(this.lives.ToString());
         if (lives == 0) {
 			StartCoroutine (Die ());
-		} else {
-			StartCoroutine(Invunerable());
-		}
+		}  
     }
 
     private IEnumerator Die()
@@ -151,10 +150,5 @@ public class CharacterManager : MonoBehaviour {
         // TODO fancy destroy?
         Destroy(friend);
     }
-	IEnumerator Invunerable()
-	{
-		canBeDamaged=false;
-		yield return new WaitForSeconds (2);
-		canBeDamaged=true;
-	}
+ 
 }

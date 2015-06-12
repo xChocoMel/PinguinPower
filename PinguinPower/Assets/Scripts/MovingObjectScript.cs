@@ -39,7 +39,7 @@ public class MovingObjectScript : MonoBehaviour {
 		current = transform.position; 
 		velocity = (current - previous) / Time.deltaTime;
 		previous = current;
-		print (velocity.y);
+		 
 		if(jumpthrough)
 		{
 			Physics.IgnoreCollision(GetComponent<BoxCollider>(), Player.GetComponent<CapsuleCollider>(), Player.transform.position.y< transform.position.y); 
