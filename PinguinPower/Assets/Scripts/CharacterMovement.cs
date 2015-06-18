@@ -169,12 +169,15 @@ public class CharacterMovement : MonoBehaviour
     /// </summary>
     public void ForwardMovementUp()
     {
-        if (this.moveDirection == MoveDirection.Stop)
+        if (this.movementMode == MovementMode.Walk)
         {
-            StartCoroutine(PlayFootsteps());
+            if (this.moveDirection == MoveDirection.Stop)
+            {
+                StartCoroutine(PlayFootsteps());
+            }
+            this.moveDirection = MoveDirection.Forward1;
+            this.animator.SetBool("Walking", true);
         }
-        this.moveDirection = MoveDirection.Forward1;
-        this.animator.SetBool("Walking", true);
     }
 
     private IEnumerator PlayFootsteps()
@@ -193,14 +196,17 @@ public class CharacterMovement : MonoBehaviour
     /// </summary>
     public void ForwardMovementDown()
     {
-        //if (this.moveDirection == MoveDirection.Forward1)
-        //{
-        //    this.slowDownSpeed = walkSpeed1;
-        //}
+        if (this.movementMode == MovementMode.Walk)
+        {
+            //if (this.moveDirection == MoveDirection.Forward1)
+            //{
+            //    this.slowDownSpeed = walkSpeed1;
+            //}
 
-        this.moveDirection = MoveDirection.Stop;
-        this.myRigidBody.velocity = new Vector3(0, this.myRigidBody.velocity.y, 0);
-        this.animator.SetBool("Walking", false);
+            this.moveDirection = MoveDirection.Stop;
+            this.myRigidBody.velocity = new Vector3(0, this.myRigidBody.velocity.y, 0);
+            this.animator.SetBool("Walking", false);
+        }
     }
 
     /// <summary>

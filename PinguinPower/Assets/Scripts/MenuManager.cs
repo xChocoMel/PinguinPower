@@ -5,21 +5,48 @@ using System;
 
 public class MenuManager : MonoBehaviour {
 
+    public Transform penguin;
+
     private GameObject MainMenu;
     private GameObject PauseMenu;
     private GameObject GameOverMenu;
     private GameObject Hud;
+    private GameObject YesNoMessage;
     private Text[] HudValues;
+
+    private SaveManager saveManager = new SaveManager();
+    private SceneFader sceneFader;
 
 	// Use this for initialization
 	void Start () {
+
+        this.sceneFader = this.gameObject.GetComponent<SceneFader>();
 
         try
         {
             this.MainMenu = GameObject.Find("Canvas").transform.FindChild("MainMenu").gameObject;
             Transform container = this.MainMenu.transform.GetChild(0).GetChild(1).GetChild(0);
-            container.FindChild("BtnStart").GetComponent<Button>().onClick.AddListener(() => ClickStart());
+            container.FindChild("BtnNewGame").GetComponent<Button>().onClick.AddListener(() => ClickNewGame());
+            container.FindChild("BtnContinueGame").GetComponent<Button>().onClick.AddListener(() => ClickContinueGame());
+
+            if (!this.saveManager.SaveAvailable())
+            {
+                container.FindChild("BtnContinueGame").GetComponent<Button>().interactable = false;
+            }
+
             container.FindChild("BtnQuit").GetComponent<Button>().onClick.AddListener(() => ClickQuit());
+        }
+        catch (Exception)
+        {
+            this.MainMenu = null;
+        }
+
+        try
+        {
+            this.YesNoMessage = GameObject.Find("Canvas").transform.FindChild("YesNoMessage").gameObject;
+            Transform container = this.YesNoMessage.transform.GetChild(0).GetChild(1).GetChild(0);
+            container.FindChild("BtnYes").GetComponent<Button>().onClick.AddListener(() => ClickYes());
+            container.FindChild("BtnNo").GetComponent<Button>().onClick.AddListener(() => ClickNo());
         }
         catch (Exception)
         {
@@ -31,6 +58,7 @@ public class MenuManager : MonoBehaviour {
             this.PauseMenu = GameObject.Find("Canvas").transform.FindChild("PauseMenu").gameObject;
             Transform container = this.PauseMenu.transform.GetChild(0).GetChild(1).GetChild(0);
             container.FindChild("BtnResume").GetComponent<Button>().onClick.AddListener(() => ClickResume());
+            container.FindChild("BtnRetry").GetComponent<Button>().onClick.AddListener(() => ClickRetry());
             container.FindChild("BtnQuitToMainMenu").GetComponent<Button>().onClick.AddListener(() => ClickQuitToMainMenu());
         }
         catch (Exception)
@@ -42,7 +70,7 @@ public class MenuManager : MonoBehaviour {
         {
             this.GameOverMenu = GameObject.Find("Canvas").transform.FindChild("GameOverMenu").gameObject;
             Transform container = this.GameOverMenu.transform.GetChild(0).GetChild(1).GetChild(0);
-            container.FindChild("BtnRetry").GetComponent<Button>().onClick.AddListener(() => ClickStart());
+            container.FindChild("BtnRetry").GetComponent<Button>().onClick.AddListener(() => ClickRetry());
             container.FindChild("BtnQuitToMainMenu").GetComponent<Button>().onClick.AddListener(() => ClickQuitToMainMenu());
         }
         catch (Exception)
@@ -69,17 +97,67 @@ public class MenuManager : MonoBehaviour {
 	
 	}
 
-    private void ClickStart() {
-        this.Pause(false);
-        Application.LoadLevel(1);
+    private void ClickNewGame() {
+
+        if (this.saveManager.SaveAvailable())
+        {
+            this.YesNoMessage.SetActive(true);
+        }
+        else
+        {
+            ClickYes();
+        }
     }
+
+    private void ClickYes()
+    {
+        this.saveManager.DeleteSaves();
+        this.Pause(false);
+        this.StartScene(1);
+    }
+
+    private void ClickNo()
+    {
+        this.YesNoMessage.SetActive(false);
+    }
+
+    private void ClickContinueGame()
+    {
+        this.Pause(false);
+        this.StartScene(1);
+    }
+
+    private void ClickRetry()
+    {
+        this.Pause(false);
+        Vector3 checkpoint = this.saveManager.LoadCheckpoint(Application.loadedLevel);
+        if (checkpoint == Vector3.zero)
+        {
+            this.StartScene(Application.loadedLevel);
+        }
+        else
+        {
+            this.penguin.GetComponent<CharacterMovement>().ForwardMovementDown();
+            this.penguin.position = checkpoint;
+        }
+    }
+
+    //Could be used for a restart button (removes checkpoint saves)
+    //private void ClickRestart()
+    //{
+    //    this.saveManager.DeleteSaves();
+    //    this.StartScene(Application.loadedLevel);
+    //}
 
     private void ClickQuit() {
         Application.Quit();
     }
 
     private void ClickQuitToMainMenu() {
-        Application.LoadLevel(0);
+        //Save characterdata
+        int[] values = new int[] { int.Parse(this.HudValues[0].text), int.Parse(this.HudValues[1].text), int.Parse(this.HudValues[2].text) };
+        this.saveManager.SaveCharacterdata(Application.loadedLevel, values);
+        this.StartScene(0);
     }
 
     private void ClickResume() {
@@ -120,6 +198,7 @@ public class MenuManager : MonoBehaviour {
                     }
                 }
 
+                this.saveManager.DeleteSaves();
                 this.GameOverMenu.SetActive(true);
             }
         }
@@ -141,5 +220,15 @@ public class MenuManager : MonoBehaviour {
     {
         if (this.Hud == null) { return; }
         this.HudValues[2].text = value;
+    }
+
+    public SaveManager getSaveManager()
+    {
+        return this.saveManager;
+    }
+
+    private void StartScene(int index)
+    {
+        this.sceneFader.EndScene(index);
     }
 }

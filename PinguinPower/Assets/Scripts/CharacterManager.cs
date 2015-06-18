@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 
 public class CharacterManager : MonoBehaviour {
     public int FishPerLife = 50;
@@ -22,8 +23,63 @@ public class CharacterManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         this.animator = this.GetComponentInChildren<Animator>();
+
+        this.LoadSave();
         StartCoroutine(InitUI());
 	}
+
+    private void LoadSave()
+    {
+        //Load position from checkpoint
+        Vector3 position = this.menuManager.getSaveManager().LoadCheckpoint(Application.loadedLevel);
+        if (position != Vector3.zero)
+        {
+            Debug.Log("Checkpoint loaded successful");
+            this.transform.position = position;
+        }
+        else
+        {
+            Debug.Log("No Checkpoints found");
+        }
+
+        //Load characterdata
+        int[] values = this.menuManager.getSaveManager().LoadCharacterdata(Application.loadedLevel);
+        if (values != null)
+        {
+            Debug.Log("Characterdata loaded successfull");
+            this.fish = values[0];
+            this.lives = values[1];
+            this.friends = values[2];
+            this.menuManager.UpdateFish(fish.ToString());
+            this.menuManager.UpdateLives(lives.ToString());
+            this.menuManager.UpdateFriends(friends.ToString());
+        }
+        else
+        {
+            Debug.Log("No Characterdata found");
+        }
+
+        //Load collected friends
+        Vector3[] positions = this.menuManager.getSaveManager().LoadCollectedFriends(Application.loadedLevel);
+        this.SearchAndDestroyFriends(positions);
+    }
+
+    //Untested
+    private void SearchAndDestroyFriends(Vector3[] positions)
+    {
+        foreach (Vector3 pos in positions)
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(pos, 1);
+            foreach (Collider col in hitColliders)
+            {
+                if (col.tag == "Friend")
+                {
+                    Destroy(col.gameObject);
+                }
+            }
+        }
+    }
+
 	public int GetLives()
 	{
 		return lives;
@@ -113,6 +169,10 @@ public class CharacterManager : MonoBehaviour {
                     newLevel = 1;
                 }
                 Application.LoadLevel(newLevel);
+                break;
+            case "Checkpoint":
+                Debug.Log("Checkpoint");
+                this.menuManager.getSaveManager().SaveCheckpoint(Application.loadedLevel, new Vector3(collider.transform.position.x, this.transform.position.y, collider.transform.position.z));
                 break;
         }
     }
