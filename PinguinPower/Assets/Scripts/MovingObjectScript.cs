@@ -11,16 +11,16 @@ public class MovingObjectScript : MonoBehaviour {
 	public int rotatingspeed;
 	 
 	public bool jumpthrough;
-	public bool moveIfTouched;
+	public bool moveAfterTouched;
 	//private bool rotating = false;
 	private bool canUseRotouine=true;
 	public enum RotateDirection {horizontal, vertical,none};
-	public RotateDirection rotatestatus= RotateDirection.none;
+	public RotateDirection rotatemode= RotateDirection.none;
 	public GameObject Player;
 	private bool canmove=true;
 	public bool rotateleft;
-	private bool rotatevertical;
-	private bool rotatehorizontal;
+	private bool rotatingvertical;
+	private bool rotatinghorizontal;
 	Vector3 velocity;
 	Vector3 current;
 	Vector3	previous;
@@ -33,7 +33,7 @@ public class MovingObjectScript : MonoBehaviour {
 		 {
 			leverscript=button.GetComponent<LeverCode>();
 		 } 
-		if(moveIfTouched)
+		if(moveAfterTouched)
 		{
 			canmove=false;
 		}
@@ -52,14 +52,22 @@ public class MovingObjectScript : MonoBehaviour {
 		 
 		if(jumpthrough)
 		{
-			Physics.IgnoreCollision(GetComponent<BoxCollider>(), Player.GetComponent<CapsuleCollider>(), Player.transform.position.y< transform.position.y); 
-			
+			if(!rotatingvertical)
+			{
+				Physics.IgnoreCollision(GetComponent<BoxCollider>(), Player.GetComponent<CapsuleCollider>(), Player.transform.position.y< transform.position.y); 
+			}
+			else{
+				Physics.IgnoreCollision(GetComponent<BoxCollider>(), Player.GetComponent<CapsuleCollider>(), false); 
+			}
 		}
 		if(canmove){
 
-			if(rotatestatus!=RotateDirection.none&&canUseRotouine)
+			if(canUseRotouine)
 			{
+				if(rotatemode==RotateDirection.horizontal||rotatemode==RotateDirection.vertical&&!rotatingvertical)
+				{
 				StartCoroutine(rotatingEnumerator()); 
+				}
 
 			}
 			 
@@ -95,7 +103,7 @@ public class MovingObjectScript : MonoBehaviour {
                 routeindex = 0;
             }
         }
-		if(rotatevertical)
+		if(rotatingvertical)
 		{
 		 
 			float rotation=rotatingspeed*Time.deltaTime;
@@ -106,16 +114,16 @@ public class MovingObjectScript : MonoBehaviour {
 			transform.Rotate(0,0,rotation);
 			if(rotationleft<=0)
 			{
-				rotatevertical=false;
+				rotatingvertical=false;
 				rotationleft=180;
 			}
 		}
-		if(rotatehorizontal&&rotateleft)
+		if(rotatinghorizontal&&rotateleft)
 		{
 			 
 			transform.Rotate(Vector3.up *rotatingspeed* Time.deltaTime);
 		}
-		else if(rotatehorizontal&&!rotateleft)
+		else if(rotatinghorizontal&&!rotateleft)
 		{
 		 
 			transform.Rotate(Vector3.up *rotatingspeed*-1* Time.deltaTime);
@@ -123,12 +131,12 @@ public class MovingObjectScript : MonoBehaviour {
 	}
 	void OnCollisionEnter(Collision collision) 
 	{
-		if (collision.gameObject.name == Player.name) 
+		if (collision.gameObject.name == Player.name&&rotatemode!=RotateDirection.vertical) 
 		{
 			var emptyObject = new GameObject ();
 			emptyObject.transform.parent = gameObject.transform;
-			//collision.transform.parent = emptyObject.transform;
-			collision.gameObject.transform.parent =gameObject.transform;
+			collision.transform.parent = emptyObject.transform;
+			//collision.gameObject.transform.parent =gameObject.transform;
 			canmove=true;
 		}
 	}
@@ -142,32 +150,23 @@ public class MovingObjectScript : MonoBehaviour {
 		}
 		
 	}
-	void OnTriggerEnter(Collider collision) 
-	{
-		collision.gameObject.transform.parent=gameObject.transform;
-
-	}
-	void OnTriggerExit(Collider collision) 
-	{
-		collision.gameObject.transform.parent = null;
-		 
-	}	 
+ 
 	IEnumerator rotatingEnumerator()
 	{
 		canUseRotouine = false;
-
-		if( rotatestatus== RotateDirection.horizontal)
+		yield return new WaitForSeconds(waitrotatetime);
+		if(rotatemode== RotateDirection.horizontal)
 		{
-			rotatehorizontal=true;
+			rotatinghorizontal=true;
 
 			yield return new WaitForSeconds(rotatehorizontaltime);
-			rotatehorizontal=false;
+			rotatinghorizontal=false;
 		}
-		else if(rotatestatus== RotateDirection.vertical)
+		else if(rotatemode== RotateDirection.vertical)
 		{
-			rotatevertical=true;
+			rotatingvertical=true;
 		}
-		yield return new WaitForSeconds(waitrotatetime);
+
 		canUseRotouine = true;
 	}
 }
