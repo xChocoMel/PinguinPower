@@ -7,23 +7,33 @@ public class MovingObjectScript : MonoBehaviour {
 	private LeverCode leverscript;
 	public Vector3[] routes;
 	public int routeindex=0;
-	public int speed;
+	public int movingspeed;
 	public int rotatingspeed;
-	public bool rotateleft;
+	 
 	public bool jumpthrough;
-	public bool moveIfTouched;
+	public bool moveAfterTouched;
+	//private bool rotating = false;
+	private bool canUseRotouine=true;
+	public enum RotateDirection {horizontal, vertical,none};
+	public RotateDirection rotatemode= RotateDirection.none;
 	public GameObject Player;
-	private bool canmove=true; 
+	private bool canmove=true;
+	public bool rotateleft;
+	private bool rotatingvertical;
+	private bool rotatinghorizontal;
 	Vector3 velocity;
 	Vector3 current;
 	Vector3	previous;
+	public int waitrotatetime;
+	public int rotatehorizontaltime;
+	private float rotationleft=180;
 	// Use this for initialization
 	void Start () {
 		 if(button!=null)
 		 {
 			leverscript=button.GetComponent<LeverCode>();
 		 } 
-		if(moveIfTouched)
+		if(moveAfterTouched)
 		{
 			canmove=false;
 		}
@@ -42,19 +52,26 @@ public class MovingObjectScript : MonoBehaviour {
 		 
 		if(jumpthrough)
 		{
-			Physics.IgnoreCollision(GetComponent<BoxCollider>(), Player.GetComponent<CapsuleCollider>(), Player.transform.position.y< transform.position.y); 
-			
+			if(!rotatingvertical)
+			{
+				Physics.IgnoreCollision(GetComponent<BoxCollider>(), Player.GetComponent<CapsuleCollider>(), Player.transform.position.y< transform.position.y); 
+			}
+			else{
+				Physics.IgnoreCollision(GetComponent<BoxCollider>(), Player.GetComponent<CapsuleCollider>(), false); 
+			}
 		}
 		if(canmove){
-			if(rotateleft&&rotatingspeed!=0)
+
+			if(canUseRotouine)
 			{
-				transform.Rotate(Vector3.up *rotatingspeed* Time.deltaTime);
+				if(rotatemode==RotateDirection.horizontal||rotatemode==RotateDirection.vertical&&!rotatingvertical)
+				{
+				StartCoroutine(rotatingEnumerator()); 
+				}
+
 			}
-			else if(rotatingspeed!=0)
-			{
-				transform.Rotate(Vector3.up *-1*rotatingspeed* Time.deltaTime);
-			}
-	        //Moving();
+			 
+			 
 			if(leverscript==null)
 			{
 				Moving();
@@ -66,14 +83,15 @@ public class MovingObjectScript : MonoBehaviour {
 					Moving();
 				}
 			} 
-		}
+		} 
+	 
 	}
 	void Moving()
 	{
         if (routes.Length > 0)
         {
             //transform.position = Vector3.Lerp(transform.position, routes[routeindex], 1 * Time.deltaTime);
-			transform.position =Vector3.MoveTowards(transform.position, routes[routeindex],speed*Time.deltaTime);
+			transform.position =Vector3.MoveTowards(transform.position, routes[routeindex],movingspeed*Time.deltaTime);
 			//GetComponent<Rigidbody>() .velocity = new Vector3(0, 10, 0);
             if (Vector3.Distance(transform.position, routes[routeindex]) < 1)
             {
@@ -85,15 +103,40 @@ public class MovingObjectScript : MonoBehaviour {
                 routeindex = 0;
             }
         }
+		if(rotatingvertical)
+		{
+		 
+			float rotation=rotatingspeed*Time.deltaTime;
+			 
+			rotationleft-=rotation;
+			 
+			 
+			transform.Rotate(0,0,rotation);
+			if(rotationleft<=0)
+			{
+				rotatingvertical=false;
+				rotationleft=180;
+			}
+		}
+		if(rotatinghorizontal&&rotateleft)
+		{
+			 
+			transform.Rotate(Vector3.up *rotatingspeed* Time.deltaTime);
+		}
+		else if(rotatinghorizontal&&!rotateleft)
+		{
+		 
+			transform.Rotate(Vector3.up *rotatingspeed*-1* Time.deltaTime);
+		}
 	}
 	void OnCollisionEnter(Collision collision) 
 	{
-		if (collision.gameObject.name == Player.name) 
+		if (collision.gameObject.name == Player.name&&rotatemode!=RotateDirection.vertical) 
 		{
-			//var emptyObject = new GameObject ();
-			//emptyObject.transform.parent = gameObject.transform;
-			//collision.transform.parent = emptyObject.transform;
-			collision.gameObject.transform.parent =gameObject.transform;
+			var emptyObject = new GameObject ();
+			emptyObject.transform.parent = gameObject.transform;
+			collision.transform.parent = emptyObject.transform;
+			//collision.gameObject.transform.parent =gameObject.transform;
 			canmove=true;
 		}
 	}
@@ -107,14 +150,23 @@ public class MovingObjectScript : MonoBehaviour {
 		}
 		
 	}
-	void OnTriggerEnter(Collider collision) 
+ 
+	IEnumerator rotatingEnumerator()
 	{
-		collision.gameObject.transform.parent=gameObject.transform;
+		canUseRotouine = false;
+		yield return new WaitForSeconds(waitrotatetime);
+		if(rotatemode== RotateDirection.horizontal)
+		{
+			rotatinghorizontal=true;
 
+			yield return new WaitForSeconds(rotatehorizontaltime);
+			rotatinghorizontal=false;
+		}
+		else if(rotatemode== RotateDirection.vertical)
+		{
+			rotatingvertical=true;
+		}
+
+		canUseRotouine = true;
 	}
-	void OnTriggerExit(Collider collision) 
-	{
-		collision.gameObject.transform.parent = null;
-		 
-	}	 
 }

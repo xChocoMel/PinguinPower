@@ -12,7 +12,7 @@ public class EnemyScript : MonoBehaviour {
 	public GameObject[] routes;
 	public int maxDistance;
 	//how far the enemy can go
-	public bool gliding;
+	 
 	public AudioClip dying;
 	public AudioClip hitsound;
 	public AudioClip loselife;
@@ -33,103 +33,101 @@ public class EnemyScript : MonoBehaviour {
 		{
 			playerobject=GameObject.Find ("Penguin");
 		}
-		GetComponent<CapsuleCollider>().isTrigger=gliding;
-		GetComponent<Rigidbody>().useGravity=!gliding;
+	 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		 
-		 	 
-			if(collidingWithPlayer&&playerobject.GetComponent<CharacterManager>().GetLives()>=1)
-			{
-				OnCollidingWithPlayer();
-			}
-			if(status==Status.patrolling){
-				Patrolling();
-			}
-			if(status==Status.waiting){
-				transform.Translate(Vector3.back *0.5F* Time.deltaTime);	
-			}
-			if(status==Status.returning||status==Status.patrolling){	
-				Vector3 directionToTarget = transform.position - playerobject.transform.position;
-				float angel = Vector3.Angle(transform.forward, directionToTarget);
-				float distance = Vector3.Distance (transform.position, playerobject.transform.position);
-				if(distance<sightRange&&(Mathf.Abs(angel) > 90 && Mathf.Abs(angel) < 270))
-				{ 
-				 
-					RaycastHit hit ;
+		if(collidingWithPlayer&&playerobject.GetComponent<CharacterManager>().GetLives()>=1)
+		{
+			OnCollidingWithPlayer();
+		}
+		if(status==Status.patrolling){
+			Patrolling();
+		}
+		if(status==Status.waiting){
+			transform.Translate(Vector3.back *0.5F* Time.deltaTime);	
+		}
+		if(status==Status.returning||status==Status.patrolling){	
+			Vector3 directionToTarget = transform.position - playerobject.transform.position;
+			float angel = Vector3.Angle(transform.forward, directionToTarget);
+			float distance = Vector3.Distance (transform.position, playerobject.transform.position);
+			if(distance<sightRange&&(Mathf.Abs(angel) > 90 && Mathf.Abs(angel) < 270))
+			{ 
+				
+				RaycastHit hit ;
 				if(Physics.Raycast(transform.position,playerobject.transform.position-transform.position,out hit, sightRange+3))
+				{
+					if(hit.collider.gameObject.name==playerobject.name)
 					{
-						if(hit.collider.gameObject.name==playerobject.name)
+						if(routes.Length > 0)
 						{
-							if(routes.Length > 0)
-							{
-								returnPosition=transform.position;
-							}
-								status= Status.attacking;
-                               // this.animator.SetTrigger("Attack");
-							
-						} 
-					}
+							returnPosition=transform.position;
+						}
+						status= Status.attacking;
+						// this.animator.SetTrigger("Attack");
+						
+					} 
 				}
 			}
-			if(status==Status.attacking){
-				
-				Attacking();
-			}
-			if(status==Status.returning)
-			{
-				Returning();
-			}
-		 
+		}
+		if(status==Status.attacking){
+			
+			Attacking();
+		}
+		if(status==Status.returning)
+		{
+			Returning();
+		}
+
+		 	 
+			
 	}
 	void OnCollidingWithPlayer()
 	{
-		print (222222);
+	 
 			if(playerobject.GetComponent<CharacterMovement>().IsKicking())
 			{
 					LoseLife(1);
 			}
 			else
 			{
-			if((gliding&&status!=Status.waiting)||(!gliding&&status==Status.attacking))
+				if( status==Status.attacking)
 				{
-							playerobject.GetComponent<CharacterManager>().Damage();
-							transform.LookAt (playerobject.transform.position);
-							GetComponent<AudioSource>().PlayOneShot(hitsound);
-							this.animator.SetTrigger("Attack");
-							status=Status.waiting;
-							print ("colliding");
-							StartCoroutine(Wait());
+					playerobject.GetComponent<CharacterManager>().Damage();
+					transform.LookAt (new Vector3(playerobject.transform.position.x,transform.position.y,playerobject.transform.position.z));
+					GetComponent<AudioSource>().PlayOneShot(hitsound);
+					this.animator.SetTrigger("Attack");
+					status=Status.waiting;
+					print ("colliding");
+					StartCoroutine(Wait());
 				}
 				 
 			}
-
 	}
 	void Patrolling(){
-        if (routes.Length > 0)
-        {
-            animator.SetBool("Walking", true);
+		if (routes.Length > 0)
+		{
+			animator.SetBool("Walking", true);
 			Quaternion toRotation = Quaternion.LookRotation(new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z) - transform.position);
-            transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 3 * Time.deltaTime);
-
-            Moveforward(2);
-
+			transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 3 * Time.deltaTime);
+			
+			Moveforward(2);
+			
 			if (Vector3.Distance(transform.position, new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z)) < 1)
-            {
-                routeindex++;
-            }
-            if (routeindex == routes.Length)
-            {
-                routeindex = 0;
-            }
-        }
-        else
-        {
-            animator.SetBool("Walking", false);
-            Moveforward(0);
-        }
+			{
+				routeindex++;
+			}
+			if (routeindex == routes.Length)
+			{
+				routeindex = 0;
+			}
+		}
+		else
+		{
+			animator.SetBool("Walking", false);
+			Moveforward(0);
+		}
 	}
 	void Returning()
 	{
@@ -158,7 +156,9 @@ public class EnemyScript : MonoBehaviour {
 		}
 	}
 	IEnumerator Wait(){
-		Moveforward (0);
+		 
+			Moveforward (0);
+		 
 		yield return new WaitForSeconds(2.0F);
 		status=Status.attacking;
 		 
@@ -171,25 +171,12 @@ public class EnemyScript : MonoBehaviour {
 	}
 	void OnCollisionExit(Collision collisionInfo) 
 	{
-		if (collisionInfo.gameObject.name == playerobject.name) {
+		if (collisionInfo.gameObject.name == playerobject.name) 
+		{
+			collidingWithPlayer=false;
+		}
+	}
 
-			collidingWithPlayer=false;
-		}
-	}
-	void OnTriggerEnter(Collider  collision) {
-		if (collision.gameObject.name == playerobject.name) {
-			collidingWithPlayer = true;
-			returnPosition=transform.position;
-		}
-		
-	}
-	void OnTriggerExit(Collider  collisionInfo) 
-	{
-		if (collisionInfo.gameObject.name == playerobject.name) {
-			
-			collidingWithPlayer=false;
-		}
-	}
 	void LoseLife(int attackpoint)
 	{
 		GetComponent<AudioSource>().PlayOneShot (loselife);
