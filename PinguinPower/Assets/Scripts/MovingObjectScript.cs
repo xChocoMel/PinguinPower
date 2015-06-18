@@ -7,16 +7,26 @@ public class MovingObjectScript : MonoBehaviour {
 	private LeverCode leverscript;
 	public Vector3[] routes;
 	public int routeindex=0;
-	public int speed;
+	public int movingspeed;
 	public int rotatingspeed;
-	public bool rotateleft;
+	 
 	public bool jumpthrough;
 	public bool moveIfTouched;
+	//private bool rotating = false;
+	private bool canUseRotouine=true;
+	public enum RotateDirection {horizontal, vertical,none};
+	public RotateDirection rotatestatus= RotateDirection.none;
 	public GameObject Player;
-	private bool canmove=true; 
+	private bool canmove=true;
+	public bool rotateleft;
+	private bool rotatevertical;
+	private bool rotatehorizontal;
 	Vector3 velocity;
 	Vector3 current;
 	Vector3	previous;
+	public int waitrotatetime;
+	public int rotatehorizontaltime;
+	private float rotationleft=180;
 	// Use this for initialization
 	void Start () {
 		 if(button!=null)
@@ -46,15 +56,14 @@ public class MovingObjectScript : MonoBehaviour {
 			
 		}
 		if(canmove){
-			if(rotateleft&&rotatingspeed!=0)
+
+			if(rotatestatus!=RotateDirection.none&&canUseRotouine)
 			{
-				transform.Rotate(Vector3.up *rotatingspeed* Time.deltaTime);
+				StartCoroutine(rotatingEnumerator()); 
+
 			}
-			else if(rotatingspeed!=0)
-			{
-				transform.Rotate(Vector3.up *-1*rotatingspeed* Time.deltaTime);
-			}
-	        //Moving();
+			 
+			 
 			if(leverscript==null)
 			{
 				Moving();
@@ -66,14 +75,15 @@ public class MovingObjectScript : MonoBehaviour {
 					Moving();
 				}
 			} 
-		}
+		} 
+	 
 	}
 	void Moving()
 	{
         if (routes.Length > 0)
         {
             //transform.position = Vector3.Lerp(transform.position, routes[routeindex], 1 * Time.deltaTime);
-			transform.position =Vector3.MoveTowards(transform.position, routes[routeindex],speed*Time.deltaTime);
+			transform.position =Vector3.MoveTowards(transform.position, routes[routeindex],movingspeed*Time.deltaTime);
 			//GetComponent<Rigidbody>() .velocity = new Vector3(0, 10, 0);
             if (Vector3.Distance(transform.position, routes[routeindex]) < 1)
             {
@@ -85,13 +95,38 @@ public class MovingObjectScript : MonoBehaviour {
                 routeindex = 0;
             }
         }
+		if(rotatevertical)
+		{
+		 
+			float rotation=rotatingspeed*Time.deltaTime;
+			 
+			rotationleft-=rotation;
+			 
+			 
+			transform.Rotate(0,0,rotation);
+			if(rotationleft<=0)
+			{
+				rotatevertical=false;
+				rotationleft=180;
+			}
+		}
+		if(rotatehorizontal&&rotateleft)
+		{
+			 
+			transform.Rotate(Vector3.up *rotatingspeed* Time.deltaTime);
+		}
+		else if(rotatehorizontal&&!rotateleft)
+		{
+		 
+			transform.Rotate(Vector3.up *rotatingspeed*-1* Time.deltaTime);
+		}
 	}
 	void OnCollisionEnter(Collision collision) 
 	{
 		if (collision.gameObject.name == Player.name) 
 		{
-			//var emptyObject = new GameObject ();
-			//emptyObject.transform.parent = gameObject.transform;
+			var emptyObject = new GameObject ();
+			emptyObject.transform.parent = gameObject.transform;
 			//collision.transform.parent = emptyObject.transform;
 			collision.gameObject.transform.parent =gameObject.transform;
 			canmove=true;
@@ -117,4 +152,22 @@ public class MovingObjectScript : MonoBehaviour {
 		collision.gameObject.transform.parent = null;
 		 
 	}	 
+	IEnumerator rotatingEnumerator()
+	{
+		canUseRotouine = false;
+
+		if( rotatestatus== RotateDirection.horizontal)
+		{
+			rotatehorizontal=true;
+
+			yield return new WaitForSeconds(rotatehorizontaltime);
+			rotatehorizontal=false;
+		}
+		else if(rotatestatus== RotateDirection.vertical)
+		{
+			rotatevertical=true;
+		}
+		yield return new WaitForSeconds(waitrotatetime);
+		canUseRotouine = true;
+	}
 }

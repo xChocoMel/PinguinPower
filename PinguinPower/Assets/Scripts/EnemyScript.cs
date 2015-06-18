@@ -86,7 +86,7 @@ public class EnemyScript : MonoBehaviour {
 	}
 	void OnCollidingWithPlayer()
 	{
-		print (222222);
+	 
 			if(playerobject.GetComponent<CharacterMovement>().IsKicking())
 			{
 					LoseLife(1);
@@ -96,7 +96,7 @@ public class EnemyScript : MonoBehaviour {
 			if((gliding&&status!=Status.waiting)||(!gliding&&status==Status.attacking))
 				{
 							playerobject.GetComponent<CharacterManager>().Damage();
-							transform.LookAt (playerobject.transform.position);
+							transform.LookAt (new Vector3(playerobject.transform.position.x,transform.position.y,playerobject.transform.position.z));
 							GetComponent<AudioSource>().PlayOneShot(hitsound);
 							this.animator.SetTrigger("Attack");
 							status=Status.waiting;
@@ -171,15 +171,19 @@ public class EnemyScript : MonoBehaviour {
 	}
 	void OnCollisionExit(Collision collisionInfo) 
 	{
-		if (collisionInfo.gameObject.name == playerobject.name) {
-
+		if (collisionInfo.gameObject.name == playerobject.name) 
+		{
 			collidingWithPlayer=false;
 		}
 	}
 	void OnTriggerEnter(Collider  collision) {
 		if (collision.gameObject.name == playerobject.name) {
 			collidingWithPlayer = true;
-			returnPosition=transform.position;
+			if(routes.Length > 0&&status!=Status.patrolling)
+			{
+				returnPosition=transform.position;
+			}
+
 		}
 		
 	}
