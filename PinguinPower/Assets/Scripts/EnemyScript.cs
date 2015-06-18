@@ -16,16 +16,17 @@ public class EnemyScript : MonoBehaviour {
 	public AudioClip dying;
 	public AudioClip hitsound;
 	public AudioClip loselife;
-	public int amountoflives;
+	  int amountoflives;
 	public int sightRange;
 	Rigidbody enemyRigidbody;
-
+	public bool alwaysDamageOnCollision;
     private Animator animator;
+	private bool collidingWithPlayer=false;
 
 	// Use this for initialization
 	void Start () {
 		enemyRigidbody=GetComponent<Rigidbody>();
-		amountoflives = 3;
+		amountoflives = 1;
 		returnPosition=transform.position;
         this.animator = this.GetComponentInChildren<Animator>();
 	}
@@ -34,7 +35,10 @@ public class EnemyScript : MonoBehaviour {
 	void Update () {
 		 
 		 	 
-			
+			if(collidingWithPlayer&&playerobject.GetComponent<CharacterManager>().GetLives()>=1)
+			{
+				OnCollidingWithPlayer();
+			}
 			if(status==Status.patrolling){
 				Patrolling();
 			}
@@ -73,6 +77,32 @@ public class EnemyScript : MonoBehaviour {
 				Returning();
 			}
 		 
+	}
+	void OnCollidingWithPlayer()
+	{
+ 
+			if(status!=Status.waiting)
+			{		 
+				if(playerobject.GetComponent<CharacterMovement>().IsKicking())
+				{
+					LoseLife(1);
+				}
+				else
+				{
+					if(alwaysDamageOnCollision||(!alwaysDamageOnCollision&&status==Status.attacking))
+					{
+							playerobject.GetComponent<CharacterManager>().Damage();
+							transform.LookAt (playerobject.transform.position);
+							GetComponent<AudioSource>().PlayOneShot(hitsound);
+							this.animator.SetTrigger("Attack");
+							status=Status.waiting;
+							print ("colliding");
+							StartCoroutine(Wait());
+					}
+				 
+				}
+			}
+	 
 	}
 	void Patrolling(){
         if (routes.Length > 0)
@@ -131,32 +161,24 @@ public class EnemyScript : MonoBehaviour {
 		 
 	}
 	void OnCollisionEnter(Collision collision) {
-		if ( collision.gameObject.name==playerobject.name) 
-		{
-			if(status!=Status.waiting)
-			{		 
-				if(playerobject.GetComponent<CharacterMovement>().IsKicking())
-				{
-					LoseLife(1);
-				}
-				else{
-				GetComponent<AudioSource>().PlayOneShot(hitsound);
-                this.animator.SetTrigger("Attack");
-				status=Status.waiting;
-				print ("colliding");
-				StartCoroutine(Wait());
-				}
-			}
+		if (collision.gameObject.name == playerobject.name) {
+			collidingWithPlayer = true;
 		}
 
 	}
+	void OnCollisionExit(Collision collisionInfo) 
+	{
+		if (collisionInfo.gameObject.name == playerobject.name) {
 
+			collidingWithPlayer=false;
+		}
+	}
 	void LoseLife(int attackpoint)
 	{
 		GetComponent<AudioSource>().PlayOneShot (loselife);
         this.animator.SetTrigger("Damage");
 		amountoflives-=attackpoint;
-		if(amountoflives<1)
+		if(amountoflives==0)
 		{
 			StartCoroutine(Dying());
 		}
@@ -170,7 +192,7 @@ public class EnemyScript : MonoBehaviour {
 	IEnumerator Dying(){
 		GetComponent<AudioSource>().PlayOneShot (dying);
         this.animator.SetTrigger("Dead");
-		yield return new WaitForSeconds(3.0F);
+		yield return new WaitForSeconds(1.0F);
 		Destroy (gameObject);
 	}
 }

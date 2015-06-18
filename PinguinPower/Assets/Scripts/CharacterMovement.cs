@@ -38,6 +38,7 @@ public class CharacterMovement : MonoBehaviour
     public float turnSpeed = 2f;
     public float jumpForce = 500f;
     public float constantGlidingForce = 6f;
+    private float slowDownSpeed = 0;
 
     private bool jumping = false;
     private float jumpTimer;
@@ -46,7 +47,8 @@ public class CharacterMovement : MonoBehaviour
 
     private float colliderYWalking = 0.8f;
     private float colliderYGliding = 0.44f;
-	 
+	private bool isKicking;
+
     // Use this for initialization
     void Start()
     {
@@ -54,7 +56,7 @@ public class CharacterMovement : MonoBehaviour
     }
 	public bool IsKicking()
 	{
-		return animator.GetBool("Kick");
+		return isKicking;
 	}
     private void Setup()
     {
@@ -69,58 +71,45 @@ public class CharacterMovement : MonoBehaviour
         this.jumpTimer = 0.3f;
     }
 
+    void FixedUpdate()
+    {
+        //Movement
+        if (this.movementMode == MovementMode.Walk)
+        {
+            switch (this.moveDirection)
+            {
+                case MoveDirection.Stop:
+                    //if (slowDownSpeed > 0)
+                    //{
+                    //    slowDownSpeed -= 1;
+                    //    if (slowDownSpeed < 0)
+                    //    {
+                    //        slowDownSpeed = 0;
+                    //    }
+                    //    this.myRigidBody.AddRelativeForce(Vector3.forward * slowDownSpeed);
+                    //}
+                    break;
+                case MoveDirection.Forward1:
+                    this.myRigidBody.AddRelativeForce(Vector3.forward * walkSpeed1);
+                    //this.myRigidBody.velocity = new Vector3((transform.forward * walkSpeed1).x, this.myRigidBody.velocity.y, (transform.forward * walkSpeed1).z);
+                    break;
+            }
+        }
+        else if (this.movementMode == MovementMode.Glide)
+        {
+            myRigidBody.AddRelativeForce(Vector3.forward * constantGlidingForce);
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-        Vector3 velocity = this.myRigidBody.velocity;
 		//this.animator.SetTrigger("Kick");
         //Jumping
         if (jumping && this.jumpTimer <= 0 && this.IsGrounded())
         {
             jumping = false;
             this.ResetDrag();
-        }
-       // print(this.myRigidBody.velocity.magnitude);
-        //Movementmode & Drag
-        /*
-        if (velocity.y < -0.1f && !jumping)
-        {
-            
-            if (this.movementMode == MovementMode.Walk && IsGrounded())
-            {
-                //this.myRigidBody.drag = glideDrag;
-                //SwitchMovementMode(MovementMode.Glide);
-            }
-        }
-        else if (!jumping)
-        {
-            if (this.movementMode == MovementMode.Glide && IsGrounded())
-            {
-                //this.myRigidBody.drag = walkDrag;
-                //SwitchMovementMode(MovementMode.Walk);
-            }
-        }*/
-
-        //Movement
-        if (this.movementMode == MovementMode.Walk)
-        {
-            Vector3 force = Vector3.zero;
-            switch (this.moveDirection)
-            {
-                case MoveDirection.Stop:
-                    break;
-                case MoveDirection.Forward1:
-                    force = Vector3.forward * walkSpeed1;
-                    break;
-                case MoveDirection.Forward2: 
-                    force = Vector3.forward * walkSpeed2;
-                    break;
-            }
-            myRigidBody.AddRelativeForce(force);
-        }
-        else if (this.movementMode == MovementMode.Glide)
-        {
-            myRigidBody.AddRelativeForce(Vector3.forward * constantGlidingForce);
         }
 
         float smooth = 0.2f;
@@ -172,18 +161,8 @@ public class CharacterMovement : MonoBehaviour
     /// </summary>
     public void ForwardMovementUp()
     {
-        switch (this.moveDirection)
-        {
-            case MoveDirection.Stop: 
-                this.moveDirection = MoveDirection.Forward1; 
-                break;
-            case MoveDirection.Forward1: 
-                this.moveDirection = MoveDirection.Forward2; 
-                break;
-        }
+        this.moveDirection = MoveDirection.Forward1;
         this.animator.SetBool("Walking", true);
-
-        //this.Text2.text = this.moveDirection.ToString();
     }
 
     /// <summary>
@@ -192,18 +171,14 @@ public class CharacterMovement : MonoBehaviour
     /// </summary>
     public void ForwardMovementDown()
     {
-        switch (this.moveDirection)
-        {
-            case MoveDirection.Forward1: 
-                this.moveDirection = MoveDirection.Stop;
-                this.animator.SetBool("Walking", false);
-                break;
-            case MoveDirection.Forward2: 
-                this.moveDirection = MoveDirection.Forward1; 
-                break;
-        }
+        //if (this.moveDirection == MoveDirection.Forward1)
+        //{
+        //    this.slowDownSpeed = walkSpeed1;
+        //}
 
-        //this.Text2.text = this.moveDirection.ToString();
+        this.moveDirection = MoveDirection.Stop;
+        this.myRigidBody.velocity = new Vector3(0, this.myRigidBody.velocity.y, 0);
+        this.animator.SetBool("Walking", false);
     }
 
     /// <summary>
@@ -237,7 +212,24 @@ public class CharacterMovement : MonoBehaviour
             }
 
             this.myRigidBody.transform.Rotate(rotation);
-            this.myRigidBody.AddRelativeForce(sidewaysMovement);
+
+            if (this.moveDirection == MoveDirection.Forward1)
+            {
+                //Calculate new force direction after turning (to prevent walking in the old direction after you the penguin has turned)
+                float magnitude = new Vector3(this.myRigidBody.velocity.x, 0, this.myRigidBody.velocity.z).magnitude;
+                Vector3 newVelocity = this.transform.forward * magnitude;
+                newVelocity.y = this.myRigidBody.velocity.y;
+                if (IsGrounded())
+                {
+                    this.myRigidBody.velocity = newVelocity;
+                }
+                else
+                {
+                    this.myRigidBody.velocity = newVelocity;
+                }
+            }
+
+            //this.myRigidBody.AddRelativeForce(sidewaysMovement);
         }
         else if (this.movementMode == MovementMode.Glide)
         {
@@ -271,7 +263,7 @@ public class CharacterMovement : MonoBehaviour
             this.jumpTimer = 0.3f;
             this.jumping = true;
             this.animator.SetTrigger("Jump");
-            
+            this.myRigidBody.velocity = new Vector3(this.myRigidBody.velocity.x, 0, this.myRigidBody.velocity.z);
             this.myRigidBody.drag = jumpDrag;
             this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
         }
@@ -284,9 +276,18 @@ public class CharacterMovement : MonoBehaviour
 
     public void Kick()
     {
-        this.animator.SetTrigger("Kick");
+		this.animator.SetTrigger("Kick");
+		if(!isKicking)
+		{
+			StartCoroutine(Kicking());
+		}
     }
-
+	IEnumerator Kicking()
+	{
+		isKicking = true;
+		yield return new WaitForSeconds (1.0F);
+		isKicking = false;
+	}
     public void SwitchMovementMode(MovementMode m)
     {
         // Play animations
