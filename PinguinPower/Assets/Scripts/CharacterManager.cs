@@ -8,10 +8,11 @@ public class CharacterManager : MonoBehaviour {
     public MenuManager menuManager;
 
     public AudioClip collectFishClip;
-    public AudioClip penguinClip;
+    public AudioClip extraLifeClip;
+    public AudioClip ouchPenguinClip;
 
     private Animator animator;
-    private AudioSource audioSource;
+    public AudioSource audioSource;
 
     private int lives = 3;
     private int fish = 0;
@@ -21,7 +22,6 @@ public class CharacterManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         this.animator = this.GetComponentInChildren<Animator>();
-        this.audioSource = this.GetComponentInChildren<AudioSource>();
         StartCoroutine(InitUI());
 	}
 	public int GetLives()
@@ -73,6 +73,7 @@ public class CharacterManager : MonoBehaviour {
 		//if(canBeDamaged=true)
 		//{
        	this.animator.SetTrigger("Damage");
+        this.audioSource.PlayOneShot(ouchPenguinClip);
         lives--;
 		//}
         menuManager.UpdateLives(this.lives.ToString());
@@ -94,7 +95,10 @@ public class CharacterManager : MonoBehaviour {
         switch (other.tag)
         {
             case "Fish":
-                this.CollideFish(other);
+                this.CollideFish(other, 1);
+                break;
+            case "GoldFish":
+                this.CollideFish(other, FishPerLife);
                 break;
             case "Friend":
                 this.CollideFriend(other);
@@ -119,17 +123,17 @@ public class CharacterManager : MonoBehaviour {
         this.animator.SetTrigger("Damage");
     }
 
-    private void CollideFish(GameObject fish)
+    private void CollideFish(GameObject fish, int amount)
     {
         // TODO fancy stuff - fish collect
-        this.fish++;
+        this.fish += amount;
         audioSource.PlayOneShot(collectFishClip);
         if (this.fish >= this.FishPerLife)
         {
             // TODO fancy stuff - extra live
             this.lives++;
             this.fish = 0;
-            audioSource.PlayOneShot(penguinClip);
+            audioSource.PlayOneShot(extraLifeClip);
             
             menuManager.UpdateLives(this.lives.ToString());
         }
@@ -144,11 +148,19 @@ public class CharacterManager : MonoBehaviour {
     {
         // TODO fancy stuff - friend collect
         this.friends++;
-        audioSource.PlayOneShot(penguinClip);
+        audioSource.PlayOneShot(extraLifeClip);
 
         menuManager.UpdateFriends(this.friends.ToString());
         // TODO fancy destroy?
+        Friend friendScript = friend.GetComponent<Friend>();
+        StartCoroutine(SayThankYou(friendScript.thankYouClip));
         Destroy(friend);
+    }
+
+    private IEnumerator SayThankYou(AudioClip clip)
+    {
+        yield return new WaitForSeconds(0.2f);
+        audioSource.PlayOneShot(clip);
     }
  
 }
