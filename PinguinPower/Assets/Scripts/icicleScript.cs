@@ -15,7 +15,10 @@ public class icicleScript : MonoBehaviour {
 		collider=gameObject.GetComponent<CapsuleCollider>();
 		//transform.position = new Vector3 (transform.position.x,height,transform.position.z);
 		collider.center = new Vector3 (0,height*-1,0);
-		 
+		if(Player==null)
+		{
+			Player=GameObject.Find ("Penguin");
+		}
 	}
 	
 	// Update is called once per frame
