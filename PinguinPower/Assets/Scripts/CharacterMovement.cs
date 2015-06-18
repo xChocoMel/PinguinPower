@@ -244,14 +244,15 @@ public class CharacterMovement : MonoBehaviour
                 case TurnDirection.Stop: 
                     break;
                 case TurnDirection.Left:
-                    //rotation += transform.up * -turnSpeed;
+                    rotation += transform.up * -turnSpeed;
                     sidewaysMovement += -Vector3.right * turnSpeed * 10;
                     break;
                 case TurnDirection.Right:
-                    //rotation += transform.up * turnSpeed;
+                    rotation += transform.up * turnSpeed;
                     sidewaysMovement += Vector3.right * turnSpeed * 10;
                     break;
             }
+            this.myRigidBody.transform.Rotate(rotation);
             this.myRigidBody.AddRelativeForce(sidewaysMovement);
         }
 
@@ -304,6 +305,7 @@ public class CharacterMovement : MonoBehaviour
         }
         else if (this.movementMode == MovementMode.Glide && m == MovementMode.Walk)
         {
+            print(" stop gliding");
             animator.SetTrigger("StopGliding");
             if (this.moveDirection == MoveDirection.Forward1 || this.moveDirection == MoveDirection.Forward2)
             {
@@ -374,6 +376,7 @@ public class CharacterMovement : MonoBehaviour
             }
             else if (texturename.Contains(walkingTexture.name))
             {
+                print("go walking");
                 this.SwitchMovementMode(MovementMode.Walk);
             }
         }
