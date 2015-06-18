@@ -30,6 +30,27 @@ public class SaveManager {
         }
     }
 
+    public bool SaveCharacterdata(int sceneindex, int[] values)
+    {
+        string value = values[0] + "," + values[1] + "," + values[2];
+        return this.WriteXML("Player", "Characterdata", new string[] { "Scene" + sceneindex }, new string[] { value });
+    }
+
+    public int[] LoadCharacterdata(int sceneindex)
+    {
+        try
+        {
+            string position = this.ReadXML("Player", "Characterdata", "Scene" + sceneindex);
+
+            String[] values = position.Split(',');
+            return new int[] { int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]) };
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+
     private string ReadXML(string filename, string title, string key)
     {
         string path = Application.persistentDataPath + "\\" + filename + ".xml";

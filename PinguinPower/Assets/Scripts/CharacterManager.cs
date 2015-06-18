@@ -23,21 +23,44 @@ public class CharacterManager : MonoBehaviour {
 	void Start () {
         this.animator = this.GetComponentInChildren<Animator>();
         this.audioSource = this.GetComponentInChildren<AudioSource>();
+
+        this.LoadSave();
         
+        StartCoroutine(InitUI());
+	}
+
+    private void LoadSave()
+    {
         //Load position from checkpoint
-        Vector3 position = this.menuManager.getSaveManager().LoadCheckpoint(Application.loadedLevel);  
+        Vector3 position = this.menuManager.getSaveManager().LoadCheckpoint(Application.loadedLevel);
         if (position != Vector3.zero)
         {
-            Debug.Log("Checkpoint loaded succesful");
+            Debug.Log("Checkpoint loaded successful");
             this.transform.position = position;
         }
         else
         {
             Debug.Log("No Checkpoints found");
         }
-        
-        StartCoroutine(InitUI());
-	}
+
+        //Load characterdata
+        int[] values = this.menuManager.getSaveManager().LoadCharacterdata(Application.loadedLevel);
+        if (values != null)
+        {
+            Debug.Log("Characterdata loaded successfull");
+            this.fish = values[0];
+            this.lives = values[1];
+            this.friends = values[2];
+            this.menuManager.UpdateFish(fish.ToString());
+            this.menuManager.UpdateLives(lives.ToString());
+            this.menuManager.UpdateFriends(friends.ToString());
+        }
+        else
+        {
+            Debug.Log("No Characterdata found");
+        }
+    }
+
 	public int GetLives()
 	{
 		return lives;

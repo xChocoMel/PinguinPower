@@ -153,6 +153,9 @@ public class MenuManager : MonoBehaviour {
     }
 
     private void ClickQuitToMainMenu() {
+        //Save characterdata
+        int[] values = new int[] { int.Parse(this.HudValues[0].text), int.Parse(this.HudValues[1].text), int.Parse(this.HudValues[2].text) };
+        this.saveManager.SaveCharacterdata(Application.loadedLevel, values);
         Application.LoadLevel(0);
     }
 
