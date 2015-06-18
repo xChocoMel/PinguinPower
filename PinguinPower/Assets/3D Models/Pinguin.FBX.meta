@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: c33a51dcf58406d488b7a46b80d97c07
-timeCreated: 1433503704
+timeCreated: 1434615235
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -188,7 +188,7 @@ ModelImporter:
       name: Kick
       takeName: Take 001
       firstFrame: 100
-      lastFrame: 120
+      lastFrame: 140
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -231,8 +231,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Damage_walk
       takeName: Take 001
-      firstFrame: 120
-      lastFrame: 145
+      firstFrame: 140
+      lastFrame: 165
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -275,8 +275,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Glide_start
       takeName: Take 001
-      firstFrame: 145
-      lastFrame: 165
+      firstFrame: 165
+      lastFrame: 185
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -319,8 +319,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Glide
       takeName: Take 001
-      firstFrame: 165
-      lastFrame: 205
+      firstFrame: 185
+      lastFrame: 225
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -363,8 +363,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Glide_stop
       takeName: Take 001
-      firstFrame: 230
-      lastFrame: 250
+      firstFrame: 250
+      lastFrame: 270
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -407,8 +407,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Damage_glide
       takeName: Take 001
-      firstFrame: 205
-      lastFrame: 230
+      firstFrame: 225
+      lastFrame: 250
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -451,8 +451,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Dead
       takeName: Take 001
-      firstFrame: 250
-      lastFrame: 270
+      firstFrame: 270
+      lastFrame: 300
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
