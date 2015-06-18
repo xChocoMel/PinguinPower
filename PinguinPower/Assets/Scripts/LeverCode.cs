@@ -4,7 +4,7 @@ using System.Collections;
 public class LeverCode : MonoBehaviour {
 	public enum Status {enabled,disabled};
 	// Use this for initialization
-	private bool canBePressed;
+	public bool canBePressed;
 	public Status status;
 	  Animator animationcontroller;
 	public GameObject  playerobject;
@@ -13,6 +13,9 @@ public class LeverCode : MonoBehaviour {
 		animationcontroller = GetComponent<Animator>();
 		status= Status.disabled;
 		canBePressed = true;
+		if(playerobject==null){
+			playerobject=GameObject.Find ("Penguin");
+		}
 	}
 	//ForceMode.Impulse
 	// Update is called once per frame
@@ -26,12 +29,17 @@ public class LeverCode : MonoBehaviour {
 					StartCoroutine (Wait ());
 					animationcontroller.SetTrigger ("EnableTrigger");
 					status = Status.enabled;
+					 
 					
-					
-				} else if (status == Status.enabled && canBePressed) {
+					print (111);
+				} 
+				else if (status == Status.enabled && canBePressed) 
+				{
 					animationcontroller.SetTrigger ("DisableTrigger");
+					StartCoroutine (Wait ());
 					status = Status.disabled;
-					
+
+					print (222);
 				}
 			}
 		}
