@@ -29,9 +29,7 @@ public class LeverCode : MonoBehaviour {
 					StartCoroutine (Wait ());
 					animationcontroller.SetTrigger ("EnableTrigger");
 					status = Status.enabled;
-					 
-					
-					print (111);
+				
 				} 
 				else if (status == Status.enabled && canBePressed) 
 				{
