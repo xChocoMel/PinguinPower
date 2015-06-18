@@ -12,14 +12,14 @@ public class EnemyScript : MonoBehaviour {
 	public GameObject[] routes;
 	public int maxDistance;
 	//how far the enemy can go
-
+	public bool gliding;
 	public AudioClip dying;
 	public AudioClip hitsound;
 	public AudioClip loselife;
-	  int amountoflives;
+	int amountoflives;
 	public int sightRange;
 	Rigidbody enemyRigidbody;
-	public bool alwaysDamageOnCollision;
+	 
     private Animator animator;
 	private bool collidingWithPlayer=false;
 
@@ -29,6 +29,12 @@ public class EnemyScript : MonoBehaviour {
 		amountoflives = 1;
 		returnPosition=transform.position;
         this.animator = this.GetComponentInChildren<Animator>();
+		if(playerobject==null)
+		{
+			playerobject=GameObject.Find ("Penguin");
+		}
+		GetComponent<CapsuleCollider>().isTrigger=gliding;
+		GetComponent<Rigidbody>().useGravity=!gliding;
 	}
 	
 	// Update is called once per frame
@@ -80,16 +86,15 @@ public class EnemyScript : MonoBehaviour {
 	}
 	void OnCollidingWithPlayer()
 	{
- 
-		 	 
-				if(playerobject.GetComponent<CharacterMovement>().IsKicking())
-				{
+		print (222222);
+			if(playerobject.GetComponent<CharacterMovement>().IsKicking())
+			{
 					LoseLife(1);
-				}
-				else
+			}
+			else
+			{
+			if((gliding&&status!=Status.waiting)||(!gliding&&status==Status.attacking))
 				{
-					if(alwaysDamageOnCollision||(!alwaysDamageOnCollision&&status==Status.attacking))
-					{
 							playerobject.GetComponent<CharacterManager>().Damage();
 							transform.LookAt (playerobject.transform.position);
 							GetComponent<AudioSource>().PlayOneShot(hitsound);
@@ -97,11 +102,10 @@ public class EnemyScript : MonoBehaviour {
 							status=Status.waiting;
 							print ("colliding");
 							StartCoroutine(Wait());
-					}
-				 
 				}
-			 
-	 
+				 
+			}
+
 	}
 	void Patrolling(){
         if (routes.Length > 0)
@@ -169,6 +173,20 @@ public class EnemyScript : MonoBehaviour {
 	{
 		if (collisionInfo.gameObject.name == playerobject.name) {
 
+			collidingWithPlayer=false;
+		}
+	}
+	void OnTriggerEnter(Collider  collision) {
+		if (collision.gameObject.name == playerobject.name) {
+			collidingWithPlayer = true;
+			returnPosition=transform.position;
+		}
+		
+	}
+	void OnTriggerExit(Collider  collisionInfo) 
+	{
+		if (collisionInfo.gameObject.name == playerobject.name) {
+			
 			collidingWithPlayer=false;
 		}
 	}
