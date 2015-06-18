@@ -12,7 +12,7 @@ public class EnemyScript : MonoBehaviour {
 	public GameObject[] routes;
 	public int maxDistance;
 	//how far the enemy can go
-	 
+	private bool canBeKilled=true;
 	public AudioClip dying;
 	public AudioClip hitsound;
 	public AudioClip loselife;
@@ -79,20 +79,19 @@ public class EnemyScript : MonoBehaviour {
 		{
 			Returning();
 		}
-
-		 	 
-			
 	}
 	void OnCollidingWithPlayer()
 	{
-	 
 			if(playerobject.GetComponent<CharacterMovement>().IsKicking())
 			{
-					LoseLife(1);
+				if(canBeKilled)
+				{
+					StartCoroutine(Dying());
+				}	 
 			}
 			else
 			{
-				if( status==Status.attacking)
+				if( status==Status.attacking&&canBeKilled==true)
 				{
 					playerobject.GetComponent<CharacterManager>().Damage();
 					transform.LookAt (new Vector3(playerobject.transform.position.x,transform.position.y,playerobject.transform.position.z));
@@ -159,7 +158,7 @@ public class EnemyScript : MonoBehaviour {
 		 
 			Moveforward (0);
 		 
-		yield return new WaitForSeconds(2.0F);
+		yield return new WaitForSeconds(3.0F);
 		status=Status.attacking;
 		 
 	}
@@ -177,16 +176,7 @@ public class EnemyScript : MonoBehaviour {
 		}
 	}
 
-	void LoseLife(int attackpoint)
-	{
-		GetComponent<AudioSource>().PlayOneShot (loselife);
-        this.animator.SetTrigger("Damage");
-		amountoflives-=attackpoint;
-		if(amountoflives==0)
-		{
-			StartCoroutine(Dying());
-		}
-	}
+ 
 	void Moveforward(int speed)
 	{
 		Vector3 v3 = transform.TransformDirection(Vector3.forward)* speed;
@@ -194,9 +184,14 @@ public class EnemyScript : MonoBehaviour {
 		enemyRigidbody.velocity = v3;
 	}
 	IEnumerator Dying(){
+		canBeKilled = false;
+		status = Status.waiting;
+		GetComponent<AudioSource>().PlayOneShot (loselife);
+		this.animator.SetTrigger("Damage");
+		yield return new WaitForSeconds(1.0F);
 		GetComponent<AudioSource>().PlayOneShot (dying);
         this.animator.SetTrigger("Dead");
-		yield return new WaitForSeconds(1.0F);
+		yield return new WaitForSeconds(2.0F);
 		Destroy (gameObject);
 	}
 }

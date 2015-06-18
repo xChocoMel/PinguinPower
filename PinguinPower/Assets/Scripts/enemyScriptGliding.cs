@@ -14,7 +14,7 @@ public class enemyScriptGliding : MonoBehaviour {
 	public AudioClip hitsound;
 	public AudioClip loselife;
 	int amountoflives;
-	 
+	private bool canBeKilled=true;
 	Rigidbody enemyRigidbody;
 	 
 	private Animator animator;
@@ -44,11 +44,15 @@ public class enemyScriptGliding : MonoBehaviour {
 	{	 
 			if(playerobject.GetComponent<CharacterMovement>().IsKicking())
 			{
-				LoseLife(1);
+				if(canBeKilled)
+				{
+					StartCoroutine(Dying());
+					 
+				}
 			}
 			else
 			{
-				if(!waiting)
+				if(!waiting&&canBeKilled==true)
 				{
 					playerobject.GetComponent<Rigidbody>().velocity/=4;
 					playerobject.GetComponent<CharacterManager>().Damage();
@@ -107,16 +111,7 @@ public class enemyScriptGliding : MonoBehaviour {
 		
 	}
 	 
-	void LoseLife(int attackpoint)
-	{
-		GetComponent<AudioSource>().PlayOneShot (loselife);
-		this.animator.SetTrigger("Damage");
-		amountoflives-=attackpoint;
-		if(amountoflives==0)
-		{
-			StartCoroutine(Dying());
-		}
-	}
+	 
 	void Moveforward(int speed)
 	{
 		Vector3 v3 = transform.TransformDirection(Vector3.forward)* speed;
@@ -124,6 +119,11 @@ public class enemyScriptGliding : MonoBehaviour {
 		enemyRigidbody.velocity = v3;
 	}
 	IEnumerator Dying(){
+		waiting = true;
+		canBeKilled = false;
+		GetComponent<AudioSource>().PlayOneShot (loselife);
+		this.animator.SetTrigger("Damage");
+		yield return new WaitForSeconds(1.0F);
 		GetComponent<AudioSource>().PlayOneShot (dying);
 		this.animator.SetTrigger("Dead");
 		yield return new WaitForSeconds(1.0F);
