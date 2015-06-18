@@ -238,11 +238,11 @@ public class CharacterMovement : MonoBehaviour
                 case TurnDirection.Stop: 
                     break;
                 case TurnDirection.Left:
-                    rotation += transform.up * -turnSpeed;
+                    //rotation += transform.up * -turnSpeed;
                     sidewaysMovement += -Vector3.right * turnSpeed * 10;
                     break;
                 case TurnDirection.Right:
-                    rotation += transform.up * turnSpeed;
+                    //rotation += transform.up * turnSpeed;
                     sidewaysMovement += Vector3.right * turnSpeed * 10;
                     break;
             }
@@ -294,12 +294,17 @@ public class CharacterMovement : MonoBehaviour
         if (this.movementMode == MovementMode.Walk && m == MovementMode.Glide)
         {
             animator.SetTrigger("StartGliding");
+            animator.SetBool("Walking", false);
         }
         else if (this.movementMode == MovementMode.Glide && m == MovementMode.Walk)
         {
             animator.SetTrigger("StopGliding");
+            if (this.moveDirection == MoveDirection.Forward1 || this.moveDirection == MoveDirection.Forward2)
+            {
+                animator.SetBool("Walking", true);
+            }
         }
-
+        
         this.movementMode = m;
 
         //this.Text1.text = this.movementMode.ToString();
@@ -356,7 +361,7 @@ public class CharacterMovement : MonoBehaviour
             Terrain terrain = (Terrain)other.GetComponent<Terrain>();
             int mainTexture = TerrainSurface.GetMainTexture(this.transform.position, terrain);
             string texturename = terrain.terrainData.splatPrototypes[mainTexture].texture.name;
-            print(texturename + " - " + glidingTexture.name);
+            print(texturename + " - " + walkingTexture.name);
             if (texturename.Contains(glidingTexture.name))
             {
                 this.SwitchMovementMode(MovementMode.Glide);
