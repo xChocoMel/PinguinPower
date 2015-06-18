@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 
 public class CharacterManager : MonoBehaviour {
     public int FishPerLife = 50;
@@ -22,6 +23,19 @@ public class CharacterManager : MonoBehaviour {
 	void Start () {
         this.animator = this.GetComponentInChildren<Animator>();
         this.audioSource = this.GetComponentInChildren<AudioSource>();
+        
+        //Load position from checkpoint
+        Vector3 position = this.menuManager.getSaveManager().LoadCheckpoint(Application.loadedLevel);  
+        if (position != Vector3.zero)
+        {
+            Debug.Log("Checkpoint loaded succesful");
+            this.transform.position = position;
+        }
+        else
+        {
+            Debug.Log("No Checkpoints found");
+        }
+        
         StartCoroutine(InitUI());
 	}
 	public int GetLives()
@@ -109,6 +123,10 @@ public class CharacterManager : MonoBehaviour {
                     newLevel = 1;
                 }
                 Application.LoadLevel(newLevel);
+                break;
+            case "Checkpoint":
+                Debug.Log("Checkpoint");
+                this.menuManager.getSaveManager().SaveCheckpoint(Application.loadedLevel, new Vector3(collider.transform.position.x, this.transform.position.y, collider.transform.position.z));
                 break;
         }
     }
