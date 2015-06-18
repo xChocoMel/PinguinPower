@@ -41,6 +41,10 @@ public class MovingObjectScript : MonoBehaviour {
 		{
 			Player=GameObject.Find ("Penguin");
 		}
+		if(rotatehorizontaltime==0&&rotatemode==RotateDirection.horizontal)
+		{
+			rotatehorizontaltime=10;
+		}
 
 	}
 	

@@ -30,6 +30,69 @@ public class SaveManager {
         }
     }
 
+    public bool SaveCharacterdata(int sceneindex, int[] values)
+    {
+        string value = values[0] + "," + values[1] + "," + values[2];
+        return this.WriteXML("Player", "Characterdata", new string[] { "Scene" + sceneindex }, new string[] { value });
+    }
+
+    public int[] LoadCharacterdata(int sceneindex)
+    {
+        try
+        {
+            string position = this.ReadXML("Player", "Characterdata", "Scene" + sceneindex);
+
+            string[] values = position.Split(',');
+            return new int[] { int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]) };
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+
+    public bool SaveCollectedFriends(int sceneindex, Vector3[] positions)
+    {
+        List<string> positionStrings = new List<string>();
+        foreach (Vector3 p in positions)
+        {
+            positionStrings.Add(p.x + "," + p.y + "," + p.z);
+        }
+
+        string[] posStrings = positionStrings.ToArray();
+
+        return this.WriteXML("Player", "CollectedFriends", new string[] { "Scene" + sceneindex }, posStrings );
+    }
+
+    public Vector3[] LoadCollectedFriends(int sceneindex)
+    {
+        try
+        {
+            string[] positionStrings = this.ReadXML_MultipleValues("Player", "Characterdata", "Scene" + sceneindex);
+
+            List<Vector3> positions = new List<Vector3>();
+
+            foreach (string p in positionStrings)
+            {
+                string[] values = p.Split(',');
+                try
+                {
+                    positions.Add(new Vector3 (float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2])));
+                }
+                catch (Exception ex)
+                {
+                    //Nothing
+                }
+            }
+            
+            return positions.ToArray();
+        }
+        catch (Exception ex)
+        {
+            return new Vector3[] { };
+        }
+    }
+
     private string ReadXML(string filename, string title, string key)
     {
         string path = Application.persistentDataPath + "\\" + filename + ".xml";
@@ -43,6 +106,36 @@ public class SaveManager {
             try
             {
                 return baseElm.Element(title).Element(key).Value;
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    private string[] ReadXML_MultipleValues (string filename, string title, string key)
+    {
+        string path = Application.persistentDataPath + "\\" + filename + ".xml";
+
+        XElement baseElm;
+
+        if (File.Exists(path))
+        {
+            baseElm = XElement.Load(path);
+
+            try
+            {
+                List<string> valueList = new List<string>();
+                foreach (XElement xel in baseElm.Element(title).Elements(key))
+                {
+                    valueList.Add(xel.Value);
+                }
+                return valueList.ToArray();
             }
             catch (Exception ex)
             {
@@ -111,9 +204,18 @@ public class SaveManager {
                 baseElm.Add(inner);
             }
 
-            for (int i = 0; i < keys.Length; i++)
+            for (int i = 0; i < values.Length; i++)
             {
-                XElement key = new XElement(keys[0]);
+                XElement key;
+                if (keys.Length > i)
+                {
+                    key = new XElement(keys[i]);
+                }
+                else
+                {
+                    key = new XElement(keys[0]);
+                }
+                 
                 key.Value = values[0];
                 inner.Add(key);
             }
