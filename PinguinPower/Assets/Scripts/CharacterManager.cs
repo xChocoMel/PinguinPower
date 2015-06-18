@@ -59,6 +59,26 @@ public class CharacterManager : MonoBehaviour {
         {
             Debug.Log("No Characterdata found");
         }
+
+        //Load collected friends
+        Vector3[] positions = this.menuManager.getSaveManager().LoadCollectedFriends(Application.loadedLevel);
+        this.SearchAndDestroyFriends(positions);
+    }
+
+    //Untested
+    private void SearchAndDestroyFriends(Vector3[] positions)
+    {
+        foreach (Vector3 pos in positions)
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(pos, 1);
+            foreach (Collider col in hitColliders)
+            {
+                if (col.tag == "Friend")
+                {
+                    Destroy(col.gameObject);
+                }
+            }
+        }
     }
 
 	public int GetLives()
