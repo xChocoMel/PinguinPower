@@ -81,8 +81,7 @@ public class EnemyScript : MonoBehaviour {
 	void OnCollidingWithPlayer()
 	{
  
-			if(status!=Status.waiting)
-			{		 
+		 	 
 				if(playerobject.GetComponent<CharacterMovement>().IsKicking())
 				{
 					LoseLife(1);
@@ -101,7 +100,7 @@ public class EnemyScript : MonoBehaviour {
 					}
 				 
 				}
-			}
+			 
 	 
 	}
 	void Patrolling(){
