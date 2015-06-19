@@ -15,11 +15,12 @@ public class MenuManager : MonoBehaviour {
     private Text[] HudValues;
 
     private SaveManager saveManager = new SaveManager();
+    private SceneFader sceneFader;
 
 	// Use this for initialization
 	void Start () {
 
-        //this.saveManager = new SaveManager();
+        this.sceneFader = this.gameObject.GetComponent<SceneFader>();
 
         try
         {
@@ -112,7 +113,7 @@ public class MenuManager : MonoBehaviour {
     {
         this.saveManager.DeleteSaves();
         this.Pause(false);
-        Application.LoadLevel(1);
+        this.StartScene(1);
     }
 
     private void ClickNo()
@@ -123,7 +124,7 @@ public class MenuManager : MonoBehaviour {
     private void ClickContinueGame()
     {
         this.Pause(false);
-        Application.LoadLevel(1);
+        this.StartScene(1);
     }
 
     private void ClickRetry()
@@ -132,7 +133,7 @@ public class MenuManager : MonoBehaviour {
         Vector3 checkpoint = this.saveManager.LoadCheckpoint(Application.loadedLevel);
         if (checkpoint == Vector3.zero)
         {
-            Application.LoadLevel(Application.loadedLevel);
+            this.StartScene(Application.loadedLevel);
         }
         else
         {
@@ -145,7 +146,7 @@ public class MenuManager : MonoBehaviour {
     //private void ClickRestart()
     //{
     //    this.saveManager.DeleteSaves();
-    //    Application.LoadLevel(Application.loadedLevel);
+    //    this.StartScene(Application.loadedLevel);
     //}
 
     private void ClickQuit() {
@@ -156,7 +157,7 @@ public class MenuManager : MonoBehaviour {
         //Save characterdata
         int[] values = new int[] { int.Parse(this.HudValues[0].text), int.Parse(this.HudValues[1].text), int.Parse(this.HudValues[2].text) };
         this.saveManager.SaveCharacterdata(Application.loadedLevel, values);
-        Application.LoadLevel(0);
+        this.StartScene(0);
     }
 
     private void ClickResume() {
@@ -224,5 +225,10 @@ public class MenuManager : MonoBehaviour {
     public SaveManager getSaveManager()
     {
         return this.saveManager;
+    }
+
+    private void StartScene(int index)
+    {
+        this.sceneFader.EndScene(index);
     }
 }
