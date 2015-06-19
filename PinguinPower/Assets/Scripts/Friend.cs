@@ -4,12 +4,14 @@ using System.Collections;
 public class Friend : MonoBehaviour {
     public AudioClip[] helpClips;
     public AudioClip[] yayClips;
+	public Material[] mats;
 
     private AudioSource audioSource;
     private float delay = 10f;
 
 	// Use this for initialization
 	void Start () {
+		this.GetComponentInChildren<Renderer> ().material = mats[Random.Range(0,3)];
         this.audioSource = this.GetComponentInChildren<AudioSource>();
         StartCoroutine(SayHelp());
 	}
