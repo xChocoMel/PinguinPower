@@ -3,7 +3,7 @@ using System.Collections;
 
 public class icicleScript : MonoBehaviour {
 	CapsuleCollider collider;
-	public int height;
+	//public int height;
 	public AudioClip fallingSound;
 	public AudioClip shatterSound;
 	public GameObject Player;
@@ -15,7 +15,7 @@ public class icicleScript : MonoBehaviour {
 	void Start () {
 		collider=gameObject.GetComponent<CapsuleCollider>();
 		//transform.position = new Vector3 (transform.position.x,height,transform.position.z);
-		collider.center = new Vector3 (0,height*-1,0);
+		//collider.center = new Vector3 (0,height*-1,0);
 		if(Player==null)
 		{
 			Player=GameObject.Find ("Penguin");
