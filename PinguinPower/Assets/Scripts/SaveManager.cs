@@ -139,12 +139,12 @@ public class SaveManager {
             }
             catch (Exception ex)
             {
-                return "";
+                return null;
             }
         }
         else
         {
-            return "";
+            return null;
         }
     }
 

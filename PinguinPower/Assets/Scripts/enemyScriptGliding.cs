@@ -19,17 +19,36 @@ public class enemyScriptGliding : MonoBehaviour {
 	 
 	private Animator animator;
 	private bool collidingWithPlayer=false;
+
+    public AudioClip sealClip;
+
+    private AudioSource audioSource;
+    private float minDelay = 5f;
+    private float maxDelay = 20f;   
+
 	void Start () {
 		enemyRigidbody=GetComponent<Rigidbody>();
 		amountoflives = 1;
 		this.animator = this.GetComponentInChildren<Animator>();
 		GetComponent<CapsuleCollider> ().isTrigger = true;
 		GetComponent<Rigidbody> ().useGravity = false;
+        this.audioSource = this.GetComponentInChildren<AudioSource>();
+        StartCoroutine(PlaySealSound());
 		if(playerobject==null)
 		{
 			playerobject=GameObject.Find ("Penguin");
 		}
 	}
+
+    private IEnumerator PlaySealSound()
+    {
+        yield return new WaitForSeconds(Random.Range(minDelay, maxDelay));
+        if (!waiting)
+        {
+            audioSource.PlayOneShot(sealClip);
+        }
+        StartCoroutine(PlaySealSound());
+    }
 	
 	// Update is called once per frame
 	void Update () 

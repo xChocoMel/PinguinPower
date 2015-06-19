@@ -10,7 +10,9 @@ public class CharacterManager : MonoBehaviour {
 
     public AudioClip collectFishClip;
     public AudioClip extraLifeClip;
-    public AudioClip ouchPenguinClip;
+    public AudioClip[] ouchPenguinClips;
+    public AudioClip deadClip;
+    public AudioClip oefClip;
 
     private Animator animator;
     public AudioSource audioSource;
@@ -108,6 +110,9 @@ public class CharacterManager : MonoBehaviour {
 			case "Icicle":
                 this.Damage();
                 break;
+            case "Icecube":
+                this.audioSource.PlayOneShot(oefClip);
+                break;
 			/*
 			case "Seal":
 				if(this.GetComponent<CharacterMovement>().IsKicking ()==false)
@@ -129,7 +134,7 @@ public class CharacterManager : MonoBehaviour {
 		//if(canBeDamaged=true)
 		//{
        	this.animator.SetTrigger("Damage");
-        this.audioSource.PlayOneShot(ouchPenguinClip);
+        this.audioSource.PlayOneShot(ouchPenguinClips[UnityEngine.Random.Range(0, ouchPenguinClips.Length)]);
         lives--;
 		//}
         menuManager.UpdateLives(this.lives.ToString());
@@ -142,6 +147,7 @@ public class CharacterManager : MonoBehaviour {
     {
         yield return new WaitForSeconds(1f);
         this.animator.SetTrigger("Dead");
+        this.audioSource.PlayOneShot(deadClip);
         StartCoroutine(GameOver());
     }
 
@@ -160,6 +166,7 @@ public class CharacterManager : MonoBehaviour {
                 this.CollideFriend(other);
                 break;
             case "Fall":
+                this.audioSource.PlayOneShot(deadClip);
                 StartCoroutine(GameOver());
                 break;
             case "Gate":
@@ -213,11 +220,11 @@ public class CharacterManager : MonoBehaviour {
         menuManager.UpdateFriends(this.friends.ToString());
         // TODO fancy destroy?
         Friend friendScript = friend.GetComponent<Friend>();
-        StartCoroutine(SayThankYou(friendScript.thankYouClip));
+        StartCoroutine(SayYay(friendScript.yayClips[UnityEngine.Random.Range(0, friendScript.yayClips.Length)]));
         Destroy(friend);
     }
 
-    private IEnumerator SayThankYou(AudioClip clip)
+    private IEnumerator SayYay(AudioClip clip)
     {
         yield return new WaitForSeconds(0.2f);
         audioSource.PlayOneShot(clip);

@@ -15,6 +15,8 @@ public class CharacterMovement : MonoBehaviour
     public AudioClip boostClip;
     public AudioClip boingClip;
     public AudioClip[] footstepClips;
+    public AudioClip[] woehoeClips;
+    public AudioClip jumpClip;
 
     private Rigidbody myRigidBody;
     private CapsuleCollider penguinCollider;
@@ -183,7 +185,7 @@ public class CharacterMovement : MonoBehaviour
     private IEnumerator PlayFootsteps()
     {
         yield return new WaitForSeconds(0.5f);
-        if (this.moveDirection != MoveDirection.Stop)
+        if (this.moveDirection != MoveDirection.Stop && !jumping)
         {
             this.audioSourceWalking.PlayOneShot(footstepClips[Random.Range(0, footstepClips.Length)]);
             StartCoroutine(PlayFootsteps());
@@ -295,6 +297,8 @@ public class CharacterMovement : MonoBehaviour
             this.myRigidBody.velocity = new Vector3(this.myRigidBody.velocity.x, 0, this.myRigidBody.velocity.z);
             this.myRigidBody.drag = jumpDrag;
             this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
+            this.audioSourceNormal.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
+            this.audioSourceWalking.PlayOneShot(jumpClip);
         }
     }
 
@@ -396,10 +400,12 @@ public class CharacterMovement : MonoBehaviour
                 break;
             case "SpeedBoost":
                 this.audioSourceNormal.PlayOneShot(boostClip);
+                this.audioSourceWalking.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
                 //TODO
                 break;
             case "Trampoline":
                 this.audioSourceNormal.PlayOneShot(boingClip);
+                this.audioSourceWalking.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
                 //TODO
                 break;
         }

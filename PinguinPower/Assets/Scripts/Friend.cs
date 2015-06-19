@@ -2,8 +2,8 @@
 using System.Collections;
 
 public class Friend : MonoBehaviour {
-    public AudioClip helpClip;
-    public AudioClip thankYouClip;
+    public AudioClip[] helpClips;
+    public AudioClip[] yayClips;
 
     private AudioSource audioSource;
     private float delay = 10f;
@@ -22,7 +22,7 @@ public class Friend : MonoBehaviour {
     private IEnumerator SayHelp()
     {
         yield return new WaitForSeconds(Random.Range(delay / 2, delay));
-        audioSource.PlayOneShot(helpClip);
+        audioSource.PlayOneShot(helpClips[Random.Range(0, helpClips.Length)]);
         StartCoroutine(SayHelp());
     }
 }
