@@ -398,53 +398,35 @@ public class CharacterMovement : MonoBehaviour
                     turningPart = false;
                 }
                 break;
+        }
+
+        DetermineMovementMode(other);
+    }
+
+    void OnTriggerEnter(Collider collider)
+    {
+        GameObject other = collider.gameObject;
+        switch (other.tag)
+        {
             case "SpeedBoost":
                 this.audioSourceNormal.PlayOneShot(boostClip);
                 this.audioSourceWalking.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
-                //TODO
                 break;
             case "Trampoline":
                 this.audioSourceNormal.PlayOneShot(boingClip);
                 this.audioSourceWalking.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
-                //TODO
                 break;
-        }
-        
-        // Switching gliding/walking
-        if (other.name.Contains("Terrain"))
-        {
-            Terrain terrain = (Terrain)other.GetComponent<Terrain>();
-            int mainTexture = TerrainSurface.GetMainTexture(this.transform.position, terrain);
-            string texturename = terrain.terrainData.splatPrototypes[mainTexture].texture.name;
-            print(texturename + " - " + walkingTexture.name);
-            if (texturename.Contains(glidingTexture.name))
-            {
-                this.SwitchMovementMode(MovementMode.Glide);
-            }
-            else if (texturename.Contains(walkingTexture.name))
-            {
-                print("go walking");
-                this.SwitchMovementMode(MovementMode.Walk);
-            }
-        }
-        else if (IsGrounded())
-        {
-            string materialname = other.GetComponentInChildren<Renderer>().material.name;
-            if (materialname.Contains(glidingMaterial.name))
-            {
-                this.SwitchMovementMode(MovementMode.Glide);
-            }
-            else if (materialname.Contains(walkingMaterial.name))
-            {
-                this.SwitchMovementMode(MovementMode.Walk);
-            }
         }
     }
     
     void OnCollisionStay(Collision coll)
     {
         GameObject other = coll.gameObject;
-        
+        DetermineMovementMode(other);        
+    }
+
+    private void DetermineMovementMode(GameObject other)
+    {
         // Switching gliding/walking
         if (other.name.Contains("Terrain"))
         {
@@ -462,14 +444,22 @@ public class CharacterMovement : MonoBehaviour
         }
         else if (IsGrounded())
         {
-            string materialname = other.GetComponentInChildren<Renderer>().material.name;
-            if (materialname.Contains(glidingMaterial.name))
+            Renderer r = other.GetComponent<Renderer>();
+            if (r == null)
             {
-                this.SwitchMovementMode(MovementMode.Glide);
+                r = other.GetComponentInChildren<Renderer>();
             }
-            else if (materialname.Contains(walkingMaterial.name))
+            if (r != null)
             {
-                this.SwitchMovementMode(MovementMode.Walk);
+                string materialname = r.material.name;
+                if (materialname.Contains(glidingMaterial.name))
+                {
+                    this.SwitchMovementMode(MovementMode.Glide);
+                }
+                else if (materialname.Contains(walkingMaterial.name))
+                {
+                    this.SwitchMovementMode(MovementMode.Walk);
+                }
             }
         }
     }
