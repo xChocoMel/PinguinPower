@@ -100,7 +100,6 @@ public class MovingObjectScript : MonoBehaviour {
             if (Vector3.Distance(transform.position, routes[routeindex]) < 1)
             {
                 routeindex++;
-
             }
             if (routeindex == routes.Length)
             {
@@ -119,6 +118,9 @@ public class MovingObjectScript : MonoBehaviour {
 			if(rotationleft<=0)
 			{
 				rotatingvertical=false;
+				var rotationVector = transform.rotation.eulerAngles;
+				rotationVector.z = 180;
+				transform.rotation = Quaternion.Euler(rotationVector);
 				rotationleft=180;
 			}
 		}

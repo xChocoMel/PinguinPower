@@ -4,7 +4,7 @@ using System.Collections;
 public class LeverCode : MonoBehaviour {
 	public enum Status {enabled,disabled};
 	// Use this for initialization
-	public bool canBePressed;
+	private bool canBePressed;
 	public Status status;
 	  Animator animationcontroller;
 	public GameObject  playerobject;

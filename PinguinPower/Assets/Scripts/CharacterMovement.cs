@@ -11,11 +11,21 @@ public class CharacterMovement : MonoBehaviour
     //public Text Text1;
     //public Text Text2;
 
+    public AudioClip kickClip;
+    public AudioClip boostClip;
+    public AudioClip boingClip;
+    public AudioClip[] footstepClips;
+    public AudioClip[] woehoeClips;
+    public AudioClip jumpClip;
+
     private Rigidbody myRigidBody;
     private CapsuleCollider penguinCollider;
     public Transform graphics;
 
     private Animator animator;
+    public AudioSource audioSourceNormal;
+    public AudioSource audioSourceGliding;
+    public AudioSource audioSourceWalking;
 
     public Material glidingMaterial;
     public Material walkingMaterial;
@@ -33,7 +43,7 @@ public class CharacterMovement : MonoBehaviour
     private MoveDirection moveDirection;
     private TurnDirection turnDirection;
 
-    public float walkSpeed1 = 5f;
+    public float walkSpeed1 = 10f;
     public float walkSpeed2 = 10f;
     public float turnSpeed = 2f;
     public float jumpForce = 500f;
@@ -163,8 +173,22 @@ public class CharacterMovement : MonoBehaviour
     {
         if (this.movementMode == MovementMode.Walk)
         {
+            if (this.moveDirection == MoveDirection.Stop)
+            {
+                StartCoroutine(PlayFootsteps());
+            }
             this.moveDirection = MoveDirection.Forward1;
             this.animator.SetBool("Walking", true);
+        }
+    }
+
+    private IEnumerator PlayFootsteps()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (this.moveDirection != MoveDirection.Stop && !jumping)
+        {
+            this.audioSourceWalking.PlayOneShot(footstepClips[Random.Range(0, footstepClips.Length)]);
+            StartCoroutine(PlayFootsteps());
         }
     }
 
@@ -244,14 +268,15 @@ public class CharacterMovement : MonoBehaviour
                 case TurnDirection.Stop: 
                     break;
                 case TurnDirection.Left:
-                    //rotation += transform.up * -turnSpeed;
+                    rotation += transform.up * -turnSpeed;
                     sidewaysMovement += -Vector3.right * turnSpeed * 10;
                     break;
                 case TurnDirection.Right:
-                    //rotation += transform.up * turnSpeed;
+                    rotation += transform.up * turnSpeed;
                     sidewaysMovement += Vector3.right * turnSpeed * 10;
                     break;
             }
+            this.myRigidBody.transform.Rotate(rotation);
             this.myRigidBody.AddRelativeForce(sidewaysMovement);
         }
 
@@ -272,6 +297,8 @@ public class CharacterMovement : MonoBehaviour
             this.myRigidBody.velocity = new Vector3(this.myRigidBody.velocity.x, 0, this.myRigidBody.velocity.z);
             this.myRigidBody.drag = jumpDrag;
             this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
+            this.audioSourceNormal.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
+            this.audioSourceWalking.PlayOneShot(jumpClip);
         }
     }
 
@@ -283,17 +310,26 @@ public class CharacterMovement : MonoBehaviour
     public void Kick()
     {
 		this.animator.SetTrigger("Kick");
+        StartCoroutine(PlayKickClip());
 		if(!isKicking)
 		{
 			StartCoroutine(Kicking());
 		}
     }
-	IEnumerator Kicking()
+
+    private IEnumerator PlayKickClip()
+    {
+        yield return new WaitForSeconds(0.2f);
+        this.audioSourceNormal.PlayOneShot(kickClip);
+    }
+
+	private IEnumerator Kicking()
 	{
 		isKicking = true;
 		yield return new WaitForSeconds (1.0F);
 		isKicking = false;
 	}
+
     public void SwitchMovementMode(MovementMode m)
     {
         // Play animations
@@ -301,14 +337,17 @@ public class CharacterMovement : MonoBehaviour
         {
             animator.SetTrigger("StartGliding");
             animator.SetBool("Walking", false);
+            audioSourceGliding.Play();
         }
         else if (this.movementMode == MovementMode.Glide && m == MovementMode.Walk)
         {
+            print(" stop gliding");
             animator.SetTrigger("StopGliding");
             if (this.moveDirection == MoveDirection.Forward1 || this.moveDirection == MoveDirection.Forward2)
             {
                 animator.SetBool("Walking", true);
             }
+            audioSourceGliding.Stop();
         }
         
         this.movementMode = m;
@@ -360,41 +399,34 @@ public class CharacterMovement : MonoBehaviour
                 }
                 break;
         }
-        
-        // Switching gliding/walking
-        if (other.name.Contains("Terrain"))
+
+        DetermineMovementMode(other);
+    }
+
+    void OnTriggerEnter(Collider collider)
+    {
+        GameObject other = collider.gameObject;
+        switch (other.tag)
         {
-            Terrain terrain = (Terrain)other.GetComponent<Terrain>();
-            int mainTexture = TerrainSurface.GetMainTexture(this.transform.position, terrain);
-            string texturename = terrain.terrainData.splatPrototypes[mainTexture].texture.name;
-            print(texturename + " - " + walkingTexture.name);
-            if (texturename.Contains(glidingTexture.name))
-            {
-                this.SwitchMovementMode(MovementMode.Glide);
-            }
-            else if (texturename.Contains(walkingTexture.name))
-            {
-                this.SwitchMovementMode(MovementMode.Walk);
-            }
-        }
-        else if (IsGrounded())
-        {
-            string materialname = other.GetComponentInChildren<Renderer>().material.name;
-            if (materialname.Contains(glidingMaterial.name))
-            {
-                this.SwitchMovementMode(MovementMode.Glide);
-            }
-            else if (materialname.Contains(walkingMaterial.name))
-            {
-                this.SwitchMovementMode(MovementMode.Walk);
-            }
+            case "SpeedBoost":
+                this.audioSourceNormal.PlayOneShot(boostClip);
+                this.audioSourceWalking.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
+                break;
+            case "Trampoline":
+                this.audioSourceNormal.PlayOneShot(boingClip);
+                this.audioSourceWalking.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
+                break;
         }
     }
     
     void OnCollisionStay(Collision coll)
     {
         GameObject other = coll.gameObject;
-        
+        DetermineMovementMode(other);        
+    }
+
+    private void DetermineMovementMode(GameObject other)
+    {
         // Switching gliding/walking
         if (other.name.Contains("Terrain"))
         {
@@ -412,14 +444,22 @@ public class CharacterMovement : MonoBehaviour
         }
         else if (IsGrounded())
         {
-            string materialname = other.GetComponentInChildren<Renderer>().material.name;
-            if (materialname.Contains(glidingMaterial.name))
+            Renderer r = other.GetComponent<Renderer>();
+            if (r == null)
             {
-                this.SwitchMovementMode(MovementMode.Glide);
+                r = other.GetComponentInChildren<Renderer>();
             }
-            else if (materialname.Contains(walkingMaterial.name))
+            if (r != null)
             {
-                this.SwitchMovementMode(MovementMode.Walk);
+                string materialname = r.material.name;
+                if (materialname.Contains(glidingMaterial.name))
+                {
+                    this.SwitchMovementMode(MovementMode.Glide);
+                }
+                else if (materialname.Contains(walkingMaterial.name))
+                {
+                    this.SwitchMovementMode(MovementMode.Walk);
+                }
             }
         }
     }

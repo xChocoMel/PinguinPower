@@ -2,7 +2,6 @@
 using System.Collections;
 
 public class EnemyScript : MonoBehaviour {
-
 	public GameObject playerobject;
 	public enum Status {returning, attacking, patrolling ,waiting};
 	Vector3 returnPosition; 
@@ -23,18 +22,36 @@ public class EnemyScript : MonoBehaviour {
     private Animator animator;
 	private bool collidingWithPlayer=false;
 
+    public AudioClip sealClip;
+
+    private AudioSource audioSource;
+    private float minDelay = 5f;
+    private float maxDelay = 20f;    
+
 	// Use this for initialization
 	void Start () {
 		enemyRigidbody=GetComponent<Rigidbody>();
 		amountoflives = 1;
 		returnPosition=transform.position;
         this.animator = this.GetComponentInChildren<Animator>();
+        this.audioSource = this.GetComponentInChildren<AudioSource>();
+        StartCoroutine(PlaySealSound());
 		if(playerobject==null)
 		{
 			playerobject=GameObject.Find ("Penguin");
 		}
 	 
 	}
+
+    private IEnumerator PlaySealSound()
+    {
+        yield return new WaitForSeconds(Random.Range(minDelay, maxDelay));
+        if (status != Status.attacking)
+        {
+            audioSource.PlayOneShot(sealClip);
+        }
+        StartCoroutine(PlaySealSound());
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -176,7 +193,26 @@ public class EnemyScript : MonoBehaviour {
 		}
 	}
 
- 
+	void OnTriggerExit(Collider  collisionInfo) 
+	{
+		if (collisionInfo.gameObject.name == playerobject.name) {
+			
+			collidingWithPlayer=false;
+		}
+	}
+	void LoseLife(int attackpoint)
+	{
+		amountoflives-=attackpoint;
+        if (amountoflives == 0)
+        {
+            StartCoroutine(Dying());
+        }
+        else
+        {
+            GetComponent<AudioSource>().PlayOneShot(loselife);
+            this.animator.SetTrigger("Damage");
+        }
+	}
 	void Moveforward(int speed)
 	{
 		Vector3 v3 = transform.TransformDirection(Vector3.forward)* speed;
