@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class CharacterManager : MonoBehaviour {
     public int FishPerLife = 50;
@@ -19,17 +20,21 @@ public class CharacterManager : MonoBehaviour {
     private int friends = 0;
 	//private bool canBeDamaged=true;
 
+    private List<Vector3> friendPositions;
+
 	// Use this for initialization
 	void Start () {
         this.animator = this.GetComponentInChildren<Animator>();
         this.audioSource = this.GetComponentInChildren<AudioSource>();
+
+        this.friendPositions = new List<Vector3>();
 
         this.LoadSave();
         
         StartCoroutine(InitUI());
 	}
 
-    private void LoadSave()
+    public void LoadSave()
     {
         //Load position from checkpoint
         Vector3 position = this.menuManager.getSaveManager().LoadCheckpoint(Application.loadedLevel);
@@ -61,6 +66,7 @@ public class CharacterManager : MonoBehaviour {
         }
 
         //Load collected friends
+        this.friendPositions = new List<Vector3>();
         Vector3[] positions = this.menuManager.getSaveManager().LoadCollectedFriends(Application.loadedLevel);
         this.SearchAndDestroyFriends(positions);
     }
@@ -70,6 +76,8 @@ public class CharacterManager : MonoBehaviour {
     {
         foreach (Vector3 pos in positions)
         {
+            Debug.Log("Position: " + pos);
+
             Collider[] hitColliders = Physics.OverlapSphere(pos, 1);
             foreach (Collider col in hitColliders)
             {
@@ -85,6 +93,7 @@ public class CharacterManager : MonoBehaviour {
 	{
 		return lives;
 	}
+
     private IEnumerator InitUI()
     {
         yield return new WaitForFixedUpdate();
@@ -155,6 +164,7 @@ public class CharacterManager : MonoBehaviour {
                 break;
             case "Friend":
                 this.CollideFriend(other);
+                this.friendPositions.Add(collider.transform.position);
                 break;
             case "Fall":
                 StartCoroutine(GameOver());
@@ -170,6 +180,12 @@ public class CharacterManager : MonoBehaviour {
             case "Checkpoint":
                 Debug.Log("Checkpoint");
                 this.menuManager.getSaveManager().SaveCheckpoint(Application.loadedLevel, new Vector3(collider.transform.position.x, this.transform.position.y, collider.transform.position.z));
+
+                if (this.friendPositions.Count > 0)
+                {
+                    this.menuManager.getSaveManager().SaveCollectedFriends(Application.loadedLevel, this.friendPositions.ToArray());
+                    this.friendPositions.Clear();
+                }
                 break;
         }
     }

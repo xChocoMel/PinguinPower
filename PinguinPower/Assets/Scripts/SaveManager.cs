@@ -11,7 +11,7 @@ public class SaveManager {
     public bool SaveCheckpoint(int sceneindex, Vector3 position)
     {
         string posString = position.x + "," + position.y + "," + position.z;
-        return this.WriteXML("Player", "Checkpoint", new string[] { "Scene" + sceneindex }, new string[] { posString });
+        return this.WriteXML("Player", "Checkpoint", new string[] { "Scene" + sceneindex }, new string[] { posString }, true);
     }
 
     public Vector3 LoadCheckpoint(int sceneindex)
@@ -33,7 +33,7 @@ public class SaveManager {
     public bool SaveCharacterdata(int sceneindex, int[] values)
     {
         string value = values[0] + "," + values[1] + "," + values[2];
-        return this.WriteXML("Player", "Characterdata", new string[] { "Scene" + sceneindex }, new string[] { value });
+        return this.WriteXML("Player", "Characterdata", new string[] { "Scene" + sceneindex }, new string[] { value }, true);
     }
 
     public int[] LoadCharacterdata(int sceneindex)
@@ -57,18 +57,19 @@ public class SaveManager {
         foreach (Vector3 p in positions)
         {
             positionStrings.Add(p.x + "," + p.y + "," + p.z);
+            Debug.Log("Position:" + p.x + "," + p.y + "," + p.z);
         }
 
         string[] posStrings = positionStrings.ToArray();
 
-        return this.WriteXML("Player", "CollectedFriends", new string[] { "Scene" + sceneindex }, posStrings );
+        return this.WriteXML("Player", "CollectedFriends", new string[] { "Scene" + sceneindex }, posStrings, false);
     }
 
     public Vector3[] LoadCollectedFriends(int sceneindex)
     {
         try
         {
-            string[] positionStrings = this.ReadXML_MultipleValues("Player", "Characterdata", "Scene" + sceneindex);
+            string[] positionStrings = this.ReadXML_MultipleValues("Player", "CollectedFriends", "Scene" + sceneindex);
 
             List<Vector3> positions = new List<Vector3>();
 
@@ -128,9 +129,10 @@ public class SaveManager {
         {
             baseElm = XElement.Load(path);
 
+            List<string> valueList = new List<string>();
+
             try
             {
-                List<string> valueList = new List<string>();
                 foreach (XElement xel in baseElm.Element(title).Elements(key))
                 {
                     valueList.Add(xel.Value);
@@ -139,16 +141,16 @@ public class SaveManager {
             }
             catch (Exception ex)
             {
-                return "";
+                return valueList.ToArray();
             }
         }
         else
         {
-            return "";
+            return new String[] {};
         }
     }
 
-	private bool WriteXML(string filename, string title, string[] keys, string[] values)
+	private bool WriteXML(string filename, string title, string[] keys, string[] values, bool removeExistingKeys)
     {
         try
         {
@@ -170,16 +172,20 @@ public class SaveManager {
 
                     File.Delete(path);
 
-                    try
+                    //Remove existing keys
+                    if (removeExistingKeys)
                     {
-                        foreach (String key in keys)
+                        try
                         {
-                            baseElm.Elements(title).Elements(key).Remove();
+                            foreach (String key in keys)
+                            {
+                                baseElm.Elements(title).Elements(key).Remove();
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        //Nothing
+                        catch (Exception ex)
+                        {
+                            //Nothing
+                        }
                     }
 
                     inner = baseElm.Element(title);

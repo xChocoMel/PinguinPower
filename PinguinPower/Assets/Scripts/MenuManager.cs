@@ -130,16 +130,7 @@ public class MenuManager : MonoBehaviour {
     private void ClickRetry()
     {
         this.Pause(false);
-        Vector3 checkpoint = this.saveManager.LoadCheckpoint(Application.loadedLevel);
-        if (checkpoint == Vector3.zero)
-        {
-            this.StartScene(Application.loadedLevel);
-        }
-        else
-        {
-            this.penguin.GetComponent<CharacterMovement>().ForwardMovementDown();
-            this.penguin.position = checkpoint;
-        }
+        this.StartScene(Application.loadedLevel);
     }
 
     //Could be used for a restart button (removes checkpoint saves)

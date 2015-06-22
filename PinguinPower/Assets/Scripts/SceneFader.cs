@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class SceneFader : MonoBehaviour {
 
     private Image Fader;
+    private GameObject cameraParticles;
 
     public float fadeSpeed = 1.5f;
     private int fading;
@@ -14,6 +15,7 @@ public class SceneFader : MonoBehaviour {
     void Start()
     {
         this.Fader = GameObject.Find("Canvas").transform.FindChild("Fader").gameObject.GetComponent<Image>();
+        this.cameraParticles = GameObject.Find("Camera").transform.GetChild(0).gameObject;
         this.fading = 1;
     }
 
@@ -28,6 +30,7 @@ public class SceneFader : MonoBehaviour {
                 this.Fader.color = Color.clear;
                 this.Fader.enabled = false;
                 fading = 0;
+                this.cameraParticles.SetActive(false);
             }
         }
         else if (fading == -1)
@@ -64,5 +67,6 @@ public class SceneFader : MonoBehaviour {
         this.newIndex = index;
         this.Fader.enabled = true;
         this.fading = -1;
+        this.cameraParticles.SetActive(true);
     }
 }
