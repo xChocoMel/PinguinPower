@@ -1,27 +1,15 @@
 fileFormatVersion: 2
-guid: 0efa499c3fe25e34d840052f67516d3b
-timeCreated: 1435047908
+guid: c569c4ccce8a9b34184ab38bab5eb999
+timeCreated: 1434019661
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
   fileIDToRecycleName:
     100000: //RootNode
-    100002: Gate
-    100004: IconPlane
-    100006: Sign
     400000: //RootNode
-    400002: Gate
-    400004: IconPlane
-    400006: Sign
-    2300000: Gate
-    2300002: IconPlane
-    2300004: Sign
-    3300000: Gate
-    3300002: IconPlane
-    3300004: Sign
-    4300000: IconPlane
-    4300002: Sign
-    4300004: Gate
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: Ground
   materials:
     importMaterials: 1
     materialName: 0

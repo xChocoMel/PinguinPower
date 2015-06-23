@@ -139,43 +139,7 @@ public class CharacterManager : MonoBehaviour
         StartCoroutine(GameOver());
     }
 
-    void OnTriggerEnter(Collider collider)
-    {
-        GameObject other = collider.gameObject;
-        switch (other.tag)
-        {
-            case "Fish":
-                this.CollideFish(other);
-                break;
-            case "Friend":
-                this.CollideFriend(other);
-                this.friendPositions.Add(collider.transform.position);
-                break;
-            case "Fall":
-                StartCoroutine(GameOver());
-                break;
-            case "Gate":
-                int newLevel = Application.loadedLevel + 1;
-                if (newLevel > 2)
-                {
-                    newLevel = 1;
-                }
-                Application.LoadLevel(newLevel);
-                break;
-            case "Checkpoint":
-                Debug.Log("Checkpoint");
-                this.menuManager.getSaveManager().SaveCheckpoint(Application.loadedLevel, new Vector3(collider.transform.position.x, this.transform.position.y, collider.transform.position.z));
-
-                if (this.friendPositions.Count > 0)
-                {
-                    this.menuManager.getSaveManager().SaveCollectedFriends(Application.loadedLevel, this.friendPositions.ToArray());
-                    this.friendPositions.Clear();
-                }
-                break;
-        }
-    }
-
-    private void CollideFish(GameObject fish, int amount)
+        private void CollideFish(GameObject fish, int amount)
     {
         // TODO fancy stuff - fish collect
         this.fish += amount;
@@ -263,6 +227,12 @@ public class CharacterManager : MonoBehaviour
             case "Checkpoint":
                 Debug.Log("Checkpoint");
                 this.menuManager.getSaveManager().SaveCheckpoint(Application.loadedLevel, new Vector3(collider.transform.position.x, this.transform.position.y, collider.transform.position.z));
+
+                if (this.friendPositions.Count > 0)
+                {
+                    this.menuManager.getSaveManager().SaveCollectedFriends(Application.loadedLevel, this.friendPositions.ToArray());
+                    this.friendPositions.Clear();
+                }
                 break;
             case "Snowman":
                 StartCoroutine(other.GetComponent<Snowman>().Destroy());
