@@ -84,10 +84,10 @@ public class enemyScriptGliding : MonoBehaviour {
 		if (routes.Length > 0)
 		{
 			animator.SetBool("Walking", true);
-			Quaternion toRotation = Quaternion.LookRotation(new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z) - transform.position);
+			Quaternion toRotation = Quaternion.LookRotation((routes[routeindex].transform.position) - transform.position);
 			transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 3 * Time.deltaTime);
 			Moveforward(2);
-			if (Vector3.Distance(transform.position, new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z)) < 1)
+			if (Vector3.Distance(transform.position, routes[routeindex].transform.position) < 1)
 			{
 				routeindex++;
 			}
@@ -140,7 +140,7 @@ public class enemyScriptGliding : MonoBehaviour {
 	void Moveforward(int speed)
 	{
 		Vector3 v3 = transform.TransformDirection(Vector3.forward)* speed;
-		v3.y = enemyRigidbody.velocity.y;
+		 
 		enemyRigidbody.velocity = v3;
 	}
 	IEnumerator Dying(){
