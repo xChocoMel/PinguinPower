@@ -494,4 +494,12 @@ public class CharacterMovement : MonoBehaviour
             }
         }
     }
+
+    void OnParticleCollision (GameObject other)
+    {
+        if (other.tag == "Wind")
+        {
+            this.myRigidBody.AddRelativeForce(Vector3.up * 300);
+        }
+    }
 }
