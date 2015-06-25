@@ -21,7 +21,7 @@ public class TrampolineScript : MonoBehaviour {
 		if(colliding)
 		{
 			//player.transform.TransformDirection(Vector3.forward)
-			player.GetComponent<Rigidbody>().AddForce(new Vector3(0,speed,0));
+			player.GetComponent<Rigidbody>().AddForce(new Vector3(0,40,0));
 		}
 	}
 	void OnTriggerEnter(Collider  collision) 
@@ -30,7 +30,9 @@ public class TrampolineScript : MonoBehaviour {
 		colliding=true;
 	}
 	void OnTriggerExit(Collider  collision) {
-		
+		Vector3 jumpspeed= player.GetComponent<Rigidbody>().velocity;
+		jumpspeed.y = speed;
+		player.GetComponent<Rigidbody> ().velocity = jumpspeed;
 		colliding=false;
 	}
 }

@@ -19,6 +19,12 @@ public class LeverCode : MonoBehaviour {
 		if(playerobject==null){
 			playerobject=GameObject.Find ("Penguin");
 		}
+		if(status==Status.enabled)
+		{
+			StartCoroutine (Wait ());
+			animationcontroller.SetTrigger ("EnableTrigger");
+		}
+	 
 	}
 	//ForceMode.Impulse
 	// Update is called once per frame
