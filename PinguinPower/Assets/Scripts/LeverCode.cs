@@ -2,10 +2,10 @@
 using System.Collections;
 
 public class LeverCode : MonoBehaviour {
-	private enum Status {enabled,disabled};
+	public enum Status {enabled,disabled};
 	// Use this for initialization
 	private bool canBePressed;
-	private Status status = Status.disabled;
+	public Status status;
 	  Animator animationcontroller;
 	public GameObject  playerobject;
 	public bool collidingwithplayer = false;
@@ -18,6 +18,11 @@ public class LeverCode : MonoBehaviour {
 		canBePressed = true;
 		if(playerobject==null){
 			playerobject=GameObject.Find ("Penguin");
+		}
+		if(status==Status.enabled)
+		{
+			StartCoroutine (Wait ());
+			animationcontroller.SetTrigger ("EnableTrigger");
 		}
 	 
 	}
