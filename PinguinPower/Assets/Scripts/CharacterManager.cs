@@ -235,8 +235,11 @@ public class CharacterManager : MonoBehaviour
                 }
                 break;
             case "Snowman":
-                StartCoroutine(other.GetComponent<Snowman>().Destroy());
+				StartCoroutine(other.GetComponent<DestroyableObject>().Destroy());
                 break;
+			case "Barrel":
+				StartCoroutine(other.GetComponent<DestroyableObject>().Destroy());
+				break;
         }
     }
 
