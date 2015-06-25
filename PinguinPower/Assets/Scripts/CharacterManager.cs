@@ -148,7 +148,7 @@ public class CharacterManager : MonoBehaviour
         {
             // TODO fancy stuff - extra live
             this.lives++;
-            this.fish = 0;
+            this.fish -= FishPerLife;
             audioSource.PlayOneShot(extraLifeClip);
 
             menuManager.UpdateLives(this.lives.ToString());

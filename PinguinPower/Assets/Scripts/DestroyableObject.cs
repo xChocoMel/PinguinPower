@@ -29,7 +29,17 @@ public class DestroyableObject : MonoBehaviour {
 				this.GetComponentInChildren<Animation> ().Play();
 			}
 
-			GameObject prefab = objectsInside [Random.Range (0, 3)];
+			//First object is standard
+			int r = Random.Range(0,5);
+			GameObject prefab = objectsInside [0];
+
+			//Get random rare object
+			if (r == 0) {
+				int r2 = Random.Range(1,objectsInside.Length);
+				print (r2);
+				prefab = objectsInside [r2];
+			}
+
 			Instantiate (prefab, this.transform.position, this.transform.rotation);
 
 			if (this.tag == "Barrel") {
