@@ -145,7 +145,7 @@ public class CharacterManager : MonoBehaviour
         StartCoroutine(GameOver());
     }
 
-        private void CollideFish(GameObject fish, int amount)
+    private void CollideFish(GameObject fish, int amount)
     {
         // TODO fancy stuff - fish collect
         this.fish += amount;

@@ -69,7 +69,7 @@ public class Cannon : MonoBehaviour {
         this.penguin = penguin;
         this.penguin.GetComponent<Rigidbody>().useGravity = false;
         this.penguin.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        this.penguin.GetComponent<CharacterMovement>().ForwardMovementDown();
+        this.penguin.GetComponent<CharacterMovement>().MoveForward(0f);
         this.timer = this.loadtimer;
         this.loaded = true;
     }
