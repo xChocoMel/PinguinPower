@@ -9,7 +9,7 @@ public class enemyScriptGliding : MonoBehaviour {
 	public GameObject[] routes;
 	 
 	//how far the enemy can go
-	bool waiting;
+	bool waiting=false;
 	public AudioClip dying;
 	public AudioClip hitsound;
 	public AudioClip loselife;
@@ -51,48 +51,43 @@ public class enemyScriptGliding : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () 
+	void Update() 
 	{
 			Patrolling();
+		 	
 			if(collidingWithPlayer)
 			{
+
 				OnCollidingWithPlayer();
 			}
 	}
 	void OnCollidingWithPlayer()
 	{	 
+			 
 			if(playerobject.GetComponent<CharacterMovement>().IsKicking())
 			{
 				if(canBeKilled)
 				{
-					StartCoroutine(Dying());
-					 
+					StartCoroutine(Dying()); 
 				}
 			}
 			else
 			{
 				if(!waiting&&canBeKilled==true)
 				{
-					playerobject.GetComponent<Rigidbody>().velocity/=4;
-					playerobject.GetComponent<CharacterManager>().Damage();
-					transform.LookAt (playerobject.transform.position);
-					GetComponent<AudioSource>().PlayOneShot(hitsound);
-					this.animator.SetTrigger("Attack");
-					print ("colliding");
-					StartCoroutine(Wait());
+					AttackPenguin();
 				}
 			}
-		 
-		
 	}
 	void Patrolling(){
+
 		if (routes.Length > 0)
 		{
 			animator.SetBool("Walking", true);
-			Quaternion toRotation = Quaternion.LookRotation(new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z) - transform.position);
+			Quaternion toRotation = Quaternion.LookRotation((routes[routeindex].transform.position) - transform.position);
 			transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 3 * Time.deltaTime);
 			Moveforward(2);
-			if (Vector3.Distance(transform.position, new Vector3(routes[routeindex].transform.position.x, transform.position.y, routes[routeindex].transform.position.z)) < 1)
+			if (Vector3.Distance(transform.position, routes[routeindex].transform.position) < 1)
 			{
 				routeindex++;
 			}
@@ -108,20 +103,31 @@ public class enemyScriptGliding : MonoBehaviour {
 		}
 	}
 	void OnTriggerEnter(Collider  collision) {
-		if (collision.gameObject.name == playerobject.name) {
+		if (collision.gameObject.name == playerobject.name) 
+		{
 			collidingWithPlayer = true;
-			print (222);
-			
+			AttackPenguin();
 		}
-		
 	}
 	void OnTriggerExit(Collider  collisionInfo) 
 	{
 		if (collisionInfo.gameObject.name == playerobject.name) {
 			
 			collidingWithPlayer=false;
+		 
 		}
 	} 
+	void AttackPenguin()
+	{
+
+		playerobject.GetComponent<Rigidbody>().velocity/=10;
+		playerobject.GetComponent<CharacterManager>().Damage();
+		transform.LookAt (playerobject.transform.position);
+		GetComponent<AudioSource>().PlayOneShot(hitsound);
+		this.animator.SetTrigger("Attack");
+	 
+		StartCoroutine(Wait());
+	}
 	IEnumerator Wait(){
 		 
 		waiting = true;
@@ -134,7 +140,7 @@ public class enemyScriptGliding : MonoBehaviour {
 	void Moveforward(int speed)
 	{
 		Vector3 v3 = transform.TransformDirection(Vector3.forward)* speed;
-		v3.y = enemyRigidbody.velocity.y;
+		 
 		enemyRigidbody.velocity = v3;
 	}
 	IEnumerator Dying(){
