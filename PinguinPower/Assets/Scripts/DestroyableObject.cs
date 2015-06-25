@@ -6,12 +6,15 @@ public class DestroyableObject : MonoBehaviour {
 	public GameObject model;
 	public GameObject[] objectsInside;
 	public GameObject barrelTop;
+	private bool collided;
 
 	// Use this for initialization
 	void Start () {
 		if (this.tag == "Snowman") {
 			barrelTop = null;
 		}
+
+		collided = false;
 	}
 	
 	// Update is called once per frame
@@ -21,7 +24,9 @@ public class DestroyableObject : MonoBehaviour {
 
 	public IEnumerator Destroy()
 	{	
-		if (model != null) {
+		if (model != null && !collided) {
+			collided = true;
+
 			if (this.tag == "Snowman") {
 				this.GetComponentInChildren<ParticleSystem> ().Play ();
 			} else if (this.tag == "Barrel") {

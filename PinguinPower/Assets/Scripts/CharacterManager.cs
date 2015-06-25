@@ -189,9 +189,6 @@ public class CharacterManager : MonoBehaviour
         GameObject other = collision.gameObject;
         switch (other.tag)
         {
-            case "Icicle":
-                this.Damage();
-                break;
             case "Icecube":
                 this.audioSource.PlayOneShot(oefClip);
                 break;
