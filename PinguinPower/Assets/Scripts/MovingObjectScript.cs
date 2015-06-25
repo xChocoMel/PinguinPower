@@ -14,19 +14,22 @@ public class MovingObjectScript : MonoBehaviour {
 	public bool moveAfterTouched;
 	//private bool rotating = false;
 	private bool canUseRotouine=true;
-	public enum RotateDirection {horizontal, vertical,none};
+	public enum RotateDirection {horizontal, vertical, circus,none};
 	public RotateDirection rotatemode= RotateDirection.none;
 	public GameObject Player;
 	private bool canmove=true;
 	public bool rotateleft;
 	private bool rotatingvertical;
 	private bool rotatinghorizontal;
+    private bool rotatingToSlide;
+    private bool rotatintBackFromSlide;
 	Vector3 velocity;
 	Vector3 current;
 	Vector3	previous;
 	public int waitrotatetime;
 	public int rotatehorizontaltime;
 	private float rotationleft=180;
+    private float rotationSlide = 45;
 	// Use this for initialization
 	void Start () {
 		 if(button!=null)
@@ -106,13 +109,44 @@ public class MovingObjectScript : MonoBehaviour {
                 routeindex = 0;
             }
         }
+        if (rotatingToSlide)
+        {
+
+            float rotation = rotatingspeed * Time.deltaTime;
+
+            rotationSlide -= rotation;
+
+            transform.Rotate(0, 0, rotation);
+            if (rotationSlide <= 0)
+            {
+                rotatingvertical = false;
+                var rotationVector = transform.rotation.eulerAngles;
+                rotationVector.z = 45;
+                transform.rotation = Quaternion.Euler(rotationVector);
+            }
+        }
+        if (rotatintBackFromSlide)
+        {
+
+            float rotation = rotatingspeed * Time.deltaTime;
+
+            rotationSlide -= rotation;
+
+            transform.Rotate(0, 0, rotation);
+            if (rotationSlide >= 45)
+            {
+                rotatingvertical = false;
+                var rotationVector = transform.rotation.eulerAngles;
+                rotationVector.z = 0;
+                transform.rotation = Quaternion.Euler(rotationVector);
+            }
+        }
 		if(rotatingvertical)
 		{
 		 
 			float rotation=rotatingspeed*Time.deltaTime;
 			 
 			rotationleft-=rotation;
-			 
 			 
 			transform.Rotate(0,0,rotation);
 			if(rotationleft<=0)
@@ -171,7 +205,16 @@ public class MovingObjectScript : MonoBehaviour {
 		else if(rotatemode== RotateDirection.vertical)
 		{
 			rotatingvertical=true;
-		}
+        }
+        else if (rotatemode == RotateDirection.circus)
+        {
+            Debug.Log("circus");
+            rotatingToSlide = true;
+            rotatintBackFromSlide = false;
+            yield return new WaitForSeconds(waitrotatetime);
+            rotatingToSlide = false;
+            rotatintBackFromSlide = true;
+        }
 
 		canUseRotouine = true;
 	}

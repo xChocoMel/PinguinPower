@@ -11,7 +11,10 @@ public class LeverCode : MonoBehaviour {
 	public bool collidingwithplayer = false;
 	void Start () {
 		animationcontroller = GetComponent<Animator>();
-		status= Status.disabled;
+        if (status == null)
+        {
+            status = Status.disabled;
+        }
 		canBePressed = true;
 		if(playerobject==null){
 			playerobject=GameObject.Find ("Penguin");
@@ -36,8 +39,6 @@ public class LeverCode : MonoBehaviour {
 					animationcontroller.SetTrigger ("DisableTrigger");
 					StartCoroutine (Wait ());
 					status = Status.disabled;
-
-					print (222);
 				}
 			}
 		}
