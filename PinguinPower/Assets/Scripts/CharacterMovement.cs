@@ -148,6 +148,25 @@ public class CharacterMovement : MonoBehaviour
         {
             this.jumpTimer -= Time.deltaTime;
         }
+
+        // Audio gliding
+        if (this.movementMode == MovementMode.Glide)
+        {
+            bool grounded = this.IsGroundedGliding();
+            if (audioSourceGliding.isPlaying && !grounded)
+            {
+                audioSourceGliding.Stop();
+            }
+            else if (!audioSourceGliding.isPlaying && grounded)
+            {
+                audioSourceGliding.Play();
+            }
+        }
+    }
+
+    private bool IsGroundedGliding()
+    {
+        return Physics.Raycast(this.transform.position, -Vector3.up, 0.5f);
     }
 
     /// <summary>

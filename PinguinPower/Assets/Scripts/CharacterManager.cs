@@ -139,7 +139,7 @@ public class CharacterManager : MonoBehaviour
         StartCoroutine(GameOver());
     }
 
-        private void CollideFish(GameObject fish, int amount)
+    private void CollideFish(GameObject fish, int amount)
     {
         // TODO fancy stuff - fish collect
         this.fish += amount;
@@ -148,7 +148,7 @@ public class CharacterManager : MonoBehaviour
         {
             // TODO fancy stuff - extra live
             this.lives++;
-            this.fish = 0;
+            this.fish -= FishPerLife;
             audioSource.PlayOneShot(extraLifeClip);
 
             menuManager.UpdateLives(this.lives.ToString());
