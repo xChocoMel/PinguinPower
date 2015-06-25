@@ -40,12 +40,12 @@ public class CharacterMovement : MonoBehaviour
     public float glideGravity = -30f;
 
     private MovementMode movementMode;
-    private MoveDirection moveDirection;
+    private float currentSpeed = 0f;
     private TurnDirection turnDirection;
+    private float currentTurnSpeed = 0f;
 
-    public float walkSpeed1 = 10f;
-    public float walkSpeed2 = 10f;
-    public float turnSpeed = 2f;
+    public float maxWalkSpeed = 20f;
+    public float maxTurnSpeed = 3f;
     public float jumpForce = 500f;
     public float constantGlidingForce = 6f;
     private float slowDownSpeed = 0;
@@ -75,8 +75,6 @@ public class CharacterMovement : MonoBehaviour
         this.animator = this.GetComponentInChildren<Animator>();
 
         this.movementMode = MovementMode.Walk;
-        this.moveDirection = MoveDirection.Stop;
-        this.turnDirection = TurnDirection.Stop;
 
         this.jumpTimer = 0.3f;
     }
@@ -86,24 +84,7 @@ public class CharacterMovement : MonoBehaviour
         //Movement
         if (this.movementMode == MovementMode.Walk)
         {
-            switch (this.moveDirection)
-            {
-                case MoveDirection.Stop:
-                    //if (slowDownSpeed > 0)
-                    //{
-                    //    slowDownSpeed -= 1;
-                    //    if (slowDownSpeed < 0)
-                    //    {
-                    //        slowDownSpeed = 0;
-                    //    }
-                    //    this.myRigidBody.AddRelativeForce(Vector3.forward * slowDownSpeed);
-                    //}
-                    break;
-                case MoveDirection.Forward1:
-                    this.myRigidBody.AddRelativeForce(Vector3.forward * walkSpeed1);
-                    //this.myRigidBody.velocity = new Vector3((transform.forward * walkSpeed1).x, this.myRigidBody.velocity.y, (transform.forward * walkSpeed1).z);
-                    break;
-            }
+            this.myRigidBody.AddRelativeForce(Vector3.forward * currentSpeed);
         }
         else if (this.movementMode == MovementMode.Glide)
         {
@@ -188,15 +169,31 @@ public class CharacterMovement : MonoBehaviour
     /// Switch to slow forward movement if stopped.
     /// Switch to fast forward movement if on slow forward movement
     /// </summary>
-    public void ForwardMovementUp()
-    {
+    //public void ForwardMovementUp()
+    //{
+    //    if (this.movementMode == MovementMode.Walk)
+    //    {
+    //        if (this.moveDirection == MoveDirection.Stop)
+    //        {
+    //            StartCoroutine(PlayFootsteps());
+    //        }
+    //        this.moveDirection = MoveDirection.Forward1;
+    //        this.animator.SetBool("Walking", true);
+    //    }
+    //}
+
+    /// <summary>
+    /// Set currentSpeed to speedPercentage of maxSpeed
+    /// </summary>
+    /// <param name="speedPercentage">Value between 0 and 1</param>
+    public void MoveForward(float speedPercentage) {
         if (this.movementMode == MovementMode.Walk)
         {
-            if (this.moveDirection == MoveDirection.Stop)
+            if (this.currentSpeed == 0f)
             {
                 StartCoroutine(PlayFootsteps());
             }
-            this.moveDirection = MoveDirection.Forward1;
+            this.currentSpeed = this.maxWalkSpeed * speedPercentage;
             this.animator.SetBool("Walking", true);
         }
     }
@@ -204,7 +201,7 @@ public class CharacterMovement : MonoBehaviour
     private IEnumerator PlayFootsteps()
     {
         yield return new WaitForSeconds(0.5f);
-        if (this.moveDirection != MoveDirection.Stop && !jumping)
+        if (this.currentSpeed != 0f && !jumping)
         {
             this.audioSourceWalking.PlayOneShot(footstepClips[Random.Range(0, footstepClips.Length)]);
             StartCoroutine(PlayFootsteps());
@@ -215,27 +212,101 @@ public class CharacterMovement : MonoBehaviour
     /// Switch to slow forward movement if on fast forward movement
     /// Switch to stop (no forward movement) if on slow forward movement
     /// </summary>
-    public void ForwardMovementDown()
-    {
-        if (this.movementMode == MovementMode.Walk)
-        {
-            //if (this.moveDirection == MoveDirection.Forward1)
-            //{
-            //    this.slowDownSpeed = walkSpeed1;
-            //}
+    //public void ForwardMovementDown()
+    //{
+    //    if (this.movementMode == MovementMode.Walk)
+    //    {
+    //        //if (this.moveDirection == MoveDirection.Forward1)
+    //        //{
+    //        //    this.slowDownSpeed = walkSpeed1;
+    //        //}
 
-            this.moveDirection = MoveDirection.Stop;
-            this.myRigidBody.velocity = new Vector3(0, this.myRigidBody.velocity.y, 0);
-            this.animator.SetBool("Walking", false);
-        }
-    }
+    //        this.moveDirection = MoveDirection.Stop;
+    //        this.myRigidBody.velocity = new Vector3(0, this.myRigidBody.velocity.y, 0);
+    //        this.animator.SetBool("Walking", false);
+    //    }
+    //}
 
     /// <summary>
     /// Turn left or right
     /// </summary>
-    public void Turn(TurnDirection turnDirection)
+    //public void Turn(TurnDirection turnDirection)
+    //{
+    //    this.turnDirection = turnDirection;
+    //    Vector3 rotation = Vector3.zero;
+    //    Vector3 sidewaysMovement = Vector3.zero;
+
+    //    if (this.movementMode == MovementMode.Walk)
+    //    {
+    //        switch (this.turnDirection)
+    //        {
+    //            case TurnDirection.Stop: break;
+    //            case TurnDirection.Left:
+    //                rotation += transform.up * -maxTurnSpeed;
+    //                if (this.currentSpeed != 0f)
+    //                {
+    //                    sidewaysMovement += -Vector3.right * maxTurnSpeed * 10;
+    //                }
+    //                break;
+    //            case TurnDirection.Right:
+    //                rotation += transform.up * maxTurnSpeed;
+    //                if (this.currentSpeed != 0f)
+    //                {
+    //                    sidewaysMovement += Vector3.right * maxTurnSpeed * 10;
+    //                }
+    //                break;
+    //        }
+
+    //        this.myRigidBody.transform.Rotate(rotation);
+
+    //        if (this.currentSpeed > 0f)
+    //        {
+    //            //Calculate new force direction after turning (to prevent walking in the old direction after you the penguin has turned)
+    //            float magnitude = new Vector3(this.myRigidBody.velocity.x, 0, this.myRigidBody.velocity.z).magnitude;
+    //            Vector3 newVelocity = this.transform.forward * magnitude;
+    //            newVelocity.y = this.myRigidBody.velocity.y;
+    //            if (IsGrounded())
+    //            {
+    //                this.myRigidBody.velocity = newVelocity;
+    //            }
+    //            else
+    //            {
+    //                this.myRigidBody.velocity = newVelocity;
+    //            }
+    //        }
+
+    //        //this.myRigidBody.AddRelativeForce(sidewaysMovement);
+    //    }
+    //    else if (this.movementMode == MovementMode.Glide)
+    //    {
+    //        switch (this.turnDirection)
+    //        {
+    //            case TurnDirection.Stop: 
+    //                break;
+    //            case TurnDirection.Left:
+    //                rotation += transform.up * -maxTurnSpeed;
+    //                sidewaysMovement += -Vector3.right * maxTurnSpeed * 10;
+    //                break;
+    //            case TurnDirection.Right:
+    //                rotation += transform.up * maxTurnSpeed;
+    //                sidewaysMovement += Vector3.right * maxTurnSpeed * 10;
+    //                break;
+    //        }
+    //        this.myRigidBody.transform.Rotate(rotation);
+    //        this.myRigidBody.AddRelativeForce(sidewaysMovement);
+    //    }
+
+    //    this.turnDirection = TurnDirection.Stop;
+    //}
+
+    /// <summary>
+    /// Set turnSpeed to speedPercentage of maxTurnSpeed
+    /// </summary>
+    /// <param name="speedPercentage">Value between 0 and 1</param>
+    public void Turn(TurnDirection turnDirection, float speedPercentage)
     {
         this.turnDirection = turnDirection;
+        this.currentTurnSpeed = speedPercentage * maxTurnSpeed;
         Vector3 rotation = Vector3.zero;
         Vector3 sidewaysMovement = Vector3.zero;
 
@@ -245,24 +316,24 @@ public class CharacterMovement : MonoBehaviour
             {
                 case TurnDirection.Stop: break;
                 case TurnDirection.Left:
-                    rotation += transform.up * -turnSpeed;
-                    if (this.moveDirection != MoveDirection.Stop)
+                    rotation += transform.up * -currentTurnSpeed;
+                    if (this.currentSpeed != 0f)
                     {
-                        sidewaysMovement += -Vector3.right * turnSpeed * 10;
+                        sidewaysMovement += -Vector3.right * -currentTurnSpeed * 10;
                     }
                     break;
                 case TurnDirection.Right:
-                    rotation += transform.up * turnSpeed;
-                    if (this.moveDirection != MoveDirection.Stop)
+                    rotation += transform.up * currentTurnSpeed;
+                    if (this.currentSpeed != 0f)
                     {
-                        sidewaysMovement += Vector3.right * turnSpeed * 10;
+                        sidewaysMovement += Vector3.right * currentTurnSpeed * 10;
                     }
                     break;
             }
 
             this.myRigidBody.transform.Rotate(rotation);
 
-            if (this.moveDirection == MoveDirection.Forward1)
+            if (this.currentSpeed > 0f)
             {
                 //Calculate new force direction after turning (to prevent walking in the old direction after you the penguin has turned)
                 float magnitude = new Vector3(this.myRigidBody.velocity.x, 0, this.myRigidBody.velocity.z).magnitude;
@@ -284,15 +355,15 @@ public class CharacterMovement : MonoBehaviour
         {
             switch (this.turnDirection)
             {
-                case TurnDirection.Stop: 
+                case TurnDirection.Stop:
                     break;
                 case TurnDirection.Left:
-                    rotation += transform.up * -turnSpeed;
-                    sidewaysMovement += -Vector3.right * turnSpeed * 10;
+                    rotation += transform.up * -currentTurnSpeed;
+                    sidewaysMovement += -Vector3.right * currentTurnSpeed * 10;
                     break;
                 case TurnDirection.Right:
-                    rotation += transform.up * turnSpeed;
-                    sidewaysMovement += Vector3.right * turnSpeed * 10;
+                    rotation += transform.up * maxTurnSpeed;
+                    sidewaysMovement += Vector3.right * currentTurnSpeed * 10;
                     break;
             }
             this.myRigidBody.transform.Rotate(rotation);
@@ -362,7 +433,7 @@ public class CharacterMovement : MonoBehaviour
         {
             print(" stop gliding");
             animator.SetTrigger("StopGliding");
-            if (this.moveDirection == MoveDirection.Forward1 || this.moveDirection == MoveDirection.Forward2)
+            if (this.currentSpeed > 0f)
             {
                 animator.SetBool("Walking", true);
             }
@@ -481,5 +552,10 @@ public class CharacterMovement : MonoBehaviour
                 }
             }
         }
+    }
+
+    public bool isRotating()
+    {
+        return this.movementMode == MovementMode.Glide && this.turningPart && (this.myRigidBody.velocity.z < 1f);
     }
 }

@@ -26,6 +26,8 @@ public class CharacterManager : MonoBehaviour
 
     private List<Vector3> friendPositions;
 
+    private float collideIcecubeTimer = 0f;
+
 	// Use this for initialization
 	void Start () {
         this.animator = this.GetComponentInChildren<Animator>();
@@ -39,7 +41,11 @@ public class CharacterManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //Timers
+        if (this.collideIcecubeTimer > 0)
+        {
+            this.collideIcecubeTimer -= Time.deltaTime;
+        }
     }
 
     private IEnumerator InitUI()
@@ -178,12 +184,6 @@ public class CharacterManager : MonoBehaviour
         audioSource.PlayOneShot(clip);
     }
 
-     private void CollideObstacle(GameObject obstacle)
-    {
-        Destroy(obstacle);
-        this.animator.SetTrigger("Damage");
-    }
-
     void OnCollisionEnter(Collision collision)
     {
         GameObject other = collision.gameObject;
@@ -193,6 +193,7 @@ public class CharacterManager : MonoBehaviour
                 this.Damage();
                 break;
             case "Icecube":
+                this.collideIcecubeTimer = 2f;
                 this.audioSource.PlayOneShot(oefClip);
                 break;
         }
@@ -240,4 +241,8 @@ public class CharacterManager : MonoBehaviour
         }
     }
 
+    public bool isColliding()
+    {
+        return (this.collideIcecubeTimer > 0);
+    }
 }

@@ -17,20 +17,20 @@ public class InputController : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.UpArrow)) {
             //Move forward
-            this.characterMovement.ForwardMovementUp();
+            this.characterMovement.MoveForward(1);
         } else if (Input.GetKeyDown(KeyCode.DownArrow)) {
             //Stop
-            this.characterMovement.ForwardMovementDown();
+            this.characterMovement.MoveForward(0);
         }
 
         if (Input.GetKey(KeyCode.LeftArrow)) {
             //[Hold]
             //Turn left
-            this.characterMovement.Turn(TurnDirection.Left);
+            this.characterMovement.Turn(TurnDirection.Left, 1);
         } else if (Input.GetKey(KeyCode.RightArrow)){
             //[Hold]
             //Turn right
-            this.characterMovement.Turn(TurnDirection.Right);
+            this.characterMovement.Turn(TurnDirection.Right, 1);
         }
 
         if (Input.GetKey(KeyCode.Z)) {
