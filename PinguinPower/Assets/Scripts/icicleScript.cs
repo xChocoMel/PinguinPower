@@ -37,15 +37,16 @@ public class icicleScript : MonoBehaviour {
 			collider.center=new Vector3 (0,0,0);
 			GetComponent<Rigidbody>().useGravity=true;
 			GetComponent<CapsuleCollider>().isTrigger=false;
+			GetComponent<CapsuleCollider>().radius=0.15F; 
 		}
 	}
 	void OnCollisionEnter(Collision other)
 	{
-		 
+		GetComponent<CapsuleCollider> ().enabled = false; 
 		foreach(Transform child in transform) {
 			Destroy(child.gameObject);
 		}
-		GetComponent<CapsuleCollider> ().enabled = false;
+
 
 		StartCoroutine(Shatter());
 	}
