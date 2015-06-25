@@ -254,6 +254,10 @@ public class CharacterManager : MonoBehaviour
                     }
                 }
                 break;
+            case "CannonGlide":
+                CannonGlide cannonGlide = collider.GetComponent<CannonGlide>();
+                cannonGlide.Shoot(this.transform);
+                break;
         }
     }
     public void DetachCannon()
