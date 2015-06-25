@@ -21,6 +21,7 @@ public class CharacterMovement : MonoBehaviour
     private Rigidbody myRigidBody;
     private CapsuleCollider penguinCollider;
     public Transform graphics;
+    private CharacterManager characterManager;
 
     private Animator animator;
     public AudioSource audioSourceNormal;
@@ -73,6 +74,7 @@ public class CharacterMovement : MonoBehaviour
         this.myRigidBody = this.GetComponent<Rigidbody>();
         this.penguinCollider = this.GetComponent<CapsuleCollider>();
         this.animator = this.GetComponentInChildren<Animator>();
+        this.characterManager = this.GetComponent<CharacterManager>();
 
         this.movementMode = MovementMode.Walk;
         this.moveDirection = MoveDirection.Stop;
@@ -192,6 +194,11 @@ public class CharacterMovement : MonoBehaviour
     {
         if (this.movementMode == MovementMode.Walk)
         {
+            if (this.characterManager.getInCannon())
+            {
+                return;
+            }
+
             if (this.moveDirection == MoveDirection.Stop)
             {
                 StartCoroutine(PlayFootsteps());
@@ -235,6 +242,11 @@ public class CharacterMovement : MonoBehaviour
     /// </summary>
     public void Turn(TurnDirection turnDirection)
     {
+        if (this.characterManager.getInCannon())
+        {
+            return;
+        }
+
         this.turnDirection = turnDirection;
         Vector3 rotation = Vector3.zero;
         Vector3 sidewaysMovement = Vector3.zero;
