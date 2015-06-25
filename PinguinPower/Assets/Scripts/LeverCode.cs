@@ -8,10 +8,13 @@ public class LeverCode : MonoBehaviour {
 	public Status status;
 	  Animator animationcontroller;
 	public GameObject  playerobject;
-	private bool collidingwithplayer;
+	public bool collidingwithplayer = false;
 	void Start () {
 		animationcontroller = GetComponent<Animator>();
-		status= Status.disabled;
+        if (status == null)
+        {
+            status = Status.disabled;
+        }
 		canBePressed = true;
 		if(playerobject==null){
 			playerobject=GameObject.Find ("Penguin");
@@ -21,7 +24,7 @@ public class LeverCode : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if(collidingwithplayer = true)
+		if(collidingwithplayer == true)
 		{
 			if(playerobject.GetComponent<CharacterMovement> ().IsKicking ())
 			{
@@ -36,8 +39,6 @@ public class LeverCode : MonoBehaviour {
 					animationcontroller.SetTrigger ("DisableTrigger");
 					StartCoroutine (Wait ());
 					status = Status.disabled;
-
-					print (222);
 				}
 			}
 		}
