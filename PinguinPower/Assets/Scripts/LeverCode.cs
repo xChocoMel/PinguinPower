@@ -2,10 +2,10 @@
 using System.Collections;
 
 public class LeverCode : MonoBehaviour {
-	public enum Status {enabled,disabled};
+	private enum Status {enabled,disabled};
 	// Use this for initialization
 	private bool canBePressed;
-	public Status status;
+	private Status status = Status.disabled;
 	  Animator animationcontroller;
 	public GameObject  playerobject;
 	public bool collidingwithplayer = false;
@@ -19,6 +19,7 @@ public class LeverCode : MonoBehaviour {
 		if(playerobject==null){
 			playerobject=GameObject.Find ("Penguin");
 		}
+	 
 	}
 	//ForceMode.Impulse
 	// Update is called once per frame
