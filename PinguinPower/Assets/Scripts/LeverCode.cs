@@ -8,7 +8,7 @@ public class LeverCode : MonoBehaviour {
 	public Status status;
 	  Animator animationcontroller;
 	public GameObject  playerobject;
-	private bool collidingwithplayer;
+	public bool collidingwithplayer = false;
 	void Start () {
 		animationcontroller = GetComponent<Animator>();
 		status= Status.disabled;
@@ -21,7 +21,7 @@ public class LeverCode : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if(collidingwithplayer = true)
+		if(collidingwithplayer == true)
 		{
 			if(playerobject.GetComponent<CharacterMovement> ().IsKicking ())
 			{
