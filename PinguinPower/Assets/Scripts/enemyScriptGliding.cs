@@ -75,13 +75,7 @@ public class enemyScriptGliding : MonoBehaviour {
 			{
 				if(!waiting&&canBeKilled==true)
 				{
-					playerobject.GetComponent<Rigidbody>().velocity/=10;
-					playerobject.GetComponent<CharacterManager>().Damage();
-					transform.LookAt (playerobject.transform.position);
-					GetComponent<AudioSource>().PlayOneShot(hitsound);
-					this.animator.SetTrigger("Attack");
-					print ("colliding");
-					StartCoroutine(Wait());
+					AttackPenguin();
 				}
 			}
 	}
@@ -112,13 +106,7 @@ public class enemyScriptGliding : MonoBehaviour {
 		if (collision.gameObject.name == playerobject.name) 
 		{
 			collidingWithPlayer = true;
-			playerobject.GetComponent<Rigidbody>().velocity/=10;
-			playerobject.GetComponent<CharacterManager>().Damage();
-			transform.LookAt (playerobject.transform.position);
-			GetComponent<AudioSource>().PlayOneShot(hitsound);
-			this.animator.SetTrigger("Attack");
-			print ("colliding");
-			StartCoroutine(Wait());
+			AttackPenguin();
 		}
 	}
 	void OnTriggerExit(Collider  collisionInfo) 
@@ -126,9 +114,20 @@ public class enemyScriptGliding : MonoBehaviour {
 		if (collisionInfo.gameObject.name == playerobject.name) {
 			
 			collidingWithPlayer=false;
-			print (11111);
+		 
 		}
 	} 
+	void AttackPenguin()
+	{
+
+		playerobject.GetComponent<Rigidbody>().velocity/=10;
+		playerobject.GetComponent<CharacterManager>().Damage();
+		transform.LookAt (playerobject.transform.position);
+		GetComponent<AudioSource>().PlayOneShot(hitsound);
+		this.animator.SetTrigger("Attack");
+	 
+		StartCoroutine(Wait());
+	}
 	IEnumerator Wait(){
 		 
 		waiting = true;
