@@ -9,7 +9,7 @@ public class enemyScriptGliding : MonoBehaviour {
 	public GameObject[] routes;
 	 
 	//how far the enemy can go
-	bool waiting;
+	bool waiting=false;
 	public AudioClip dying;
 	public AudioClip hitsound;
 	public AudioClip loselife;
@@ -51,29 +51,31 @@ public class enemyScriptGliding : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () 
+	void Update() 
 	{
 			Patrolling();
+		 	
 			if(collidingWithPlayer)
 			{
+
 				OnCollidingWithPlayer();
 			}
 	}
 	void OnCollidingWithPlayer()
 	{	 
+			 
 			if(playerobject.GetComponent<CharacterMovement>().IsKicking())
 			{
 				if(canBeKilled)
 				{
-					StartCoroutine(Dying());
-					 
+					StartCoroutine(Dying()); 
 				}
 			}
 			else
 			{
 				if(!waiting&&canBeKilled==true)
 				{
-					playerobject.GetComponent<Rigidbody>().velocity/=4;
+					playerobject.GetComponent<Rigidbody>().velocity/=10;
 					playerobject.GetComponent<CharacterManager>().Damage();
 					transform.LookAt (playerobject.transform.position);
 					GetComponent<AudioSource>().PlayOneShot(hitsound);
@@ -82,10 +84,9 @@ public class enemyScriptGliding : MonoBehaviour {
 					StartCoroutine(Wait());
 				}
 			}
-		 
-		
 	}
 	void Patrolling(){
+
 		if (routes.Length > 0)
 		{
 			animator.SetBool("Walking", true);
@@ -108,18 +109,24 @@ public class enemyScriptGliding : MonoBehaviour {
 		}
 	}
 	void OnTriggerEnter(Collider  collision) {
-		if (collision.gameObject.name == playerobject.name) {
+		if (collision.gameObject.name == playerobject.name) 
+		{
 			collidingWithPlayer = true;
-			print (222);
-			
+			playerobject.GetComponent<Rigidbody>().velocity/=10;
+			playerobject.GetComponent<CharacterManager>().Damage();
+			transform.LookAt (playerobject.transform.position);
+			GetComponent<AudioSource>().PlayOneShot(hitsound);
+			this.animator.SetTrigger("Attack");
+			print ("colliding");
+			StartCoroutine(Wait());
 		}
-		
 	}
 	void OnTriggerExit(Collider  collisionInfo) 
 	{
 		if (collisionInfo.gameObject.name == playerobject.name) {
 			
 			collidingWithPlayer=false;
+			print (11111);
 		}
 	} 
 	IEnumerator Wait(){
