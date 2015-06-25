@@ -14,7 +14,6 @@ public class ChangeCameraScript : MonoBehaviour {
     {
         if (collision.gameObject.name == player.name)
         {
-            Debug.Log("Player entered");
             oldAimYValue = maincamera.aimY;
             oldAimZValue = maincamera.aimZ;
             maincamera.aimY = changeYValue;
@@ -25,7 +24,6 @@ public class ChangeCameraScript : MonoBehaviour {
     {
         if (collision.gameObject.name == player.name)
         {
-            Debug.Log("Player lef");
             maincamera.aimY = oldAimYValue;
             maincamera.aimZ = oldAimZValue;
         }

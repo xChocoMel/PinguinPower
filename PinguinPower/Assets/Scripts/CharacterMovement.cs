@@ -21,6 +21,7 @@ public class CharacterMovement : MonoBehaviour
     private Rigidbody myRigidBody;
     private CapsuleCollider penguinCollider;
     public Transform graphics;
+    private CharacterManager characterManager;
 
     private Animator animator;
     public AudioSource audioSourceNormal;
@@ -73,6 +74,7 @@ public class CharacterMovement : MonoBehaviour
         this.myRigidBody = this.GetComponent<Rigidbody>();
         this.penguinCollider = this.GetComponent<CapsuleCollider>();
         this.animator = this.GetComponentInChildren<Animator>();
+        this.characterManager = this.GetComponent<CharacterManager>();
 
         this.movementMode = MovementMode.Walk;
 
@@ -189,6 +191,11 @@ public class CharacterMovement : MonoBehaviour
     public void MoveForward(float speedPercentage) {
         if (this.movementMode == MovementMode.Walk)
         {
+            if (this.characterManager.getInCannon())
+            {
+                return;
+            }
+
             if (this.currentSpeed == 0f)
             {
                 StartCoroutine(PlayFootsteps());
@@ -305,6 +312,11 @@ public class CharacterMovement : MonoBehaviour
     /// <param name="speedPercentage">Value between 0 and 1</param>
     public void Turn(TurnDirection turnDirection, float speedPercentage)
     {
+        if (this.characterManager.getInCannon())
+        {
+            return;
+        }
+
         this.turnDirection = turnDirection;
         this.currentTurnSpeed = speedPercentage * maxTurnSpeed;
         Vector3 rotation = Vector3.zero;
@@ -557,5 +569,13 @@ public class CharacterMovement : MonoBehaviour
     public bool isRotating()
     {
         return this.movementMode == MovementMode.Glide && this.turningPart && (this.myRigidBody.velocity.z < 1f);
+    }
+
+    void OnParticleCollision (GameObject other)
+    {
+        if (other.tag == "Wind")
+        {
+            this.myRigidBody.AddRelativeForce(Vector3.up * 300);
+        }
     }
 }
