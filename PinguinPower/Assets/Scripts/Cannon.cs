@@ -67,9 +67,6 @@ public class Cannon : MonoBehaviour {
     {
         Debug.Log("Cannon is loaded...");
         this.penguin = penguin;
-        this.penguin.GetComponent<Rigidbody>().useGravity = false;
-        this.penguin.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        this.penguin.GetComponent<CharacterMovement>().MoveForward(0f);
         this.timer = this.loadtimer;
         this.loaded = true;
     }
@@ -81,11 +78,11 @@ public class Cannon : MonoBehaviour {
 
         this.Spot.DetachChildren();
         this.penguin.GetComponent<Rigidbody>().useGravity = true;
-        this.penguin.GetComponent<CharacterManager>().DetachCannon();
+        this.penguin.GetComponent<CharacterMovement>().DetachCannon();
         this.penguin.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * this.cannonforce);
         var vector = Vector3.zero;
-        vector.y = this.penguin.rotation.y;
-        this.penguin.transform.rotation = Quaternion.Euler(vector);
+        vector.y = this.penguin.localRotation.y;
+        //this.penguin.rotation = new Quaternion(0, this.penguin.rotation.y, 0, 0);
         this.ParticleSystem.gameObject.SetActive(true);
     }
 
