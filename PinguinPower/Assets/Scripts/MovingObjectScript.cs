@@ -44,7 +44,7 @@ public class MovingObjectScript : MonoBehaviour
         }
         if (Player == null)
         {
-            Player = GameObject.Find("   ");
+            Player = GameObject.Find("Penguin");
         }
         if (rotatehorizontaltime == 0 && rotatemode == RotateDirection.horizontal)
         {
@@ -188,9 +188,12 @@ public class MovingObjectScript : MonoBehaviour
     }
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.name == Player.name && rotatemode != RotateDirection.vertical)
+        if (collision.transform.tag == "Player" && rotatemode != RotateDirection.vertical)
         {
-            transform.DetachChildren();
+            if (this.rotatemode == RotateDirection.circus)
+            {
+                transform.DetachChildren();
+            }
             var emptyObject = new GameObject();
             emptyObject.transform.parent = gameObject.transform;
             collision.transform.parent = emptyObject.transform;
@@ -209,7 +212,7 @@ public class MovingObjectScript : MonoBehaviour
     }
     void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.name == Player.name)
+        if (collision.transform.tag == "Player")
         {
             collision.transform.localScale = new Vector3(1, 1, 1);
             collision.transform.parent = null;
