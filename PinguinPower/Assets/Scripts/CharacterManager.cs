@@ -23,7 +23,6 @@ public class CharacterManager : MonoBehaviour
     private int lives = 3;
     private int fish = 0;
     private int friends = 0;
-	private bool inCannon;
     //private bool canBeDamaged=true;
 
     private List<Vector3> friendPositions;
@@ -34,7 +33,6 @@ public class CharacterManager : MonoBehaviour
 	void Start () {
         this.animator = this.GetComponentInChildren<Animator>();
         this.friendPositions = new List<Vector3>();
-		this.inCannon = false;
         this.LoadSave();
         StartCoroutine(InitUI());
     }
@@ -239,19 +237,6 @@ public class CharacterManager : MonoBehaviour
 			case "Barrel":
 				StartCoroutine(other.GetComponent<DestroyableObject>().Destroy());
 				break;
-			case "Cannon":
-				if (!this.inCannon)
-				{
-					Cannon cannon = collider.GetComponent<Cannon>();
-					if (cannon.LoadCannonAllowed())
-					{
-						this.transform.parent = cannon.getSpot();
-						this.transform.localPosition = Vector3.zero;
-						this.transform.localRotation = new Quaternion(0, 0, 0, 0);
-						cannon.Load(this.transform);
-					}
-				}
-				break;
 			case "CannonGlide":
                 CannonGlide cannonGlide = collider.GetComponent<CannonGlide>();
                 cannonGlide.Shoot(this.transform);
@@ -262,20 +247,5 @@ public class CharacterManager : MonoBehaviour
     public bool isColliding()
     {
         return (this.collideIcecubeTimer > 0);
-    }
-
-	public void DetachCannon()
-	{
-		this.inCannon = false;
-	}
-	
-	public bool getInCannon()
-	{
-		return this.inCannon;
-	}
-
-    public void setInCannon()
-    {
-        this.inCannon = true;
     }
 }
