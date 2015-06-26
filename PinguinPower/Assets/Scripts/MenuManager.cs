@@ -17,74 +17,78 @@ public class MenuManager : MonoBehaviour {
     private SaveManager saveManager = new SaveManager();
     private SceneFader sceneFader;
 
+	private AudioSource audioSource;
+	public AudioClip clickClip;
+
 	// Use this for initialization
 	void Start () {
 
         this.sceneFader = this.gameObject.GetComponent<SceneFader>();
+		this.audioSource = this.gameObject.GetComponent<AudioSource> ();
 
         try
         {
             this.MainMenu = GameObject.Find("Canvas").transform.FindChild("MainMenu").gameObject;
-            Transform container = this.MainMenu.transform.GetChild(0).GetChild(1).GetChild(0);
-            container.FindChild("BtnNewGame").GetComponent<Button>().onClick.AddListener(() => ClickNewGame());
-            container.FindChild("BtnContinueGame").GetComponent<Button>().onClick.AddListener(() => ClickContinueGame());
-
-            if (!this.saveManager.SaveAvailable())
+            Transform container = this.MainMenu.transform;
+			container.FindChild("BtnNewGame").GetComponent<Button>().onClick.AddListener(() => ClickNewGame());
+			container.FindChild("BtnContinueGame").GetComponent<Button>().onClick.AddListener(() => ClickContinueGame());
+            
+			if (!this.saveManager.SaveAvailable())
             {
                 container.FindChild("BtnContinueGame").GetComponent<Button>().interactable = false;
             }
 
-            container.FindChild("BtnQuit").GetComponent<Button>().onClick.AddListener(() => ClickQuit());
+			container.FindChild("BtnQuit").GetComponent<Button>().onClick.AddListener(() => ClickQuit());
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             this.MainMenu = null;
         }
 
-        try
-        {
-            this.YesNoMessage = GameObject.Find("Canvas").transform.FindChild("YesNoMessage").gameObject;
-            Transform container = this.YesNoMessage.transform.GetChild(0).GetChild(1).GetChild(0);
-            container.FindChild("BtnYes").GetComponent<Button>().onClick.AddListener(() => ClickYes());
-            container.FindChild("BtnNo").GetComponent<Button>().onClick.AddListener(() => ClickNo());
-        }
-        catch (Exception)
-        {
-            this.MainMenu = null;
-        }
+		try
+		{
+			this.YesNoMessage = GameObject.Find("Canvas").transform.FindChild("YesNoMessage").gameObject;
+			Transform container = this.YesNoMessage.transform;
+			container.FindChild("BtnYes").GetComponent<Button>().onClick.AddListener(() => ClickYes());
+			container.FindChild("BtnNo").GetComponent<Button>().onClick.AddListener(() => ClickNo());
+		}
+		catch (Exception ex)
+		{
+			this.YesNoMessage = null;
+		}
 
-        try
-        {
-            this.PauseMenu = GameObject.Find("Canvas").transform.FindChild("PauseMenu").gameObject;
-            Transform container = this.PauseMenu.transform.GetChild(0).GetChild(1).GetChild(0);
-            container.FindChild("BtnResume").GetComponent<Button>().onClick.AddListener(() => ClickResume());
-            container.FindChild("BtnRetry").GetComponent<Button>().onClick.AddListener(() => ClickRetry());
-            container.FindChild("BtnQuitToMainMenu").GetComponent<Button>().onClick.AddListener(() => ClickQuitToMainMenu());
-        }
-        catch (Exception)
-        {
-            this.PauseMenu = null;
-        }
-
-        try
-        {
-            this.GameOverMenu = GameObject.Find("Canvas").transform.FindChild("GameOverMenu").gameObject;
-            Transform container = this.GameOverMenu.transform.GetChild(0).GetChild(1).GetChild(0);
-            container.FindChild("BtnRetry").GetComponent<Button>().onClick.AddListener(() => ClickRetry());
-            container.FindChild("BtnQuitToMainMenu").GetComponent<Button>().onClick.AddListener(() => ClickQuitToMainMenu());
-        }
-        catch (Exception)
-        {
-            this.GameOverMenu = null;
-        }
+		try
+		{
+			this.PauseMenu = GameObject.Find("Canvas").transform.FindChild("PauseMenu").gameObject;
+			Transform container = this.PauseMenu.transform;
+			container.FindChild("BtnResume").GetComponent<Button>().onClick.AddListener(() => ClickResume());
+			container.FindChild("BtnRetry").GetComponent<Button>().onClick.AddListener(() => ClickRetry());
+			container.FindChild("BtnQuitToMainMenu").GetComponent<Button>().onClick.AddListener(() => ClickQuitToMainMenu());
+		}
+		catch (Exception ex)
+		{
+			this.PauseMenu = null;
+		}
+		
+		try
+		{
+			this.GameOverMenu = GameObject.Find("Canvas").transform.FindChild("GameOverMenu").gameObject;
+			Transform container = this.GameOverMenu.transform;;
+			container.FindChild("BtnRetry").GetComponent<Button>().onClick.AddListener(() => ClickRetry());
+			container.FindChild("BtnQuitToMainMenu").GetComponent<Button>().onClick.AddListener(() => ClickQuitToMainMenu());
+		}
+		catch (Exception)
+		{
+			this.GameOverMenu = null;
+		}
 
         try
         {
             this.Hud = GameObject.Find("Canvas").transform.FindChild("HUD").gameObject;
-            Transform container = this.Hud.transform.GetChild(0).GetChild(0).GetChild(0);
+			Transform container = this.Hud.transform;
             this.HudValues = new Text[] { container.GetChild(0).GetChild(1).GetComponent<Text>(), container.GetChild(1).GetChild(1).GetComponent<Text>(), container.GetChild(2).GetChild(1).GetComponent<Text>() };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             Debug.Log("No HUD :(");
             this.Hud = null;
@@ -97,7 +101,9 @@ public class MenuManager : MonoBehaviour {
 	
 	}
 
-    private void ClickNewGame() {
+    public void ClickNewGame() 
+	{
+		this.audioSource.PlayOneShot (clickClip);
 
         if (this.saveManager.SaveAvailable())
         {
@@ -109,26 +115,28 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    private void ClickYes()
+	public void ClickYes()
     {
+		this.audioSource.PlayOneShot (clickClip);
         this.saveManager.DeleteSaves();
-        this.Pause(false);
         this.StartScene(1);
     }
 
-    private void ClickNo()
+	public void ClickNo()
     {
+		this.audioSource.PlayOneShot (clickClip);
         this.YesNoMessage.SetActive(false);
     }
 
-    private void ClickContinueGame()
+	public void ClickContinueGame()
     {
-        this.Pause(false);
+		this.audioSource.PlayOneShot (clickClip);
         this.StartScene(1);
     }
 
-    private void ClickRetry()
+	public void ClickRetry()
     {
+		this.audioSource.PlayOneShot (clickClip);
         this.Pause(false);
         this.StartScene(Application.loadedLevel);
     }
@@ -140,24 +148,39 @@ public class MenuManager : MonoBehaviour {
     //    this.StartScene(Application.loadedLevel);
     //}
 
-    private void ClickQuit() {
+	public void ClickQuit()
+	{
+		this.audioSource.PlayOneShot (clickClip);
         Application.Quit();
     }
 
-    private void ClickQuitToMainMenu() {
+	public void ClickQuitToMainMenu()
+	{
+		this.audioSource.PlayOneShot (clickClip);
+
         //Save characterdata
-        int[] values = new int[] { int.Parse(this.HudValues[0].text), int.Parse(this.HudValues[1].text), int.Parse(this.HudValues[2].text) };
+		string valueLives = this.HudValues[0].text;
+		int valueLive = int.Parse(valueLives.Substring (0, valueLives.Length - 1));
+
+		string valueFriends = this.HudValues[1].text;
+		int valueFriend = int.Parse(valueFriends.Substring (0, valueFriends.Length - 1));
+
+		string valueFishes = this.HudValues[2].text;
+		int valueFish = int.Parse(valueFishes.Substring (0, valueFishes.Length - 1));
+
+		int[] values = new int[] { valueLive, valueFriend, valueFish};
         this.saveManager.SaveCharacterdata(Application.loadedLevel, values);
         this.StartScene(0);
     }
 
-    private void ClickResume() {
-        
+	public void ClickResume() 
+	{
+		this.audioSource.PlayOneShot (clickClip);
         this.Pause(false);
     }
 
-    private void Pause(bool pause) {
-
+	public void Pause(bool pause) 
+	{
         this.PauseMenu.SetActive(pause);
 
         if (pause) {
@@ -167,8 +190,7 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    public void OpenCloseMenu() {
-
+	public void OpenCloseMenu()	{
         if (this.GameOverMenu != null) {
             if (this.GameOverMenu.activeSelf == true) {
                 return;
@@ -180,12 +202,17 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    public void ShowGameOverMenu() {
+	public void ShowGameOverMenu() 	{
         if (this.GameOverMenu != null) {
             if (!this.GameOverMenu.activeSelf) {
                 if (this.PauseMenu != null) {
                     if (this.PauseMenu.activeSelf) {
+
                         this.OpenCloseMenu();
+
+						if (this.Hud != null) {
+							this.Hud.SetActive(false);
+						}
                     }
                 }
 
@@ -193,32 +220,32 @@ public class MenuManager : MonoBehaviour {
                 this.GameOverMenu.SetActive(true);
             }
         }
-    }
-
-    public void UpdateFish(string value)
-    {
-        if (this.Hud == null) { return; }
-        this.HudValues[0].text = value;
-    }
+    }    
 
     public void UpdateLives(string value)
     {
         if (this.Hud == null) { return; }
-        this.HudValues[1].text = value;
+		this.HudValues[0].text = value + "x";
     }
 
     public void UpdateFriends(string value)
     {
         if (this.Hud == null) { return; }
-        this.HudValues[2].text = value;
+		this.HudValues[1].text = value + "x";
     }
+
+	public void UpdateFish(string value)
+	{
+		if (this.Hud == null) { return; }
+		this.HudValues[2].text = value + "x";
+	}
 
     public SaveManager getSaveManager()
     {
         return this.saveManager;
     }
 
-    private void StartScene(int index)
+	public void StartScene(int index)
     {
         this.sceneFader.EndScene(index);
     }

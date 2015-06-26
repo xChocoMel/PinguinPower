@@ -41,7 +41,6 @@ public class DestroyableObject : MonoBehaviour {
 			//Get random rare object
 			if (r == 0) {
 				int r2 = Random.Range(1,objectsInside.Length);
-				print (r2);
 				prefab = objectsInside [r2];
 			}
 
