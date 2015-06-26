@@ -125,17 +125,17 @@ public class CharacterManager : MonoBehaviour
 
     public void Damage()
     {
-        //if(canBeDamaged=true)
-        //{
-        this.animator.SetTrigger("Damage");
-        this.audioSource.PlayOneShot(ouchPenguinClips[UnityEngine.Random.Range(0, ouchPenguinClips.Length)]);
-        lives--;
-        //}
-        menuManager.UpdateLives(this.lives.ToString());
-        if (lives == 0)
-        {
-            StartCoroutine(Die());
-        }
+		this.animator.SetTrigger ("Damage");
+		this.audioSource.PlayOneShot (ouchPenguinClips [UnityEngine.Random.Range (0, ouchPenguinClips.Length)]);
+		lives--;
+
+		if (lives <= 0) {
+			menuManager.UpdateLives ("0");
+			StartCoroutine (Die ());
+		} else {
+			menuManager.UpdateLives (this.lives.ToString ());
+		}
+        
     }
 
     private IEnumerator Die()
