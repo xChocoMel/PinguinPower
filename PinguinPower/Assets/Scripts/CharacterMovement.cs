@@ -230,9 +230,12 @@ public class CharacterMovement : MonoBehaviour
     private IEnumerator PlayFootsteps()
     {
         yield return new WaitForSeconds(0.5f);
-        if (this.movementMode == MovementMode.Walk && this.currentSpeed != 0f && !jumping)
+        if (this.movementMode == MovementMode.Walk && this.currentSpeed != 0f)
         {
-            this.audioSourceWalking.PlayOneShot(footstepClips[Random.Range(0, footstepClips.Length)]);
+            if (!jumping)
+            {
+                this.audioSourceWalking.PlayOneShot(footstepClips[Random.Range(0, footstepClips.Length)]);
+            }
             StartCoroutine(PlayFootsteps());
         }
     }

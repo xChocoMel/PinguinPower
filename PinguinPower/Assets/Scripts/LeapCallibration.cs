@@ -3,6 +3,13 @@ using System.Collections;
 using Leap;
 
 public class LeapCallibration : MonoBehaviour {
+    private MovieTexture movie;
+    public MovieTexture movieRollLeft;
+    public MovieTexture movieRollRight;
+    public MovieTexture movieGrab;
+    public MovieTexture moviePitch;
+    public MovieTexture movieSpeedZ;
+
     private float secondsToWait = 5f;
 
     private Controller leapController;
@@ -15,6 +22,7 @@ public class LeapCallibration : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         this.leapController = new Controller();
+        this.movie = movieRollLeft;
         StartCoroutine(CallibrateMaxRollLeft());
 	}
 	
@@ -81,6 +89,8 @@ public class LeapCallibration : MonoBehaviour {
     /// <returns></returns>
     private IEnumerator CallibrateMaxRollLeft()
     {
+        movie.Play();
+        yield return new WaitForSeconds(movie.duration);
         if (hand != null)
         {
             print("Draai je pols zover mogelijk naar links");
@@ -90,6 +100,7 @@ public class LeapCallibration : MonoBehaviour {
                 CallibrationData.maxRollLeft = hand.PalmNormal.Roll;
                 print("Callibratie roll left: " + CallibrationData.maxRollLeft);
                 this.StopCoroutine(CallibrateMaxRollLeft());
+                this.movie = movieRollRight;
                 StartCoroutine(CallibrateMaxRollRight());
             }
             else
@@ -113,6 +124,8 @@ public class LeapCallibration : MonoBehaviour {
     /// <returns></returns>
     private IEnumerator CallibrateMaxRollRight()
     {
+        movie.Play();
+        yield return new WaitForSeconds(movie.duration);
         if (hand != null)
         {
             print("Draai je pols zover mogelijk naar rechts");
@@ -122,6 +135,7 @@ public class LeapCallibration : MonoBehaviour {
                 CallibrationData.maxRollRight = hand.PalmNormal.Roll;
                 print("Callibratie roll right: " + CallibrationData.maxRollRight);
                 this.StopCoroutine(CallibrateMaxRollRight());
+                this.movie = movieGrab;
                 StartCoroutine(this.CallibrateMaxGrabPlayer());
             }
             else
@@ -145,6 +159,8 @@ public class LeapCallibration : MonoBehaviour {
     /// <returns></returns>
     private IEnumerator CallibrateMaxGrabPlayer()
     {
+        movie.Play();
+        yield return new WaitForSeconds(movie.duration);
         if (hand != null)
         {
             print("Maak een vuist");
@@ -154,6 +170,7 @@ public class LeapCallibration : MonoBehaviour {
                 CallibrationData.maxGrabPlayer = hand.GrabStrength;
                 print("Callibratie grab: " + CallibrationData.maxGrabPlayer);
                 this.StopCoroutine(CallibrateMaxGrabPlayer());
+                this.movie = moviePitch;
                 StartCoroutine(CallibrateMaxPitchPlayer());
             }
             else
@@ -177,6 +194,8 @@ public class LeapCallibration : MonoBehaviour {
     /// <returns></returns>
     private IEnumerator CallibrateMaxPitchPlayer()
     {
+        movie.Play();
+        yield return new WaitForSeconds(movie.duration);
         if (hand != null)
         {
             print("Draai je hand omhoog");
@@ -186,6 +205,7 @@ public class LeapCallibration : MonoBehaviour {
                 CallibrationData.maxPitchPlayer = hand.Direction.Pitch;
                 print("Callibratie pitch: " + CallibrationData.maxPitchPlayer);
                 this.StopCoroutine(CallibrateMaxPitchPlayer());
+                this.movie = movieSpeedZ;
                 StartCoroutine(CallibrateMaxSpeedZ());
             }
             else
@@ -209,7 +229,8 @@ public class LeapCallibration : MonoBehaviour {
     /// <returns></returns>
     private IEnumerator CallibrateMaxSpeedZ()
     {
-        yield return new WaitForFixedUpdate();
+        movie.Play();
+        yield return new WaitForSeconds(movie.duration);
         if (hand != null)
         {
             print("Beweeg je hand 3x zo snel mogelijk naar voren");
@@ -221,6 +242,14 @@ public class LeapCallibration : MonoBehaviour {
             print("Hand is uit beeld");
             yield return new WaitForFixedUpdate();
             StartCoroutine(CallibrateMaxSpeedZ());
+        }
+    }
+
+    void OnGUI()
+    {
+        if (movie.isPlaying)
+        {
+            GUI.DrawTexture(new Rect(0, 0, UnityEngine.Screen.width, UnityEngine.Screen.height), movie, ScaleMode.StretchToFill);
         }
     }
 }
