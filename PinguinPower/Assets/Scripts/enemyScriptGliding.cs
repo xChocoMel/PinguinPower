@@ -75,7 +75,7 @@ public class enemyScriptGliding : MonoBehaviour {
 			{
 				if(!waiting&&canBeKilled==true)
 				{
-					AttackPenguin();
+				AttackPenguin(); 
 				}
 			}
 	}
@@ -119,18 +119,19 @@ public class enemyScriptGliding : MonoBehaviour {
 	} 
 	void AttackPenguin()
 	{
-
-		playerobject.GetComponent<Rigidbody>().velocity/=10;
+		 
+		waiting = true;
+	 
+		playerobject.GetComponent<Rigidbody>().velocity/=2F;
 		playerobject.GetComponent<CharacterManager>().Damage();
 		transform.LookAt (playerobject.transform.position);
 		GetComponent<AudioSource>().PlayOneShot(hitsound);
 		this.animator.SetTrigger("Attack");
-	 
 		StartCoroutine(Wait());
 	}
 	IEnumerator Wait(){
 		 
-		waiting = true;
+
 		yield return new WaitForSeconds(2.0F);
 		waiting = false;
 		
