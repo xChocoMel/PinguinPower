@@ -28,7 +28,9 @@ public class TrampolineScript : MonoBehaviour {
 	}
 	void OnTriggerEnter(Collider  collision) 
 	{
-		animator.SetTrigger ("Bounce");
+		if (animator != null) {
+			animator.SetTrigger ("Bounce");
+		}
 		colliding=true;
 	}
 	void OnTriggerExit(Collider  collision) {
