@@ -83,7 +83,9 @@ public class Cannon : MonoBehaviour {
         this.penguin.GetComponent<Rigidbody>().useGravity = true;
         this.penguin.GetComponent<CharacterManager>().DetachCannon();
         this.penguin.GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * this.cannonforce);
-        this.penguin.transform.rotation = Quaternion.Euler(Vector3.zero);
+        var vector = Vector3.zero;
+        vector.y = this.penguin.rotation.y;
+        this.penguin.transform.rotation = Quaternion.Euler(vector);
         this.ParticleSystem.gameObject.SetActive(true);
     }
 

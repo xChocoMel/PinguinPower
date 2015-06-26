@@ -15,6 +15,7 @@ public class CharacterManager : MonoBehaviour
     public AudioClip[] ouchPenguinClips;
     public AudioClip deadClip;
     public AudioClip oefClip;
+	public AudioClip checkpointClip;
 
     private Animator animator;
     public AudioSource audioSource;
@@ -124,17 +125,17 @@ public class CharacterManager : MonoBehaviour
 
     public void Damage()
     {
-        //if(canBeDamaged=true)
-        //{
-        this.animator.SetTrigger("Damage");
-        this.audioSource.PlayOneShot(ouchPenguinClips[UnityEngine.Random.Range(0, ouchPenguinClips.Length)]);
-        lives--;
-        //}
-        menuManager.UpdateLives(this.lives.ToString());
-        if (lives == 0)
-        {
-            StartCoroutine(Die());
-        }
+		this.animator.SetTrigger ("Damage");
+		this.audioSource.PlayOneShot (ouchPenguinClips [UnityEngine.Random.Range (0, ouchPenguinClips.Length)]);
+		lives--;
+
+		if (lives <= 0) {
+			menuManager.UpdateLives ("0");
+			StartCoroutine (Die ());
+		} else {
+			menuManager.UpdateLives (this.lives.ToString ());
+		}
+        
     }
 
     private IEnumerator Die()
@@ -214,16 +215,16 @@ public class CharacterManager : MonoBehaviour
                 this.audioSource.PlayOneShot(deadClip);
                 StartCoroutine(GameOver());
                 break;
-            case "Gate":
-                int newLevel = Application.loadedLevel + 1;
-                if (newLevel > 2)
-                {
-                    newLevel = 1;
-                }
-                Application.LoadLevel(newLevel);
-                break;
             case "Checkpoint":
-                Debug.Log("Checkpoint");
+				this.audioSource.PlayOneShot(checkpointClip);
+				ParticleSystem[] particles = other.GetComponentsInChildren<ParticleSystem> ();
+				
+				foreach (ParticleSystem p in particles) {
+					if (p.tag.Equals("ParticleImpulse")) {
+						p.Play();
+					}
+				}
+
                 this.menuManager.getSaveManager().SaveCheckpoint(Application.loadedLevel, new Vector3(collider.transform.position.x, this.transform.position.y, collider.transform.position.z));
 
                 if (this.friendPositions.Count > 0)

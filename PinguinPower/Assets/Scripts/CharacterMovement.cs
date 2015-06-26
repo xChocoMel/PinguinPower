@@ -82,6 +82,8 @@ public class CharacterMovement : MonoBehaviour
         this.jumpTimer = 0.3f;
 
         this.inWindturbine = false;
+
+        Physics.gravity = Vector3.up * walkGravity;
     }
 
     void FixedUpdate()
