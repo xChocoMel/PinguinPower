@@ -15,6 +15,7 @@ public class CharacterManager : MonoBehaviour
     public AudioClip[] ouchPenguinClips;
     public AudioClip deadClip;
     public AudioClip oefClip;
+	public AudioClip checkpointClip;
 
     private Animator animator;
     public AudioSource audioSource;
@@ -215,8 +216,7 @@ public class CharacterManager : MonoBehaviour
                 StartCoroutine(GameOver());
                 break;
             case "Checkpoint":
-                Debug.Log("Checkpoint");
-
+				this.audioSource.PlayOneShot(checkpointClip);
 				ParticleSystem[] particles = other.GetComponentsInChildren<ParticleSystem> ();
 				
 				foreach (ParticleSystem p in particles) {

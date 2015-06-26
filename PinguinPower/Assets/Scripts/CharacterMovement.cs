@@ -79,6 +79,8 @@ public class CharacterMovement : MonoBehaviour
         this.movementMode = MovementMode.Walk;
 
         this.jumpTimer = 0.3f;
+
+        Physics.gravity = Vector3.up * walkGravity;
     }
 
     void FixedUpdate()
