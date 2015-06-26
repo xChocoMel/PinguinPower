@@ -214,14 +214,6 @@ public class CharacterManager : MonoBehaviour
                 this.audioSource.PlayOneShot(deadClip);
                 StartCoroutine(GameOver());
                 break;
-            case "Gate":
-                int newLevel = Application.loadedLevel + 1;
-                if (newLevel > 2)
-                {
-                    newLevel = 1;
-                }
-                Application.LoadLevel(newLevel);
-                break;
             case "Checkpoint":
                 Debug.Log("Checkpoint");
                 this.menuManager.getSaveManager().SaveCheckpoint(Application.loadedLevel, new Vector3(collider.transform.position.x, this.transform.position.y, collider.transform.position.z));
