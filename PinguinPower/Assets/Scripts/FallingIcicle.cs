@@ -23,17 +23,17 @@ public class FallingIcicle : MonoBehaviour {
 			speed = 0.05f;
 		}
 
-		this.transform.position = new Vector3(this.transform.parent.position.x + 0.75f, height, this.transform.parent.position.z);
-		bottom = new Vector3(this.transform.position.x, 0, this.transform.position.z);
+		this.transform.position = new Vector3(this.transform.parent.position.x + 0.75f, this.transform.parent.position.y + height, this.transform.parent.position.z);
+		bottom = new Vector3(this.transform.position.x, this.transform.parent.position.y, this.transform.position.z);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (fall) {
-			if (this.transform.position.y > 1.5) {
+			if (this.transform.position.y > (this.transform.parent.position.y + 1.5)) {
 				this.transform.position = Vector3.Lerp(this.transform.position, bottom, speed);
-			} else if (this.transform.position.y <= 1.5) {
-				this.transform.position = new Vector3(this.transform.position.x, 1.5f, this.transform.position.z);
+			} else if (this.transform.position.y <= (this.transform.parent.position.y + 1.5)) {
+				this.transform.position = new Vector3(this.transform.position.x, this.transform.parent.position.y + 1.5f, this.transform.position.z);
 				StartCoroutine(Shatter());
 			}
 		}
