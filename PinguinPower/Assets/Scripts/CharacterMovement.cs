@@ -56,6 +56,9 @@ public class CharacterMovement : MonoBehaviour
 	private bool isKicking;
     private bool inWindturbine;
 
+    private int inCannon;
+    private float inCannonTimer;
+
     // Use this for initialization
     void Start()
     {
@@ -83,6 +86,8 @@ public class CharacterMovement : MonoBehaviour
         this.jumpTimer = 0.3f;
 
         this.inWindturbine = false;
+        this.inCannon = 0;
+        this.inCannonTimer = 0;
 
         Physics.gravity = Vector3.up * walkGravity;
     }
@@ -181,6 +186,37 @@ public class CharacterMovement : MonoBehaviour
                 audioSourceGliding.Play();
             }
         }
+
+        //Cannon
+        if (this.inCannon == 2)
+        {
+            this.inCannonTimer -= Time.deltaTime;
+            if (this.inCannonTimer < 0)
+            {
+                this.inCannon = 3;
+            }
+        }
+        else if (this.inCannon == 3)
+        {
+            if (this.IsGroundedCannon())
+            {
+                this.inCannon = 4;
+            }
+        }
+        else if (this.inCannon == 4)
+        {
+            Quaternion defaultRotation = new Quaternion(0, this.transform.rotation.y, 0, 0);
+            if (this.transform.rotation != defaultRotation)
+            {
+                this.transform.rotation = Quaternion.Lerp(this.transform.rotation, defaultRotation, 0.1f);
+            }
+            else
+            {
+                this.inCannon = 0;
+            }
+        }
+
+        Debug.Log("Cannon: " + this.inCannon);
     }
 
     private bool IsGroundedGliding()
@@ -231,7 +267,7 @@ public class CharacterMovement : MonoBehaviour
             {
                 speedPercentage = 1;
             }
-            if (this.characterManager.getInCannon())
+            if (this.inCannon != 0)
             {
                 return;
             }
@@ -252,9 +288,12 @@ public class CharacterMovement : MonoBehaviour
     private IEnumerator PlayFootsteps()
     {
         yield return new WaitForSeconds(0.5f);
-        if (this.movementMode == MovementMode.Walk && this.currentSpeed != 0f && !jumping)
+        if (this.movementMode == MovementMode.Walk && this.currentSpeed != 0f)
         {
-            this.audioSourceWalking.PlayOneShot(footstepClips[Random.Range(0, footstepClips.Length)]);
+            if (!jumping)
+            {
+                this.audioSourceWalking.PlayOneShot(footstepClips[Random.Range(0, footstepClips.Length)]);
+            }
             StartCoroutine(PlayFootsteps());
         }
     }
@@ -356,7 +395,7 @@ public class CharacterMovement : MonoBehaviour
     /// <param name="speedPercentage">Value between 0 and 1</param>
     public void Turn(TurnDirection turnDirection, float speedPercentage)
     {
-        if (this.characterManager.getInCannon())
+        if (this.inCannon != 0)
         {
             return;
         }
@@ -466,6 +505,15 @@ public class CharacterMovement : MonoBehaviour
     private bool IsGrounded()
     {
         return Physics.Raycast(this.transform.position, -Vector3.up, 0.2f);
+    }
+
+    private bool IsGroundedCannon()
+    {
+        if (Physics.Raycast(this.transform.position, -Vector3.up, 1f) || Physics.Raycast(this.transform.position, Vector3.forward, 1f))
+        {
+            return true;
+        }
+        return false;
     }
 
     public void Kick()
@@ -580,6 +628,23 @@ public class CharacterMovement : MonoBehaviour
             case "Windturbine":
                 this.inWindturbine = true;
                 break;
+            case "Cannon":
+                if (this.inCannon == 0)
+                {
+                    Cannon cannon = collider.GetComponent<Cannon>();
+                    if (cannon.LoadCannonAllowed())
+                    {
+                        this.transform.parent = cannon.getSpot();
+                        this.transform.localPosition = Vector3.zero;
+                        this.transform.localRotation = new Quaternion(0, 0, 0, 0);
+                        this.myRigidBody.useGravity = false;
+                        this.myRigidBody.velocity = Vector3.zero;
+                        this.MoveForward(0f);
+                        this.inCannon = 1;
+                        cannon.Load(this.transform);
+                    }
+                }
+                break;
         }
     }
     
@@ -649,5 +714,11 @@ public class CharacterMovement : MonoBehaviour
                 this.inWindturbine = false;
                 break;
         }
+    }
+
+    public void DetachCannon()
+    {
+        this.inCannon = 2;
+        this.inCannonTimer = 1;
     }
 }

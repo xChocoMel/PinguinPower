@@ -93,7 +93,7 @@ public class enemyScriptGliding : MonoBehaviour {
 			{
 				if(!waiting && canBeKilled)
 				{
-					AttackPenguin();
+				AttackPenguin(); 
 				}
 			}
 	}
@@ -149,8 +149,8 @@ public class enemyScriptGliding : MonoBehaviour {
 		StartCoroutine(Wait());
 	}
 
-	IEnumerator Wait() {		 
-		waiting = true;
+	IEnumerator Wait() {	
+		waiting = true;		 
 		yield return new WaitForSeconds(2.0F);
 		waiting = false;		
 	}	 
