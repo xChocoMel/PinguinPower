@@ -224,6 +224,15 @@ public class CharacterManager : MonoBehaviour
                 break;
             case "Checkpoint":
                 Debug.Log("Checkpoint");
+
+				ParticleSystem[] particles = other.GetComponentsInChildren<ParticleSystem> ();
+				
+				foreach (ParticleSystem p in particles) {
+					if (p.tag.Equals("ParticleImpulse")) {
+						p.Play();
+					}
+				}
+
                 this.menuManager.getSaveManager().SaveCheckpoint(Application.loadedLevel, new Vector3(collider.transform.position.x, this.transform.position.y, collider.transform.position.z));
 
                 if (this.friendPositions.Count > 0)

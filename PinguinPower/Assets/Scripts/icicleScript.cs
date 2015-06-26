@@ -22,7 +22,16 @@ public class icicleScript : MonoBehaviour {
 	}
 
 	public void DestroyThis() {
-		GetComponentInChildren<ParticleSystem> ().Play();
+		ParticleSystem[] particles = GetComponentsInChildren<ParticleSystem> ();
+
+		foreach (ParticleSystem p in particles) {
+			if (p.tag.Equals("ParticleImpulse")) {
+				p.Play();
+			} else if (p.tag.Equals("ParticleConstant")) {
+				p.Stop();
+			}
+		}
+
 		Destroy (this.gameObject, 2);
 	}
 }

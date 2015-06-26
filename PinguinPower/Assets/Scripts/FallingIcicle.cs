@@ -16,11 +16,11 @@ public class FallingIcicle : MonoBehaviour {
 		fall = false;
 
 		if (height <= 0) {
-			height = 10;
+			height = 15;
 		}
 
 		if (speed <= 0) {
-			speed = 0.05f;
+			speed = 0.04f;
 		}
 
 		this.transform.position = new Vector3(this.transform.parent.position.x + 0.75f, this.transform.parent.position.y + height, this.transform.parent.position.z);
