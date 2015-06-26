@@ -26,56 +26,15 @@ public class MenuManager : MonoBehaviour {
         {
             this.MainMenu = GameObject.Find("Canvas").transform.FindChild("MainMenu").gameObject;
             Transform container = this.MainMenu.transform.GetChild(0).GetChild(1).GetChild(0);
-            container.FindChild("BtnNewGame").GetComponent<Button>().onClick.AddListener(() => ClickNewGame());
-            container.FindChild("BtnContinueGame").GetComponent<Button>().onClick.AddListener(() => ClickContinueGame());
-
-            if (!this.saveManager.SaveAvailable())
+            
+			if (!this.saveManager.SaveAvailable())
             {
                 container.FindChild("BtnContinueGame").GetComponent<Button>().interactable = false;
             }
-
-            container.FindChild("BtnQuit").GetComponent<Button>().onClick.AddListener(() => ClickQuit());
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             this.MainMenu = null;
-        }
-
-        try
-        {
-            this.YesNoMessage = GameObject.Find("Canvas").transform.FindChild("YesNoMessage").gameObject;
-            Transform container = this.YesNoMessage.transform.GetChild(0).GetChild(1).GetChild(0);
-            container.FindChild("BtnYes").GetComponent<Button>().onClick.AddListener(() => ClickYes());
-            container.FindChild("BtnNo").GetComponent<Button>().onClick.AddListener(() => ClickNo());
-        }
-        catch (Exception)
-        {
-            this.MainMenu = null;
-        }
-
-        try
-        {
-            this.PauseMenu = GameObject.Find("Canvas").transform.FindChild("PauseMenu").gameObject;
-            Transform container = this.PauseMenu.transform.GetChild(0).GetChild(1).GetChild(0);
-            container.FindChild("BtnResume").GetComponent<Button>().onClick.AddListener(() => ClickResume());
-            container.FindChild("BtnRetry").GetComponent<Button>().onClick.AddListener(() => ClickRetry());
-            container.FindChild("BtnQuitToMainMenu").GetComponent<Button>().onClick.AddListener(() => ClickQuitToMainMenu());
-        }
-        catch (Exception)
-        {
-            this.PauseMenu = null;
-        }
-
-        try
-        {
-            this.GameOverMenu = GameObject.Find("Canvas").transform.FindChild("GameOverMenu").gameObject;
-            Transform container = this.GameOverMenu.transform.GetChild(0).GetChild(1).GetChild(0);
-            container.FindChild("BtnRetry").GetComponent<Button>().onClick.AddListener(() => ClickRetry());
-            container.FindChild("BtnQuitToMainMenu").GetComponent<Button>().onClick.AddListener(() => ClickQuitToMainMenu());
-        }
-        catch (Exception)
-        {
-            this.GameOverMenu = null;
         }
 
         try
@@ -84,7 +43,7 @@ public class MenuManager : MonoBehaviour {
             Transform container = this.Hud.transform.GetChild(0).GetChild(0).GetChild(0);
             this.HudValues = new Text[] { container.GetChild(0).GetChild(1).GetComponent<Text>(), container.GetChild(1).GetChild(1).GetComponent<Text>(), container.GetChild(2).GetChild(1).GetComponent<Text>() };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             Debug.Log("No HUD :(");
             this.Hud = null;
@@ -97,7 +56,7 @@ public class MenuManager : MonoBehaviour {
 	
 	}
 
-    private void ClickNewGame() {
+    public void ClickNewGame() {
 
         if (this.saveManager.SaveAvailable())
         {
@@ -109,25 +68,25 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    private void ClickYes()
+	public void ClickYes()
     {
         this.saveManager.DeleteSaves();
         this.Pause(false);
         this.StartScene(1);
     }
 
-    private void ClickNo()
+	public void ClickNo()
     {
         this.YesNoMessage.SetActive(false);
     }
 
-    private void ClickContinueGame()
+	public void ClickContinueGame()
     {
         this.Pause(false);
         this.StartScene(1);
     }
 
-    private void ClickRetry()
+	public void ClickRetry()
     {
         this.Pause(false);
         this.StartScene(Application.loadedLevel);
@@ -140,23 +99,23 @@ public class MenuManager : MonoBehaviour {
     //    this.StartScene(Application.loadedLevel);
     //}
 
-    private void ClickQuit() {
+	public void ClickQuit() {
         Application.Quit();
     }
 
-    private void ClickQuitToMainMenu() {
+	public void ClickQuitToMainMenu() {
         //Save characterdata
         int[] values = new int[] { int.Parse(this.HudValues[0].text), int.Parse(this.HudValues[1].text), int.Parse(this.HudValues[2].text) };
         this.saveManager.SaveCharacterdata(Application.loadedLevel, values);
         this.StartScene(0);
     }
 
-    private void ClickResume() {
+	public void ClickResume() {
         
         this.Pause(false);
     }
 
-    private void Pause(bool pause) {
+	public void Pause(bool pause) {
 
         this.PauseMenu.SetActive(pause);
 
@@ -167,7 +126,7 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    public void OpenCloseMenu() {
+	public void OpenCloseMenu() {
 
         if (this.GameOverMenu != null) {
             if (this.GameOverMenu.activeSelf == true) {
@@ -180,7 +139,7 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    public void ShowGameOverMenu() {
+	public void ShowGameOverMenu() {
         if (this.GameOverMenu != null) {
             if (!this.GameOverMenu.activeSelf) {
                 if (this.PauseMenu != null) {
@@ -218,7 +177,7 @@ public class MenuManager : MonoBehaviour {
         return this.saveManager;
     }
 
-    private void StartScene(int index)
+	public void StartScene(int index)
     {
         this.sceneFader.EndScene(index);
     }
