@@ -205,6 +205,10 @@ public class CharacterMovement : MonoBehaviour
     public void MoveForward(float speedPercentage) {
         if (this.movementMode == MovementMode.Walk)
         {
+            if (speedPercentage > 1)
+            {
+                speedPercentage = 1;
+            }
             if (this.characterManager.getInCannon())
             {
                 return;
@@ -216,13 +220,17 @@ public class CharacterMovement : MonoBehaviour
             }
             this.currentSpeed = this.maxWalkSpeed * speedPercentage;
             this.animator.SetBool("Walking", true);
+            if (speedPercentage == 0)
+            {
+                this.animator.SetBool("Walking", false);
+            }
         }
     }
 
     private IEnumerator PlayFootsteps()
     {
         yield return new WaitForSeconds(0.5f);
-        if (this.currentSpeed != 0f && !jumping)
+        if (this.movementMode == MovementMode.Walk && this.currentSpeed != 0f && !jumping)
         {
             this.audioSourceWalking.PlayOneShot(footstepClips[Random.Range(0, footstepClips.Length)]);
             StartCoroutine(PlayFootsteps());
@@ -331,6 +339,11 @@ public class CharacterMovement : MonoBehaviour
             return;
         }
 
+        if (speedPercentage > 1)
+        {
+            speedPercentage = 1;
+        }
+
         this.turnDirection = turnDirection;
         this.currentTurnSpeed = speedPercentage * maxTurnSpeed;
         Vector3 rotation = Vector3.zero;
@@ -358,6 +371,16 @@ public class CharacterMovement : MonoBehaviour
             }
 
             this.myRigidBody.transform.Rotate(rotation);
+            print(speedPercentage);
+            if (this.currentSpeed <= 0f && turnDirection != TurnDirection.Stop)
+            {
+                //this.myRigidBody.AddRelativeForce(Vector3.forward * (maxTurnSpeed / 2) * 10);
+                this.animator.SetBool("Walking", true);
+            }
+            else if (turnDirection == TurnDirection.Stop)
+            {
+                this.animator.SetBool("Walking", false);
+            }
 
             if (this.currentSpeed > 0f)
             {
@@ -412,7 +435,7 @@ public class CharacterMovement : MonoBehaviour
             this.animator.SetTrigger("Jump");
             this.myRigidBody.velocity = new Vector3(this.myRigidBody.velocity.x, 0, this.myRigidBody.velocity.z);
             this.myRigidBody.drag = jumpDrag;
-            this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
+            this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, jumpForce / 2), ForceMode.Force);
             this.audioSourceNormal.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
             this.audioSourceWalking.PlayOneShot(jumpClip);
         }
