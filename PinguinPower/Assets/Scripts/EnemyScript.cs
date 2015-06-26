@@ -215,9 +215,12 @@ public class EnemyScript : MonoBehaviour {
 	}
 	void Moveforward(int speed)
 	{
-		Vector3 v3 = transform.TransformDirection(Vector3.forward)* speed;
-		v3.y = enemyRigidbody.velocity.y;
-		enemyRigidbody.velocity = v3;
+		if(canBeKilled)
+		{
+			Vector3 v3 = transform.TransformDirection(Vector3.forward)* speed;
+			v3.y = enemyRigidbody.velocity.y;
+			enemyRigidbody.velocity = v3;
+		}
 	}
 	IEnumerator Dying(){
 		canBeKilled = false;
