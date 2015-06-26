@@ -2,18 +2,20 @@
 using System.Collections;
 
 public class TrampolineScript : MonoBehaviour {
-
+	
 	// Use this for initialization
-
+	
 	public int speed;
 	public GameObject player;
 	bool enumeratorStarted=false;
 	bool colliding=false;
+	Animator animator;
 	void Start () {
 		if(player==null)
 		{
 			player=GameObject.Find ("Penguin");
 		}
+		animator = GetComponent<Animator>();
 	}
 	
 	// Update is called once per frame
@@ -26,7 +28,7 @@ public class TrampolineScript : MonoBehaviour {
 	}
 	void OnTriggerEnter(Collider  collision) 
 	{
- 
+		animator.SetTrigger ("Bounce");
 		colliding=true;
 	}
 	void OnTriggerExit(Collider  collision) {
