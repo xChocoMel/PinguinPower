@@ -18,10 +18,13 @@ public class MenuManager : MonoBehaviour {
     private SceneFader sceneFader;
 
 	private AudioSource audioSource;
-	public AudioClip clickClip;
+	private AudioClip clickClip;
 
 	// Use this for initialization
 	void Start () {
+
+		GameObject p = GameObject.FindGameObjectWithTag("Penguin");
+		this.penguin = p.transform;
 
         this.sceneFader = this.gameObject.GetComponent<SceneFader>();
 		this.audioSource = this.gameObject.GetComponent<AudioSource> ();
@@ -40,7 +43,7 @@ public class MenuManager : MonoBehaviour {
 
 			container.FindChild("BtnQuit").GetComponent<Button>().onClick.AddListener(() => ClickQuit());
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             this.MainMenu = null;
         }
@@ -52,7 +55,7 @@ public class MenuManager : MonoBehaviour {
 			container.FindChild("BtnYes").GetComponent<Button>().onClick.AddListener(() => ClickYes());
 			container.FindChild("BtnNo").GetComponent<Button>().onClick.AddListener(() => ClickNo());
 		}
-		catch (Exception ex)
+		catch (Exception)
 		{
 			this.YesNoMessage = null;
 		}
@@ -65,7 +68,7 @@ public class MenuManager : MonoBehaviour {
 			container.FindChild("BtnRetry").GetComponent<Button>().onClick.AddListener(() => ClickRetry());
 			container.FindChild("BtnQuitToMainMenu").GetComponent<Button>().onClick.AddListener(() => ClickQuitToMainMenu());
 		}
-		catch (Exception ex)
+		catch (Exception)
 		{
 			this.PauseMenu = null;
 		}
@@ -88,12 +91,22 @@ public class MenuManager : MonoBehaviour {
 			Transform container = this.Hud.transform;
             this.HudValues = new Text[] { container.GetChild(0).GetChild(1).GetComponent<Text>(), container.GetChild(1).GetChild(1).GetComponent<Text>(), container.GetChild(2).GetChild(1).GetComponent<Text>() };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Debug.Log("No HUD :(");
             this.Hud = null;
             this.HudValues = null;
         }
+	}
+
+	private void getAudioClips() {
+		AudioClip[] audio = Resources.LoadAll<AudioClip>("Sounds");
+
+		foreach (AudioClip a in audio) {
+			if (a.name.Equals("Button_click")) {
+				clickClip = a;
+			}
+		}
 	}
 	
 	// Update is called once per frame

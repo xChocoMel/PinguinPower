@@ -19,11 +19,10 @@ public class SaveManager {
         try
         {
             string position = this.ReadXML("Player", "Checkpoint", "Scene" + sceneindex);
-
             String[] coordinates = position.Split(',');
             return new Vector3(float.Parse(coordinates[0]), float.Parse(coordinates[1]), float.Parse(coordinates[2]));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //Debug.Log("SaveManager exception: " + ex);
             return Vector3.zero;
@@ -41,11 +40,10 @@ public class SaveManager {
         try
         {
             string position = this.ReadXML("Player", "Characterdata", "Scene" + sceneindex);
-
             string[] values = position.Split(',');
             return new int[] { int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]) };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return null;
         }
@@ -54,6 +52,7 @@ public class SaveManager {
     public bool SaveCollectedFriends(int sceneindex, Vector3[] positions)
     {
         List<string> positionStrings = new List<string>();
+
         foreach (Vector3 p in positions)
         {
             positionStrings.Add(p.x + "," + p.y + "," + p.z);
@@ -61,7 +60,6 @@ public class SaveManager {
         }
 
         string[] posStrings = positionStrings.ToArray();
-
         return this.WriteXML("Player", "CollectedFriends", new string[] { "Scene" + sceneindex }, posStrings, false);
     }
 
@@ -70,25 +68,22 @@ public class SaveManager {
         try
         {
             string[] positionStrings = this.ReadXML_MultipleValues("Player", "CollectedFriends", "Scene" + sceneindex);
-
             List<Vector3> positions = new List<Vector3>();
 
             foreach (string p in positionStrings)
             {
                 string[] values = p.Split(',');
+
                 try
                 {
                     positions.Add(new Vector3 (float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2])));
                 }
-                catch (Exception ex)
-                {
-                    //Nothing
-                }
+                catch (Exception) {}
             }
             
             return positions.ToArray();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new Vector3[] { };
         }
@@ -97,7 +92,6 @@ public class SaveManager {
     private string ReadXML(string filename, string title, string key)
     {
         string path = Application.persistentDataPath + "\\" + filename + ".xml";
-
         XElement baseElm;
 
         if (File.Exists(path))
@@ -108,7 +102,7 @@ public class SaveManager {
             {
                 return baseElm.Element(title).Element(key).Value;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return "";
             }
@@ -122,13 +116,11 @@ public class SaveManager {
     private string[] ReadXML_MultipleValues (string filename, string title, string key)
     {
         string path = Application.persistentDataPath + "\\" + filename + ".xml";
-
         XElement baseElm;
 
         if (File.Exists(path))
         {
             baseElm = XElement.Load(path);
-
             List<string> valueList = new List<string>();
 
             try
@@ -137,9 +129,10 @@ public class SaveManager {
                 {
                     valueList.Add(xel.Value);
                 }
+
                 return valueList.ToArray();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return valueList.ToArray();
             }
@@ -155,9 +148,7 @@ public class SaveManager {
         try
         {
             string path = Application.persistentDataPath + "\\" + filename + ".xml";
-
             XElement baseElm;
-
             XElement inner;
 
             if (File.Exists(path))
@@ -165,6 +156,7 @@ public class SaveManager {
                 try
                 {
                     baseElm = XElement.Load(path);
+
                     if (baseElm.Name != filename)
                     {
                         baseElm.Name = filename;
@@ -182,20 +174,18 @@ public class SaveManager {
                                 baseElm.Elements(title).Elements(key).Remove();
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            //Nothing
-                        }
+                        catch (Exception) {}
                     }
 
                     inner = baseElm.Element(title);
+
                     if (inner == null)
                     {
                         inner = new XElement(title);
                         baseElm.Add(inner);
                     }
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     File.Delete(path);
                     baseElm = new XElement(filename);
@@ -213,6 +203,7 @@ public class SaveManager {
             for (int i = 0; i < values.Length; i++)
             {
                 XElement key;
+
                 if (keys.Length > i)
                 {
                     key = new XElement(keys[i]);
@@ -227,7 +218,6 @@ public class SaveManager {
             }
 
             baseElm.Save(path);
-
             return true;
         }
         catch (Exception ex)
@@ -270,6 +260,7 @@ public class SaveManager {
         {
             Debug.Log("SaveAvailable exception: " + ex);
         }
+
         return false;
     }
 }

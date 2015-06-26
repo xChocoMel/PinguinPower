@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MovingObjectScript : MonoBehaviour
-{
+public class MovingObjectScript : MonoBehaviour {
 
     public GameObject button;
     private LeverCode leverscript;
@@ -13,20 +12,21 @@ public class MovingObjectScript : MonoBehaviour
 
     public bool jumpthrough;
     public bool moveAfterTouched;
+
     //private bool rotating = false;
     private bool canUseRotouine = true;
     public enum RotateDirection { horizontal, vertical, circus, none };
     public RotateDirection rotatemode = RotateDirection.none;
-    public GameObject Player;
+    private GameObject Player;
     private bool canmove = true;
     public bool rotateleft;
     private bool rotatingvertical;
     private bool rotatinghorizontal;
     private bool rotatingToSlide;
     private bool rotatintBackFromSlide;
-    Vector3 velocity;
-    Vector3 current;
-    Vector3 previous;
+	private Vector3 velocity;
+	private Vector3 current;
+	private Vector3 previous;
     public int waitrotatetime;
     public int rotatehorizontaltime;
     private float rotationleft = 180;
@@ -34,6 +34,8 @@ public class MovingObjectScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+		this.Player = GameObject.FindGameObjectWithTag("Penguin");
+
         if (button != null)
         {
             leverscript = button.GetComponent<LeverCode>();

@@ -3,9 +3,14 @@ using System.Collections;
 
 public class TeleportScript : MonoBehaviour {
 
-    public GameObject player;
-    public GameObject camera;
+    private GameObject player;
+	private GameObject camera;
     public Vector3 teleportLocation;
+
+	void Start() {
+		this.player = GameObject.FindGameObjectWithTag("Penguin");
+		this.camera = GameObject.FindGameObjectWithTag("MainCamera");
+	}
 
     void OnTriggerEnter(Collider collision)
     {

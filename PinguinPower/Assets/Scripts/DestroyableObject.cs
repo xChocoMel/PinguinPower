@@ -3,18 +3,21 @@ using System.Collections;
 
 public class DestroyableObject : MonoBehaviour {
 
-	public GameObject model;
+	private GameObject model;
 	public GameObject[] objectsInside;
-	public GameObject barrelTop;
+	private GameObject barrelTop;
 	private bool collided;
 
 	// Use this for initialization
 	void Start () {
+		collided = false;
+		model = this.transform.GetChild(0).gameObject;
+
 		if (this.tag == "Snowman") {
 			barrelTop = null;
+		} else if (this.tag == "Barrel") {
+			barrelTop = model.transform.GetChild(0).gameObject;
 		}
-
-		collided = false;
 	}
 	
 	// Update is called once per frame

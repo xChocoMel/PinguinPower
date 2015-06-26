@@ -4,27 +4,32 @@ using System.Collections;
 public class FallingIcicle : MonoBehaviour {
 
 	public GameObject Player;
-	public float height;
-	public float speed;
-	public AudioClip fallingSound;
-	public AudioClip shatterSound;
+	public float height = 15;
+	public float speed = 0.04f;
+	private AudioClip fallingClip;
+	private AudioClip shatterClip;
 	private bool fall;
 	private Vector3 bottom;
 
 	// Use this for initialization
 	void Start () {
+		getAudioClips ();
+		this.Player = GameObject.FindGameObjectWithTag ("Penguin");
 		fall = false;
-
-		if (height <= 0) {
-			height = 15;
-		}
-
-		if (speed <= 0) {
-			speed = 0.04f;
-		}
-
 		this.transform.position = new Vector3(this.transform.parent.position.x + 0.75f, this.transform.parent.position.y + height, this.transform.parent.position.z);
 		bottom = new Vector3(this.transform.position.x, this.transform.parent.position.y, this.transform.position.z);
+	}
+
+	private void getAudioClips() {
+		AudioClip[] audio = Resources.LoadAll<AudioClip>("Sounds");
+		
+		foreach (AudioClip a in audio) {
+			if (a.name.Equals("Swoosh")) {
+				fallingClip = a;
+			} else if (a.name.Equals("Collision")) {
+				shatterClip = a;
+			}
+		}
 	}
 	
 	// Update is called once per frame
@@ -47,12 +52,12 @@ public class FallingIcicle : MonoBehaviour {
 
 	public void StartFalling() {
 		fall = true;
-		GetComponent<AudioSource>().PlayOneShot (fallingSound);
+		GetComponent<AudioSource>().PlayOneShot (fallingClip);
 	}
 	
 	private IEnumerator Shatter() {
 		fall = false;
-		GetComponent<AudioSource>().PlayOneShot(shatterSound);
+		GetComponent<AudioSource>().PlayOneShot(shatterClip);
 		GetComponentInParent<icicleScript> ().DestroyThis ();
 		yield return new WaitForSeconds(0.1f);
 		Destroy (this.gameObject);

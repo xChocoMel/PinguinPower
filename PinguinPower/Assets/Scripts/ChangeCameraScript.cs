@@ -3,8 +3,8 @@ using System.Collections;
 
 public class ChangeCameraScript : MonoBehaviour {
 
-    public GameObject player;
-    public CameraMovement maincamera;
+    private GameObject player;
+    private CameraMovement maincamera;
     public float changeYValue;
     public float changeZValue;
     private float oldAimYValue;
@@ -12,6 +12,10 @@ public class ChangeCameraScript : MonoBehaviour {
 
     void OnTriggerEnter(Collider collision)
     {
+		this.player = GameObject.FindGameObjectWithTag("Penguin");
+		GameObject g = GameObject.FindGameObjectWithTag ("MainCamera");
+		this.maincamera = g.GetComponent<CameraMovement> ();
+
         if (collision.gameObject.name == player.name)
         {
             oldAimYValue = maincamera.aimY;
@@ -20,6 +24,7 @@ public class ChangeCameraScript : MonoBehaviour {
             maincamera.aimZ = changeZValue;
         }
     }
+
     void OnTriggerExit(Collider collision)
     {
         if (collision.gameObject.name == player.name)

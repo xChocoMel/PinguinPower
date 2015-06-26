@@ -10,12 +10,12 @@ public class CharacterManager : MonoBehaviour
 
     public MenuManager menuManager;
 
-    public AudioClip collectFishClip;
-    public AudioClip extraLifeClip;
-    public AudioClip[] ouchPenguinClips;
-    public AudioClip deadClip;
-    public AudioClip oefClip;
-	public AudioClip checkpointClip;
+	private AudioClip collectFishClip;
+	private AudioClip extraLifeClip;
+	private AudioClip[] ouchPenguinClips;
+	private AudioClip deadClip;
+	private AudioClip oefClip;
+	private AudioClip checkpointClip;
 
     private Animator animator;
     public AudioSource audioSource;
@@ -24,7 +24,6 @@ public class CharacterManager : MonoBehaviour
     private int fish = 0;
     private int friends = 0;
 	private bool inCannon;
-    //private bool canBeDamaged=true;
 
     private List<Vector3> friendPositions;
 
@@ -32,6 +31,7 @@ public class CharacterManager : MonoBehaviour
 
 	// Use this for initialization
 	void Start () {
+		getAudioClips ();
         this.animator = this.GetComponentInChildren<Animator>();
         this.friendPositions = new List<Vector3>();
 		this.inCannon = false;
@@ -48,6 +48,29 @@ public class CharacterManager : MonoBehaviour
             this.collideIcecubeTimer -= Time.deltaTime;
         }
     }
+
+	public void getAudioClips() {
+		AudioClip[] audio = Resources.LoadAll<AudioClip>("Sounds");
+		ouchPenguinClips = new AudioClip[3];		
+		int i = 0;
+		
+		foreach (AudioClip a in audio) {
+			if (a.name.Equals("Plop")) {
+				collectFishClip = a;
+			} else if (a.name.Equals("Extra_life")) {
+				extraLifeClip = a;
+			} else if (a.name.Equals("pinguin_game_over")) {
+				deadClip = a;
+			} else if (a.name.Equals("pinguin_collision")) {
+				oefClip = a;
+			} else if (a.name.Equals("checkpoint")) {
+				checkpointClip = a;
+			} else if (a.name.Contains("pinguin_au")) {
+				ouchPenguinClips[i] = a;
+				i++;
+			}
+		}
+	}
 
     private IEnumerator InitUI()
     {

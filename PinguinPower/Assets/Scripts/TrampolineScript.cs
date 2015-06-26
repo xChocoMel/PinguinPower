@@ -2,19 +2,19 @@
 using System.Collections;
 
 public class TrampolineScript : MonoBehaviour {
-	
-	// Use this for initialization
-	
+
 	public int speed;
 	public GameObject player;
-	bool enumeratorStarted=false;
-	bool colliding=false;
-	Animator animator;
+	private bool colliding = false;
+	private Animator animator;
+
+	// Use this for initialization
 	void Start () {
-		if(player==null)
+		if (player == null)
 		{
-			player=GameObject.Find ("Penguin");
+			player = GameObject.Find ("Penguin");
 		}
+
 		animator = GetComponent<Animator>();
 	}
 	
@@ -22,21 +22,24 @@ public class TrampolineScript : MonoBehaviour {
 	void Update () {
 		if(colliding)
 		{
-			//player.transform.TransformDirection(Vector3.forward)
 			player.GetComponent<Rigidbody>().AddForce(new Vector3(0,40,0));
 		}
 	}
+
 	void OnTriggerEnter(Collider  collision) 
 	{
 		if (animator != null) {
 			animator.SetTrigger ("Bounce");
 		}
-		colliding=true;
+
+		colliding = true;
 	}
-	void OnTriggerExit(Collider  collision) {
-		Vector3 jumpspeed= player.GetComponent<Rigidbody>().velocity;
+
+	void OnTriggerExit(Collider  collision) 
+	{
+		Vector3 jumpspeed = player.GetComponent<Rigidbody>().velocity;
 		jumpspeed.y = speed;
 		player.GetComponent<Rigidbody> ().velocity = jumpspeed;
-		colliding=false;
+		colliding = false;
 	}
 }

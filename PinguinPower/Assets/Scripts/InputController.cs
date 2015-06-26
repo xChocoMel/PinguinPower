@@ -4,7 +4,7 @@ using System;
 
 public class InputController : MonoBehaviour {
 
-    MenuManager menuManager;
+    private MenuManager menuManager;
     public CharacterMovement characterMovement;
 
 	// Use this for initialization

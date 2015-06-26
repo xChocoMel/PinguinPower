@@ -2,27 +2,30 @@
 using System.Collections;
 
 public class EnemyScript : MonoBehaviour {
-	public GameObject playerobject;
+
+	private GameObject playerobject;
 	public enum Status {returning, attacking, patrolling ,waiting};
-	Vector3 returnPosition; 
+	private Vector3 returnPosition; 
 	 
-	public Status status= Status.patrolling;
+	public Status status = Status.patrolling;
 	public int routeindex;
 	public GameObject[] routes;
-	public int maxDistance;
+
 	//how far the enemy can go
-	private bool canBeKilled=true;
-	public AudioClip dying;
-	public AudioClip hitsound;
-	public AudioClip loselife;
-	int amountoflives;
-	public int sightRange;
-	Rigidbody enemyRigidbody;
+	public int maxDistance = 12;
+
+	private bool canBeKilled = true;
+	private AudioClip dying;
+	private AudioClip hitsound;
+	private AudioClip loselife;
+	private int amountoflives;
+	public int sightRange = 6;
+	private Rigidbody enemyRigidbody;
 	 
     private Animator animator;
-	private bool collidingWithPlayer=false;
+	private bool collidingWithPlayer = false;
 
-    public AudioClip sealClip;
+    private AudioClip sealClip;
 
     private AudioSource audioSource;
     private float minDelay = 5f;
@@ -30,97 +33,123 @@ public class EnemyScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		enemyRigidbody=GetComponent<Rigidbody>();
+		getAudioClips ();
+		playerobject = GameObject.FindGameObjectWithTag ("Penguin");
+		enemyRigidbody = GetComponent<Rigidbody>();
 		amountoflives = 1;
-		returnPosition=transform.position;
+		returnPosition = transform.position;
         this.animator = this.GetComponentInChildren<Animator>();
         this.audioSource = this.GetComponentInChildren<AudioSource>();
         StartCoroutine(PlaySealSound());
-		if(playerobject==null)
+
+		if(playerobject == null)
 		{
-			playerobject=GameObject.Find ("Penguin");
+			playerobject = GameObject.Find ("Penguin");
+		}	 
+	}
+
+	private void getAudioClips() {
+		AudioClip[] audio = Resources.LoadAll<AudioClip>("Sounds");
+		
+		foreach (AudioClip a in audio) {
+			if (a.name.Equals("Seal")) {
+				sealClip = a;
+			} else if (a.name.Equals("pinguin_collision")) {
+				dying = a;
+			} else if (a.name.Equals("Collision")) {
+				hitsound = a;
+			} else if (a.name.Equals("pinguin_collision")) {
+				loselife = a;
+			}
 		}
-	 
 	}
 
     private IEnumerator PlaySealSound()
     {
         yield return new WaitForSeconds(Random.Range(minDelay, maxDelay));
+
         if (status != Status.attacking)
         {
             audioSource.PlayOneShot(sealClip);
         }
+
         StartCoroutine(PlaySealSound());
     }
 	
 	// Update is called once per frame
 	void Update () {
-		if(collidingWithPlayer&&playerobject.GetComponent<CharacterManager>().GetLives()>=1)
+		if (collidingWithPlayer && playerobject.GetComponent<CharacterManager>().GetLives() >= 1)
 		{
 			OnCollidingWithPlayer();
 		}
-		if(status==Status.patrolling){
+
+		if (status == Status.patrolling)
+		{
 			Patrolling();
-		}
-		if(status==Status.waiting){
+		} 
+		else if (status == Status.waiting)
+		{
 			transform.Translate(Vector3.back *0.5F* Time.deltaTime);	
+		} 
+		else if (status == Status.attacking){
+			
+			Attacking();
 		}
-		if(status==Status.returning||status==Status.patrolling){	
+		else if (status == Status.returning)
+		{
+			Returning();
+		}
+
+		if (status == Status.returning || status == Status.patrolling) 
+		{	
 			Vector3 directionToTarget = transform.position - playerobject.transform.position;
 			float angel = Vector3.Angle(transform.forward, directionToTarget);
 			float distance = Vector3.Distance (transform.position, playerobject.transform.position);
-			if(distance<sightRange&&(Mathf.Abs(angel) > 90 && Mathf.Abs(angel) < 270))
-			{ 
-				
-				RaycastHit hit ;
-				if(Physics.Raycast(transform.position,playerobject.transform.position-transform.position,out hit, sightRange+3))
+
+			if (distance < sightRange&&(Mathf.Abs(angel) > 90 && Mathf.Abs(angel) < 270))
+			{ 				
+				RaycastHit hit;
+
+				if (Physics.Raycast(transform.position,playerobject.transform.position-transform.position,out hit, sightRange+3))
 				{
-					if(hit.collider.gameObject.name==playerobject.name)
+					if (hit.collider.gameObject.name == playerobject.name)
 					{
-						if(routes.Length > 0)
+						if (routes.Length > 0)
 						{
-							returnPosition=transform.position;
+							returnPosition = transform.position;
 						}
-						status= Status.attacking;
-						// this.animator.SetTrigger("Attack");
-						
+
+						status = Status.attacking;						
 					} 
 				}
 			}
 		}
-		if(status==Status.attacking){
-			
-			Attacking();
-		}
-		if(status==Status.returning)
-		{
-			Returning();
-		}
 	}
+
 	void OnCollidingWithPlayer()
 	{
-			if(playerobject.GetComponent<CharacterMovement>().IsKicking())
+		if (playerobject.GetComponent<CharacterMovement>().IsKicking())
+		{
+			if (canBeKilled)
 			{
-				if(canBeKilled)
-				{
-					StartCoroutine(Dying());
-				}	 
-			}
-			else
+				StartCoroutine(Dying());
+			}	 
+		}
+		else
+		{
+			if (status == Status.attacking && canBeKilled == true)
 			{
-				if( status==Status.attacking&&canBeKilled==true)
-				{
-					playerobject.GetComponent<CharacterManager>().Damage();
-					transform.LookAt (new Vector3(playerobject.transform.position.x,transform.position.y,playerobject.transform.position.z));
-					GetComponent<AudioSource>().PlayOneShot(hitsound);
-					this.animator.SetTrigger("Attack");
-					status=Status.waiting;
-					print ("colliding");
-					StartCoroutine(Wait());
-				}
-				 
-			}
+				playerobject.GetComponent<CharacterManager>().Damage();
+				transform.LookAt (new Vector3(playerobject.transform.position.x,transform.position.y,playerobject.transform.position.z));
+				GetComponent<AudioSource>().PlayOneShot(hitsound);
+				this.animator.SetTrigger("Attack");
+				status = Status.waiting;
+				print ("colliding");
+				StartCoroutine(Wait());
+			}				 
+		}
 	}
+
 	void Patrolling(){
 		if (routes.Length > 0)
 		{
@@ -134,6 +163,7 @@ public class EnemyScript : MonoBehaviour {
 			{
 				routeindex++;
 			}
+
 			if (routeindex == routes.Length)
 			{
 				routeindex = 0;
@@ -145,64 +175,70 @@ public class EnemyScript : MonoBehaviour {
 			Moveforward(0);
 		}
 	}
+
 	void Returning()
 	{
 		Quaternion toRotation= Quaternion.LookRotation (new Vector3(returnPosition.x,transform.position.y ,returnPosition.z)- transform.position );
 		transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 4 * Time.deltaTime);
  
 		Moveforward(2);
-		if(Vector3.Distance (transform.position, returnPosition)<1)
+
+		if (Vector3.Distance (transform.position, returnPosition) < 1)
 		{
-			status=Status.patrolling;
+			status = Status.patrolling;
 		}
 	}
+
 	void Attacking()
 	{
-		if(playerobject.GetComponent<CharacterManager>().GetLives()>=1)
+		if (playerobject.GetComponent<CharacterManager>().GetLives() >= 1)
 		{
 			Quaternion toRotation= Quaternion.LookRotation (new Vector3(playerobject.transform.position.x,transform.position.y ,playerobject.transform.position.z)- transform.position );
 			transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 4 * Time.deltaTime);
 			 		 
 			Moveforward(4);
 
-			if(Vector3.Distance (transform.position, returnPosition)>maxDistance)
+			if (Vector3.Distance (transform.position, returnPosition) > maxDistance)
 			{
-				status=Status.returning;
+				status = Status.returning;
 			}
 		}
 	}
-	IEnumerator Wait(){
-		 
-			Moveforward (0);
-		 
+
+	IEnumerator Wait()
+	{		 
+		Moveforward (0);		 
 		yield return new WaitForSeconds(3.0F);
-		status=Status.attacking;
-		 
+		status = Status.attacking;		 
 	}
-	void OnCollisionEnter(Collision collision) {
+
+	void OnCollisionEnter(Collision collision) 
+	{
 		if (collision.gameObject.name == playerobject.name) {
 			collidingWithPlayer = true;
 		}
-
 	}
+
 	void OnCollisionExit(Collision collisionInfo) 
 	{
 		if (collisionInfo.gameObject.name == playerobject.name) 
 		{
-			collidingWithPlayer=false;
+			collidingWithPlayer = false;
 		}
 	}
 
 	void OnTriggerExit(Collider  collisionInfo) 
 	{
-		if (collisionInfo.gameObject.name == playerobject.name) {
-			
-			collidingWithPlayer=false;
+		if (collisionInfo.gameObject.name == playerobject.name) 
+		{		
+			collidingWithPlayer = false;
 		}
 	}
+
 	void LoseLife(int attackpoint)
 	{
-		amountoflives-=attackpoint;
+		amountoflives -= attackpoint;
+
         if (amountoflives == 0)
         {
             StartCoroutine(Dying());
@@ -213,6 +249,7 @@ public class EnemyScript : MonoBehaviour {
             this.animator.SetTrigger("Damage");
         }
 	}
+
 	void Moveforward(int speed)
 	{
 		if(canBeKilled)
@@ -222,7 +259,9 @@ public class EnemyScript : MonoBehaviour {
 			enemyRigidbody.velocity = v3;
 		}
 	}
-	IEnumerator Dying(){
+
+	IEnumerator Dying()
+	{
 		canBeKilled = false;
 		status = Status.waiting;
 		GetComponent<AudioSource>().PlayOneShot (loselife);
