@@ -245,7 +245,6 @@ public class CharacterManager : MonoBehaviour
 					Cannon cannon = collider.GetComponent<Cannon>();
 					if (cannon.LoadCannonAllowed())
 					{
-						this.inCannon = true;
 						this.transform.parent = cannon.getSpot();
 						this.transform.localPosition = Vector3.zero;
 						this.transform.localRotation = new Quaternion(0, 0, 0, 0);
@@ -274,4 +273,9 @@ public class CharacterManager : MonoBehaviour
 	{
 		return this.inCannon;
 	}
+
+    public void setInCannon()
+    {
+        this.inCannon = true;
+    }
 }
