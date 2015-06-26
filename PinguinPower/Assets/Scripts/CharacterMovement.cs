@@ -59,6 +59,7 @@ public class CharacterMovement : MonoBehaviour
     private float colliderYWalking = 0.8f;
     private float colliderYGliding = 0.44f;
 	private bool isKicking;
+    private bool inWindturbine;
 
     // Use this for initialization
     void Start()
@@ -79,6 +80,8 @@ public class CharacterMovement : MonoBehaviour
         this.movementMode = MovementMode.Walk;
 
         this.jumpTimer = 0.3f;
+
+        this.inWindturbine = false;
     }
 
     void FixedUpdate()
@@ -91,6 +94,13 @@ public class CharacterMovement : MonoBehaviour
         else if (this.movementMode == MovementMode.Glide)
         {
             myRigidBody.AddRelativeForce(Vector3.forward * constantGlidingForce);
+        }
+
+        //Windturbine
+        if (this.inWindturbine)
+        {
+            Debug.Log("Wind boost");
+            this.myRigidBody.AddRelativeForce(Vector3.up * 50);
         }
     }
 
@@ -146,6 +156,8 @@ public class CharacterMovement : MonoBehaviour
             }
         }
     }
+
+
 
     private bool IsGroundedGliding()
     {
@@ -518,6 +530,9 @@ public class CharacterMovement : MonoBehaviour
                 this.audioSourceNormal.PlayOneShot(boingClip);
                 this.audioSourceWalking.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
                 break;
+            case "Windturbine":
+                this.inWindturbine = true;
+                break;
         }
     }
     
@@ -575,7 +590,17 @@ public class CharacterMovement : MonoBehaviour
     {
         if (other.tag == "Wind")
         {
-            this.myRigidBody.AddRelativeForce(Vector3.up * 300);
+            //this.myRigidBody.AddRelativeForce(Vector3.up * 300);
+        }
+    }
+
+    void OnTriggerExit(Collider collider)
+    {
+        switch (collider.tag)
+        {
+            case "Windturbine":
+                this.inWindturbine = false;
+                break;
         }
     }
 }

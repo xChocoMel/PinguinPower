@@ -5,9 +5,11 @@ public class Windturbine : MonoBehaviour {
 
     public LeverCode Button;
     public float height = 10;
+    public float radius = 1;
 
     private GameObject windturbine;
     private ParticleSystem wind;
+    private BoxCollider boxCollider;
     private bool playing;
 
 	// Use this for initialization
@@ -15,6 +17,7 @@ public class Windturbine : MonoBehaviour {
 
         this.windturbine = this.transform.GetChild(0).gameObject;
         this.wind = this.windturbine.GetComponent<ParticleSystem>();
+        this.boxCollider = this.GetComponent<BoxCollider>();
 
         if (this.Button == null)
         {
@@ -30,8 +33,11 @@ public class Windturbine : MonoBehaviour {
 	void Update () {
 
         //Update Particle System
+        //this.wind.gravityModifier = -height / 10;
         this.wind.startSpeed = height;
-        this.wind.startSize = height / 2;
+        this.wind.startSize = radius / 2;
+        this.boxCollider.center = new Vector3(0, height / 2, 0);
+        this.boxCollider.size = new Vector3(radius * 2, height, radius * 2);
 
         if (this.Button != null)
         {
