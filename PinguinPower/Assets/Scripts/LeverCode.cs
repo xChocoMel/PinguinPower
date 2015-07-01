@@ -2,39 +2,39 @@
 using System.Collections;
 
 public class LeverCode : MonoBehaviour {
-	public enum Status {enabled,disabled};
-	// Use this for initialization
+
+	public enum Status {enabled, disabled};
 	private bool canBePressed;
-	public Status status;
-	  Animator animationcontroller;
-	public GameObject  playerobject;
+	public Status status = Status.disabled;
+	private Animator animationcontroller;
+	public GameObject  player;
 	public bool collidingwithplayer = false;
-	void Start () {
+
+	// Use this for initialization
+	void Start () 
+	{
+		player = GameObject.FindGameObjectWithTag("Penguin");
 		animationcontroller = GetComponent<Animator>();
-        if (status == null)
-        {
-            status = Status.disabled;
-        }
-		canBePressed = true;
-		if(playerobject==null){
-			playerobject=GameObject.Find ("Penguin");
-		}
-		if(status==Status.enabled)
+
+        if (status == Status.enabled)
 		{
 			StartCoroutine (Wait ());
 			animationcontroller.SetTrigger ("EnableTrigger");
 		}
-	 
+
+		canBePressed = true; 
 	}
+
 	//ForceMode.Impulse
 	// Update is called once per frame
 	void Update () 
 	{
-		if(collidingwithplayer == true)
+		if (collidingwithplayer == true)
 		{
-			if(playerobject.GetComponent<CharacterMovement> ().IsKicking ())
+			if (player.GetComponent<CharacterMovement> ().IsKicking ())
 			{
-				if (status == Status.disabled && canBePressed) {
+				if (status == Status.disabled && canBePressed) 
+				{
 					StartCoroutine (Wait ());
 					animationcontroller.SetTrigger ("EnableTrigger");
 					status = Status.enabled;
@@ -49,16 +49,18 @@ public class LeverCode : MonoBehaviour {
 			}
 		}
 	}
-	void OnCollisionEnter(Collision collision) {
-		if (collision.gameObject.name==playerobject.name) 
-		{
-			
+
+	void OnCollisionEnter(Collision collision) 
+	{
+		if (collision.gameObject.name.Equals(player.name))
+		{			
 			collidingwithplayer = true;
 		} 
 	}
+
 	void OnCollisionExit(Collision collision)
 	{
-		if (collision.gameObject.name==playerobject.name) 
+		if (collision.gameObject.name.Equals(player.name))
 		{
 			
 			collidingwithplayer = false;
@@ -67,12 +69,14 @@ public class LeverCode : MonoBehaviour {
  
 	public bool LeverEnabled()
 	{
-		if(status== Status.enabled)
+		if (status == Status.enabled)
 		{
 			return true;
 		}
+
 		return false;
 	}
+
 	public IEnumerator Wait()
 	{
 		canBePressed = false;

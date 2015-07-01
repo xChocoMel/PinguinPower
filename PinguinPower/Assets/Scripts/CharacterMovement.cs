@@ -7,20 +7,16 @@ using UnityEngine.UI;
 /// </summary>
 public class CharacterMovement : MonoBehaviour
 {
-
-    //public Text Text1;
-    //public Text Text2;
-
-    public AudioClip kickClip;
-    public AudioClip boostClip;
-    public AudioClip boingClip;
-    public AudioClip[] footstepClips;
-    public AudioClip[] woehoeClips;
-    public AudioClip jumpClip;
+	private AudioClip kickClip;
+	private AudioClip boostClip;
+	private AudioClip boingClip;
+	private AudioClip[] footstepClips;
+	private AudioClip[] woehoeClips;
+	private AudioClip jumpClip;
 
     private Rigidbody myRigidBody;
     private CapsuleCollider penguinCollider;
-    public Transform graphics;
+    private Transform graphics;
     private CharacterManager characterManager;
 
     private Animator animator;
@@ -49,7 +45,6 @@ public class CharacterMovement : MonoBehaviour
     public float maxTurnSpeed = 3f;
     public float jumpForce = 500f;
     public float constantGlidingForce = 6f;
-    private float slowDownSpeed = 0;
 
     private bool jumping = false;
     private float jumpTimer;
@@ -69,12 +64,18 @@ public class CharacterMovement : MonoBehaviour
     {
         this.Setup();
     }
+
 	public bool IsKicking()
 	{
 		return isKicking;
 	}
+
     private void Setup()
     {
+		getAudioClips ();
+		GameObject p = GameObject.FindGameObjectWithTag("Penguin");
+		this.graphics = p.transform.GetChild (0);
+
         this.myRigidBody = this.GetComponent<Rigidbody>();
         this.penguinCollider = this.GetComponent<CapsuleCollider>();
         this.animator = this.GetComponentInChildren<Animator>();
@@ -90,6 +91,29 @@ public class CharacterMovement : MonoBehaviour
 
         Physics.gravity = Vector3.up * walkGravity;
     }
+
+	private void getAudioClips() {
+		AudioClip[] audio = Resources.LoadAll<AudioClip>("Sounds");
+		footstepClips = Resources.LoadAll<AudioClip>("Sounds/Footsteps");
+		woehoeClips = new AudioClip[2];
+		
+		int i = 0;
+		
+		foreach (AudioClip a in audio) {
+			if (a.name.Equals("Kick")) {
+				kickClip = a;
+			} else if (a.name.Equals("Swoosh")) {
+				boostClip = a;
+			} else if (a.name.Equals("Boin")) {
+				boingClip = a;
+			} else if (a.name.Equals("jump")) {
+				jumpClip = a;
+			} else if (a.name.Contains("pinguin_happy_speed")) {
+				woehoeClips[i] = a;
+				i++;
+			}
+		}
+	}
 
     void FixedUpdate()
     {
@@ -195,8 +219,6 @@ public class CharacterMovement : MonoBehaviour
         Debug.Log("Cannon: " + this.inCannon);
     }
 
-
-
     private bool IsGroundedGliding()
     {
         return Physics.Raycast(this.transform.position, -Vector3.up, 0.5f);
@@ -266,9 +288,12 @@ public class CharacterMovement : MonoBehaviour
     private IEnumerator PlayFootsteps()
     {
         yield return new WaitForSeconds(0.5f);
-        if (this.movementMode == MovementMode.Walk && this.currentSpeed != 0f && !jumping)
+        if (this.movementMode == MovementMode.Walk && this.currentSpeed != 0f)
         {
-            this.audioSourceWalking.PlayOneShot(footstepClips[Random.Range(0, footstepClips.Length)]);
+            if (!jumping)
+            {
+                this.audioSourceWalking.PlayOneShot(footstepClips[Random.Range(0, footstepClips.Length)]);
+            }
             StartCoroutine(PlayFootsteps());
         }
     }
@@ -407,7 +432,7 @@ public class CharacterMovement : MonoBehaviour
             }
 
             this.myRigidBody.transform.Rotate(rotation);
-            print(speedPercentage);
+            //print(speedPercentage);
             if (this.currentSpeed <= 0f && turnDirection != TurnDirection.Stop)
             {
                 //this.myRigidBody.AddRelativeForce(Vector3.forward * (maxTurnSpeed / 2) * 10);
@@ -471,7 +496,7 @@ public class CharacterMovement : MonoBehaviour
             this.animator.SetTrigger("Jump");
             this.myRigidBody.velocity = new Vector3(this.myRigidBody.velocity.x, 0, this.myRigidBody.velocity.z);
             this.myRigidBody.drag = jumpDrag;
-            this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, jumpForce / 2), ForceMode.Force);
+            this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, jumpForce), ForceMode.Force);
             this.audioSourceNormal.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
             this.audioSourceWalking.PlayOneShot(jumpClip);
         }
@@ -629,6 +654,12 @@ public class CharacterMovement : MonoBehaviour
         DetermineMovementMode(other);        
     }
 
+    private IEnumerator SetStraightPart()
+    {
+        yield return new WaitForSeconds(2);
+        this.turningPart = false;
+    }
+
     private void DetermineMovementMode(GameObject other)
     {
         // Switching gliding/walking
@@ -640,6 +671,8 @@ public class CharacterMovement : MonoBehaviour
             if (texturename.Contains(glidingTexture.name))
             {
                 this.SwitchMovementMode(MovementMode.Glide);
+                this.turningPart = true;
+                StartCoroutine(SetStraightPart());
             }
             else if (texturename.Contains(walkingTexture.name))
             {
@@ -673,13 +706,13 @@ public class CharacterMovement : MonoBehaviour
         return this.movementMode == MovementMode.Glide && this.turningPart && (this.myRigidBody.velocity.z < 1f);
     }
 
-    void OnParticleCollision (GameObject other)
-    {
-        if (other.tag == "Wind")
-        {
-            //this.myRigidBody.AddRelativeForce(Vector3.up * 300);
-        }
-    }
+    //void OnParticleCollision (GameObject other)
+    //{
+    //    if (other.tag == "Wind")
+    //    {
+    //        this.myRigidBody.AddRelativeForce(Vector3.up * 300);
+    //    }
+    //}
 
     void OnTriggerExit(Collider collider)
     {

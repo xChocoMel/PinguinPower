@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class TerrainSurface {
+
     /// <summary>
     /// Returns an array containing the relative mix of textures
     /// on the given terrain at this world position
@@ -27,8 +28,7 @@ public class TerrainSurface {
              cellMix[n] = splatmapData[0,0,n];    
          }
  
-         return cellMix;        
- 
+         return cellMix;   
      }
 
     /// <summary>
@@ -41,10 +41,8 @@ public class TerrainSurface {
     public static int GetMainTexture(Vector3 worldPos, Terrain terrain) {
  
          // returns the zero-based index of the most dominant texture
-         // on the main terrain at this world position.
- 
-         float[] mix = GetTextureMix(worldPos, terrain);
- 
+         // on the main terrain at this world position. 
+         float[] mix = GetTextureMix(worldPos, terrain); 
  
          float maxMix = 0;
          int maxIndex = 0;
@@ -59,7 +57,6 @@ public class TerrainSurface {
              }
          }
  
-         return maxIndex;
- 
+         return maxIndex; 
     }
 }

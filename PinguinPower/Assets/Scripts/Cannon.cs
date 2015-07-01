@@ -8,8 +8,6 @@ public class Cannon : MonoBehaviour {
 
     public LeverCode Button;
 
-    private bool activated;
-
     private bool loaded;
     private float timer;
     private Transform penguin;
@@ -18,11 +16,12 @@ public class Cannon : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		GameObject p = GameObject.FindGameObjectWithTag("Penguin");
+		this.penguin = p.transform;
 
         this.Spot = this.transform.GetChild(1).GetChild(0);
         this.ParticleSystem = this.transform.GetChild(1).GetChild(1).gameObject;
         this.ParticleSystem.gameObject.SetActive(false);
-        this.activated = false;
 
         this.loaded = false;
         this.timer = 0;

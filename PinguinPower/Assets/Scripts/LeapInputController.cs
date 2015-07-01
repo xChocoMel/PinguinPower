@@ -18,12 +18,15 @@ public class LeapInputController : MonoBehaviour
 
     private float minPercentage = 0.25f;
 
-    public CharacterMovement player;
+    private CharacterMovement player;
 
     private Controller leapController;
 
     void Start()
     {
+		GameObject p = GameObject.FindGameObjectWithTag("Penguin");
+		this.player = p.GetComponent<CharacterMovement> ();
+
         this.leapController = new Controller();
 
         print(CallibrationData.toString());
@@ -56,6 +59,7 @@ public class LeapInputController : MonoBehaviour
             player.Turn(TurnDirection.Stop, 0);
             return;
         }
+
         Hand hand = frame.Hands[0];
 
         // Turning
@@ -80,6 +84,7 @@ public class LeapInputController : MonoBehaviour
                 player.Turn(TurnDirection.Right, rollPercentage);
             }
         }
+
         if (rollPercentage < minPercentage)
         {
             player.Turn(TurnDirection.Stop, 0);
@@ -100,11 +105,13 @@ public class LeapInputController : MonoBehaviour
 
         // Jumping
         float pitch = hand.Direction.Pitch;
+
         if (canJump && pitch > (maxPitchPlayer - (maxPitchPlayer * minPercentage)))
         {
             canJump = false;
             player.Jump();
         }
+
         if (!canJump && pitch < (maxPitchPlayer * minPercentage))
         {
             canJump = true;
@@ -119,6 +126,7 @@ public class LeapInputController : MonoBehaviour
             canKick = false;
             player.Kick();
         }
+
         if (!canKick && palmZ > (maxPalmZ * minPercentage))
         {
             canKick = true;

@@ -15,7 +15,7 @@ public class Friend : MonoBehaviour {
         this.audioSource = this.GetComponentInChildren<AudioSource>();
         StartCoroutine(SayHelp());
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 	    

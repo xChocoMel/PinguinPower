@@ -3,13 +3,13 @@ using System.Collections;
 
 public class boostscript : MonoBehaviour {
 
+	public int speed = 50;
+	private GameObject player;
+	private bool colliding = false;
+
 	// Use this for initialization
-	public int speed;
-	public GameObject player;
-	bool colliding = false;
-
 	void Start () {
-
+		this.player = GameObject.FindGameObjectWithTag("Penguin");
 	}
 	
 	// Update is called once per frame

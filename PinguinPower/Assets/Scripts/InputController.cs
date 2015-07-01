@@ -4,7 +4,7 @@ using System;
 
 public class InputController : MonoBehaviour {
 
-    MenuManager menuManager;
+    private MenuManager menuManager;
     public CharacterMovement characterMovement;
 
 	// Use this for initialization
@@ -18,7 +18,7 @@ public class InputController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.UpArrow)) {
             //Move forward
             this.characterMovement.MoveForward(1);
-        } else if (Input.GetKeyDown(KeyCode.DownArrow)) {
+        } else if (Input.GetKeyUp(KeyCode.UpArrow)) {
             //Stop
             this.characterMovement.MoveForward(0);
         }
