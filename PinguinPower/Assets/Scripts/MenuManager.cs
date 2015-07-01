@@ -5,6 +5,7 @@ using System;
 
 public class MenuManager : MonoBehaviour {
 
+    private Transform penguin;
     private GameObject MainMenu;
     private GameObject PauseMenu;
     private GameObject GameOverMenu;
