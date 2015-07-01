@@ -2,11 +2,10 @@
 using System.Collections;
 
 public class CameraMovement : MonoBehaviour {
-    public Transform graphics;
-    public Transform lookAt;
-    public GameObject player;
+    private Transform graphics;
+    private Transform lookAt;
+    private GameObject player;
     private Rigidbody charRigidbody;
-    private CharacterMovement charMovement;
     private CharacterManager charManager;
     private Camera cam;
 
@@ -21,10 +20,14 @@ public class CameraMovement : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        this.cam = this.GetComponent<Camera>();
+
+        this.player = GameObject.FindGameObjectWithTag("Penguin");
+        this.graphics = player.transform.GetChild(0);
+        this.lookAt = graphics.transform.GetChild(1);
+        
+        this.cam = this.transform.GetChild(1).GetComponent<Camera>();
         this.charRigidbody = player.GetComponent<Rigidbody>();
-        this.charMovement = player.GetComponent<CharacterMovement>();
-        this.charManager = player.GetComponent<CharacterManager>();
+
 
         transform.position = graphics.position + (graphics.forward * aimZ * 3) + (graphics.up * aimY * 3);
         cam.fieldOfView = minFieldOfView;
@@ -39,7 +42,7 @@ public class CameraMovement : MonoBehaviour {
         transform.position = Vector3.Lerp(transform.position, aimPos, smooth);
         //if (!charManager.isColliding() && !charMovement.isRotating())
         //{
-            transform.LookAt(lookAt);
+            transform.GetChild(1).LookAt(lookAt);
         //}
         float aimFieldOfView = charRigidbody.velocity.magnitude * (maxFieldOfView) / maxSpeed;
         float deltaFieldOfView = aimFieldOfView - cam.fieldOfView;
