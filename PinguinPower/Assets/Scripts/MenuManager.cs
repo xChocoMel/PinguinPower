@@ -5,8 +5,6 @@ using System;
 
 public class MenuManager : MonoBehaviour {
 
-    public Transform penguin;
-
     private GameObject MainMenu;
     private GameObject PauseMenu;
     private GameObject GameOverMenu;
@@ -22,9 +20,6 @@ public class MenuManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
-		GameObject p = GameObject.FindGameObjectWithTag("Penguin");
-		this.penguin = p.transform;
 
         this.sceneFader = this.gameObject.GetComponent<SceneFader>();
 		this.audioSource = this.gameObject.GetComponent<AudioSource> ();
@@ -181,8 +176,8 @@ public class MenuManager : MonoBehaviour {
 		string valueFishes = this.HudValues[2].text;
 		int valueFish = int.Parse(valueFishes.Substring (0, valueFishes.Length - 1));
 
-		int[] values = new int[] { valueLive, valueFriend, valueFish};
-        this.saveManager.SaveCharacterdata(Application.loadedLevel, values);
+		//int[] values = new int[] { valueLive, valueFriend, valueFish};
+        //this.saveManager.SaveCharacterdata(Application.loadedLevel, values);
         this.StartScene(0);
     }
 

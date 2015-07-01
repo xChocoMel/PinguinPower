@@ -20,8 +20,6 @@ public class CameraMovement : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-<<<<<<< HEAD
-
         this.player = GameObject.FindGameObjectWithTag("Penguin");
         this.graphics = player.transform.GetChild(0);
         this.lookAt = graphics.transform.GetChild(1);

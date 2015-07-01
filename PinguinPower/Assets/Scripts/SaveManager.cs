@@ -11,6 +11,7 @@ public class SaveManager {
     public bool SaveCheckpoint(int sceneindex, Vector3 position)
     {
         string posString = position.x + "," + position.y + "," + position.z;
+
         return this.WriteXML("Player", "Checkpoint", new string[] { "Scene" + sceneindex }, new string[] { posString }, true);
     }
 
@@ -31,12 +32,18 @@ public class SaveManager {
 
     public bool SaveCharacterdata(int sceneindex, int[] values)
     {
+        //Scene number makes no difference, save should be applied for all scenes
+        sceneindex = 1;
+
         string value = values[0] + "," + values[1] + "," + values[2];
         return this.WriteXML("Player", "Characterdata", new string[] { "Scene" + sceneindex }, new string[] { value }, true);
     }
 
     public int[] LoadCharacterdata(int sceneindex)
     {
+        //Scene number makes no difference, save should be applied for all scenes
+        sceneindex = 1;
+
         try
         {
             string position = this.ReadXML("Player", "Characterdata", "Scene" + sceneindex);
@@ -51,6 +58,9 @@ public class SaveManager {
 
     public bool SaveCollectedFriends(int sceneindex, Vector3[] positions)
     {
+        //Scene number makes no difference, save should be applied for all scenes
+        sceneindex = 1;
+
         List<string> positionStrings = new List<string>();
 
         foreach (Vector3 p in positions)
@@ -65,6 +75,9 @@ public class SaveManager {
 
     public Vector3[] LoadCollectedFriends(int sceneindex)
     {
+        //Scene number makes no difference, save should be applied for all scenes
+        sceneindex = 1;
+
         try
         {
             string[] positionStrings = this.ReadXML_MultipleValues("Player", "CollectedFriends", "Scene" + sceneindex);
