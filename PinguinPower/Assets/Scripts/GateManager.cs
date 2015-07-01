@@ -16,7 +16,8 @@ public class GateManager : MonoBehaviour {
 	}
 
     void OnTriggerEnter(Collider other) {
-        if (other.gameObject.tag == "Player") {
+        if (other.gameObject.tag == "Penguin") {
+            // TODO via menumanager
             Application.LoadLevel(LevelToLoad);
         }
     }

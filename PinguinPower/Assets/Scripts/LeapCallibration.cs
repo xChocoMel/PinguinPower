@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using Leap;
 
@@ -9,6 +10,9 @@ public class LeapCallibration : MonoBehaviour {
     public MovieTexture movieGrab;
     public MovieTexture moviePitch;
     public MovieTexture movieSpeedZ;
+
+    public Text counterText;
+    public Text messageText;
 
     private float secondsToWait = 5f;
 
@@ -48,6 +52,7 @@ public class LeapCallibration : MonoBehaviour {
         {
             if (hand != null)
             {
+                messageText.text = "Beweeg je hand 3x zo snel mogelijk naar voren";
                 // Kicking
                 float palmZ = hand.PalmPosition.z;
                 Vector speed = hand.PalmVelocity;
@@ -60,6 +65,7 @@ public class LeapCallibration : MonoBehaviour {
                         CallibrationData.maxSpeedZ = speed.z;
                     }
                     kickCallibratedCount++;
+                    counterText.text = kickCallibratedCount.ToString() + " x";
                 }
                 if (!canKick && palmZ > (CallibrationData.GetMaxPalmZ() * CallibrationData.GetMinPercentage()))
                 {
@@ -73,12 +79,13 @@ public class LeapCallibration : MonoBehaviour {
                     callibrateKick = false;
 
                     //TODO naar juiste scene
+                    //TODO via menumanager
                     Application.LoadLevel(2);
                 }
             }
             else
             {
-                print("Hand is uit beeld");
+                messageText.text = "Hand is uit beeld";
             }
         }
 	}
@@ -93,8 +100,14 @@ public class LeapCallibration : MonoBehaviour {
         yield return new WaitForSeconds(movie.duration);
         if (hand != null)
         {
-            print("Draai je pols zover mogelijk naar links");
-            yield return new WaitForSeconds(secondsToWait);
+            messageText.text = "Draai je hand naar links";
+
+            for (int i = (int)secondsToWait; i >= 0; i--)
+            {
+                counterText.text = i.ToString();
+                yield return new WaitForSeconds(1);
+            }
+
             if (hand != null)
             {
                 CallibrationData.maxRollLeft = hand.PalmNormal.Roll;
@@ -105,14 +118,14 @@ public class LeapCallibration : MonoBehaviour {
             }
             else
             {
-                print("Hand is uit beeld");
+                messageText.text = "Hand is uit beeld";
                 yield return new WaitForFixedUpdate();
                 StartCoroutine(CallibrateMaxRollLeft());
             }
         }
         else
         {
-            print("Hand is uit beeld");
+            messageText.text = "Hand is uit beeld";
             yield return new WaitForFixedUpdate();
             StartCoroutine(CallibrateMaxRollLeft());
         }
@@ -128,8 +141,14 @@ public class LeapCallibration : MonoBehaviour {
         yield return new WaitForSeconds(movie.duration);
         if (hand != null)
         {
-            print("Draai je pols zover mogelijk naar rechts");
-            yield return new WaitForSeconds(secondsToWait);
+            messageText.text = "Draai je hand naar rechts";
+
+            for (int i = (int)secondsToWait; i >= 0; i--)
+            {
+                counterText.text = i.ToString();
+                yield return new WaitForSeconds(1);
+            }
+
             if (hand != null)
             {
                 CallibrationData.maxRollRight = hand.PalmNormal.Roll;
@@ -140,14 +159,14 @@ public class LeapCallibration : MonoBehaviour {
             }
             else
             {
-                print("Hand is uit beeld");
+                messageText.text = "Hand is uit beeld";
                 yield return new WaitForFixedUpdate();
                 StartCoroutine(CallibrateMaxRollRight());
             }
         }
         else
         {
-            print("Hand is uit beeld");
+            messageText.text = "Hand is uit beeld";
             yield return new WaitForFixedUpdate();
             StartCoroutine(CallibrateMaxRollRight());
         }
@@ -163,8 +182,14 @@ public class LeapCallibration : MonoBehaviour {
         yield return new WaitForSeconds(movie.duration);
         if (hand != null)
         {
-            print("Maak een vuist");
-            yield return new WaitForSeconds(secondsToWait);
+            messageText.text = "Maak een vuist";
+
+            for (int i = (int)secondsToWait; i >= 0; i--)
+            {
+                counterText.text = i.ToString();
+                yield return new WaitForSeconds(1);
+            }
+
             if (hand != null)
             {
                 CallibrationData.maxGrabPlayer = hand.GrabStrength;
@@ -175,14 +200,14 @@ public class LeapCallibration : MonoBehaviour {
             }
             else
             {
-                print("Hand is uit beeld");
+                messageText.text = "Hand is uit beeld";
                 yield return new WaitForFixedUpdate();
                 StartCoroutine(CallibrateMaxGrabPlayer());
             }
         }
         else
         {
-            print("Hand is uit beeld");
+            messageText.text = "Hand is uit beeld";
             yield return new WaitForFixedUpdate();
             StartCoroutine(CallibrateMaxGrabPlayer());
         }
@@ -198,8 +223,14 @@ public class LeapCallibration : MonoBehaviour {
         yield return new WaitForSeconds(movie.duration);
         if (hand != null)
         {
-            print("Draai je hand omhoog");
-            yield return new WaitForSeconds(secondsToWait);
+            messageText.text = "Draai je hand omhoog";
+
+            for (int i = (int)secondsToWait; i >= 0; i--)
+            {
+                counterText.text = i.ToString();
+                yield return new WaitForSeconds(1);
+            }
+
             if (hand != null)
             {
                 CallibrationData.maxPitchPlayer = hand.Direction.Pitch;
@@ -210,14 +241,14 @@ public class LeapCallibration : MonoBehaviour {
             }
             else
             {
-                print("Hand is uit beeld");
+                messageText.text = "Hand is uit beeld";
                 yield return new WaitForFixedUpdate();
                 StartCoroutine(CallibrateMaxPitchPlayer());
             }
         }
         else
         {
-            print("Hand is uit beeld");
+            messageText.text = "Hand is uit beeld";
             yield return new WaitForFixedUpdate();
             StartCoroutine(CallibrateMaxPitchPlayer());
         }
@@ -233,13 +264,13 @@ public class LeapCallibration : MonoBehaviour {
         yield return new WaitForSeconds(movie.duration);
         if (hand != null)
         {
-            print("Beweeg je hand 3x zo snel mogelijk naar voren");
+            messageText.text = "Beweeg je hand 3x zo snel mogelijk naar voren";
             callibrateKick = true;
             this.StopCoroutine(CallibrateMaxSpeedZ());
         }
         else
         {
-            print("Hand is uit beeld");
+            messageText.text = "Hand is uit beeld";
             yield return new WaitForFixedUpdate();
             StartCoroutine(CallibrateMaxSpeedZ());
         }

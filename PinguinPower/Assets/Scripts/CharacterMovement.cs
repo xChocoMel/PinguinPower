@@ -496,7 +496,7 @@ public class CharacterMovement : MonoBehaviour
             this.animator.SetTrigger("Jump");
             this.myRigidBody.velocity = new Vector3(this.myRigidBody.velocity.x, 0, this.myRigidBody.velocity.z);
             this.myRigidBody.drag = jumpDrag;
-            this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, jumpForce / 2), ForceMode.Force);
+            this.myRigidBody.AddRelativeForce(new Vector3(0, jumpForce, jumpForce), ForceMode.Force);
             this.audioSourceNormal.PlayOneShot(woehoeClips[Random.Range(0, woehoeClips.Length)]);
             this.audioSourceWalking.PlayOneShot(jumpClip);
         }
@@ -654,6 +654,12 @@ public class CharacterMovement : MonoBehaviour
         DetermineMovementMode(other);        
     }
 
+    private IEnumerator SetStraightPart()
+    {
+        yield return new WaitForSeconds(2);
+        this.turningPart = false;
+    }
+
     private void DetermineMovementMode(GameObject other)
     {
         // Switching gliding/walking
@@ -665,6 +671,8 @@ public class CharacterMovement : MonoBehaviour
             if (texturename.Contains(glidingTexture.name))
             {
                 this.SwitchMovementMode(MovementMode.Glide);
+                this.turningPart = true;
+                StartCoroutine(SetStraightPart());
             }
             else if (texturename.Contains(walkingTexture.name))
             {
