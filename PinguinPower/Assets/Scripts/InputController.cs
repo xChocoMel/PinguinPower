@@ -9,6 +9,15 @@ public class InputController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		try
+		{
+			this.characterMovement = Component.FindObjectOfType<CharacterMovement> ();
+		}
+		catch (Exception) 
+		{
+			this.characterMovement = null;
+		}
+
         this.menuManager = this.GetComponent<MenuManager>();
 	}
 	

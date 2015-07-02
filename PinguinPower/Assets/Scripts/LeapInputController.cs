@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System; //Hoop dat dit geen problemen geeft
 using Leap;
 
 public class LeapInputController : MonoBehaviour
@@ -24,8 +25,15 @@ public class LeapInputController : MonoBehaviour
 
     void Start()
     {
-		GameObject p = GameObject.FindGameObjectWithTag("Penguin");
-		this.player = p.GetComponent<CharacterMovement> ();
+		try
+		{
+			GameObject p = GameObject.FindGameObjectWithTag("Penguin");
+			this.player = p.GetComponent<CharacterMovement> ();
+		}
+		catch (Exception)
+		{
+			this.player = null;
+		}
 
         this.leapController = new Controller();
 

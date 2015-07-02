@@ -98,9 +98,9 @@ public class CharacterManager : MonoBehaviour
         if (values != null)
         {
             Debug.Log("Characterdata loaded successfull");
-            this.fish = values[0];
-            this.lives = values[1];
-            this.friends = values[2];
+            this.lives = values[0];
+            this.friends = values[1];
+            this.fish = values[2];
             this.menuManager.UpdateFish(fish.ToString());
             this.menuManager.UpdateLives(lives.ToString());
             this.menuManager.UpdateFriends(friends.ToString());
@@ -248,6 +248,8 @@ public class CharacterManager : MonoBehaviour
 				}
 
                 this.menuManager.getSaveManager().SaveCheckpoint(Application.loadedLevel, new Vector3(collider.transform.position.x, this.transform.position.y, collider.transform.position.z));
+                int[] values = new int[] { this.lives, this.friends, this.fish };
+                this.menuManager.getSaveManager().SaveCharacterdata(Application.loadedLevel, values);
 
                 if (this.friendPositions.Count > 0)
                 {

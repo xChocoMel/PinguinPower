@@ -5,13 +5,13 @@ using System;
 
 public class MenuManager : MonoBehaviour {
 
-    public Transform penguin;
-
+    private Transform penguin;
     private GameObject MainMenu;
     private GameObject PauseMenu;
     private GameObject GameOverMenu;
     private GameObject Hud;
     private GameObject YesNoMessage;
+	private GameObject CallibratieMenu;
     private Text[] HudValues;
 
     private SaveManager saveManager = new SaveManager();
@@ -20,11 +20,25 @@ public class MenuManager : MonoBehaviour {
 	private AudioSource audioSource;
 	private AudioClip clickClip;
 
+	private int mainMenu = 0;
+	private int callibration = 1;
+	private int walkScene = 2;
+	//private int glide1 = 3;
+	//private int glide2 = 4;
+	//private int glide3 = 5;
+	//private int glideTutorial = 6;
+
 	// Use this for initialization
 	void Start () {
-
+		try 
+		{
 		GameObject p = GameObject.FindGameObjectWithTag("Penguin");
 		this.penguin = p.transform;
+		}
+		catch (Exception)
+		{
+			this.penguin = null;
+		}
 
         this.sceneFader = this.gameObject.GetComponent<SceneFader>();
 		this.audioSource = this.gameObject.GetComponent<AudioSource> ();
@@ -58,6 +72,18 @@ public class MenuManager : MonoBehaviour {
 		catch (Exception)
 		{
 			this.YesNoMessage = null;
+		}
+
+		try
+		{
+			this.CallibratieMenu = GameObject.Find("Canvas").transform.FindChild("CallibratieMenu").gameObject;
+			Transform container = this.CallibratieMenu.transform;
+			container.FindChild("BtnYes").GetComponent<Button>().onClick.AddListener(() => ClickYesCallibratie());
+			container.FindChild("BtnNo").GetComponent<Button>().onClick.AddListener(() => ClickNoCallibratie());
+		}
+		catch (Exception)
+		{
+			this.CallibratieMenu = null;
 		}
 
 		try
@@ -124,7 +150,7 @@ public class MenuManager : MonoBehaviour {
         }
         else
         {
-            ClickYes();
+            ClickYesCallibratie();
         }
     }
 
@@ -132,7 +158,7 @@ public class MenuManager : MonoBehaviour {
     {
 		this.audioSource.PlayOneShot (clickClip);
         this.saveManager.DeleteSaves();
-        this.StartScene(1);
+		this.ClickYesCallibratie ();
     }
 
 	public void ClickNo()
@@ -141,10 +167,27 @@ public class MenuManager : MonoBehaviour {
         this.YesNoMessage.SetActive(false);
     }
 
+	public void ClickYesCallibratie()
+	{
+		this.audioSource.PlayOneShot (clickClip);
+		this.StartScene(this.callibration);
+	}
+	
+	public void ClickNoCallibratie()
+	{
+		this.audioSource.PlayOneShot (clickClip);
+		this.StartScene (this.walkScene);
+	}
+
 	public void ClickContinueGame()
     {
 		this.audioSource.PlayOneShot (clickClip);
-        this.StartScene(1);
+
+		if (CallibrationData.callibrated) {
+			this.CallibratieMenu.SetActive (true);
+		} else {
+			this.ClickYesCallibratie();
+		}
     }
 
 	public void ClickRetry()
@@ -181,8 +224,8 @@ public class MenuManager : MonoBehaviour {
 		string valueFishes = this.HudValues[2].text;
 		int valueFish = int.Parse(valueFishes.Substring (0, valueFishes.Length - 1));
 
-		int[] values = new int[] { valueLive, valueFriend, valueFish};
-        this.saveManager.SaveCharacterdata(Application.loadedLevel, values);
+		//int[] values = new int[] { valueLive, valueFriend, valueFish};
+        //this.saveManager.SaveCharacterdata(Application.loadedLevel, values);
         this.StartScene(0);
     }
 
