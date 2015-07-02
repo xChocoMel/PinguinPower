@@ -190,7 +190,7 @@ public class MovingObjectScript : MonoBehaviour {
     }
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.tag == "Player" && rotatemode != RotateDirection.vertical)
+        if (collision.transform.tag == "Penguin" && rotatemode != RotateDirection.vertical)
         {
             if (this.rotatemode == RotateDirection.circus)
             {
@@ -214,7 +214,7 @@ public class MovingObjectScript : MonoBehaviour {
     }
     void OnCollisionExit(Collision collision)
     {
-        if (collision.transform.tag == "Player")
+        if (collision.transform.tag == "Penguin")
         {
             collision.transform.localScale = new Vector3(1, 1, 1);
             collision.transform.parent = null;

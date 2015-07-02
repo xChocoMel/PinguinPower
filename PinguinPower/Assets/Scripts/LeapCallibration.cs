@@ -23,6 +23,8 @@ public class LeapCallibration : MonoBehaviour {
     private bool callibrateKick = false;
     private bool canKick = true;
 
+    private int glideTutorial = 6;
+
 	// Use this for initialization
 	void Start () {
         this.leapController = new Controller();
@@ -78,9 +80,7 @@ public class LeapCallibration : MonoBehaviour {
                     CallibrationData.callibrated = true;
                     callibrateKick = false;
 
-                    //TODO naar juiste scene
-                    //TODO via menumanager
-                    Application.LoadLevel(2);
+                    Application.LoadLevel(glideTutorial);
                 }
             }
             else

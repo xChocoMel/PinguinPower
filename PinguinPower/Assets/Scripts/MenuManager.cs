@@ -26,7 +26,7 @@ public class MenuManager : MonoBehaviour {
 	//private int glide1 = 3;
 	//private int glide2 = 4;
 	//private int glide3 = 5;
-	//private int glideTutorial = 6;
+	private int glideTutorial = 6;
 
 	// Use this for initialization
 	void Start () {
@@ -176,7 +176,7 @@ public class MenuManager : MonoBehaviour {
 	public void ClickNoCallibratie()
 	{
 		this.audioSource.PlayOneShot (clickClip);
-		this.StartScene (this.walkScene);
+		this.StartScene (this.glideTutorial);
 	}
 
 	public void ClickContinueGame()
@@ -274,6 +274,7 @@ public class MenuManager : MonoBehaviour {
 
                 this.saveManager.DeleteSaves();
                 this.GameOverMenu.SetActive(true);
+                Time.timeScale = 0.0f;
             }
         }
     }    
