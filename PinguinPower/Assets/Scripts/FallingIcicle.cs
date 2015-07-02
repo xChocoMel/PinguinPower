@@ -3,7 +3,7 @@ using System.Collections;
 
 public class FallingIcicle : MonoBehaviour {
 
-	public GameObject Player;
+	private GameObject Player;
 	public float height = 15;
 	public float speed = 0.04f;
 	private AudioClip fallingClip;
