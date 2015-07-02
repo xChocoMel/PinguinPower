@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class LeverCode : MonoBehaviour {
 
@@ -7,7 +8,7 @@ public class LeverCode : MonoBehaviour {
 	private bool canBePressed;
 	public Status status = Status.disabled;
 	private Animator animationcontroller;
-	public GameObject  player;
+	private GameObject player;
 	public bool collidingwithplayer = false;
 
 	// Use this for initialization
@@ -19,7 +20,12 @@ public class LeverCode : MonoBehaviour {
         if (status == Status.enabled)
 		{
 			StartCoroutine (Wait ());
-			animationcontroller.SetTrigger ("EnableTrigger");
+
+            try
+            {
+                animationcontroller.SetTrigger("EnableTrigger");
+            }
+            catch (Exception) { }
 		}
 
 		canBePressed = true; 

@@ -39,7 +39,7 @@ public class Fontein : MonoBehaviour {
                 if (this.timer < -delay)
                 {
                     this.index++;
-                    if (this.index > this.transform.childCount)
+                    if (this.index > this.transform.childCount - 1)
                     {
                         this.index = 0;
                     }
