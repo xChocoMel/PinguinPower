@@ -1,0 +1,1 @@
+Dit is de installatiesoftware voor de Leap Motion is te vinden op: https://www.leapmotion.com/
