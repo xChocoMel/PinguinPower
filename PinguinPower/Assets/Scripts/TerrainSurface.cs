@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class TerrainSurface {
 
@@ -11,24 +12,28 @@ public class TerrainSurface {
     /// <param name="worldPos"></param>
     /// <returns></returns>
     public static float[] GetTextureMix(Vector3 worldPos, Terrain terrain) {
-         TerrainData terrainData = terrain.terrainData;
-         Vector3 terrainPos = terrain.transform.position;
- 
-         // calculate which splat map cell the worldPos falls within (ignoring y)
-         int mapX = (int)(((worldPos.x - terrainPos.x) / terrainData.size.x) * terrainData.alphamapWidth);
-         int mapZ = (int)(((worldPos.z - terrainPos.z) / terrainData.size.z) * terrainData.alphamapHeight);
- 
-         // get the splat data for this cell as a 1x1xN 3d array (where N = number of textures)
-         float[,,] splatmapData = terrainData.GetAlphamaps(mapX,mapZ,1,1);
- 
-         // extract the 3D array data to a 1D array:
-         float[] cellMix = new float[splatmapData.GetUpperBound(2)+1];
-         for (int n=0; n<cellMix.Length; n++)
-         {
-             cellMix[n] = splatmapData[0,0,n];    
-         }
- 
-         return cellMix;   
+        try
+        {
+            TerrainData terrainData = terrain.terrainData;
+            Vector3 terrainPos = terrain.transform.position;
+
+            // calculate which splat map cell the worldPos falls within (ignoring y)
+            int mapX = (int)(((worldPos.x - terrainPos.x) / terrainData.size.x) * terrainData.alphamapWidth);
+            int mapZ = (int)(((worldPos.z - terrainPos.z) / terrainData.size.z) * terrainData.alphamapHeight);
+
+            // get the splat data for this cell as a 1x1xN 3d array (where N = number of textures)
+            float[, ,] splatmapData = terrainData.GetAlphamaps(mapX, mapZ, 1, 1);
+
+            // extract the 3D array data to a 1D array:
+            float[] cellMix = new float[splatmapData.GetUpperBound(2) + 1];
+            for (int n = 0; n < cellMix.Length; n++)
+            {
+                cellMix[n] = splatmapData[0, 0, n];
+            }
+
+            return cellMix;
+        }
+        catch (Exception) { return new float[0]; }
      }
 
     /// <summary>

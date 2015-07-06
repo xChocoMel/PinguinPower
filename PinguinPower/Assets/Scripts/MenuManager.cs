@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System;
+using Leap;
 
 public class MenuManager : MonoBehaviour {
 
@@ -28,8 +29,12 @@ public class MenuManager : MonoBehaviour {
 	//private int glide3 = 5;
 	private int glideTutorial = 6;
 
+    private Controller controller;
+
 	// Use this for initialization
 	void Start () {
+        this.controller = new Controller();
+
 		try 
 		{
 		GameObject p = GameObject.FindGameObjectWithTag("Penguin");
@@ -167,11 +172,18 @@ public class MenuManager : MonoBehaviour {
         this.YesNoMessage.SetActive(false);
     }
 
-	public void ClickYesCallibratie()
-	{
-		this.audioSource.PlayOneShot (clickClip);
-		this.StartScene(this.callibration);
-	}
+    public void ClickYesCallibratie()
+    {
+        this.audioSource.PlayOneShot(clickClip);
+        if (this.controller.IsConnected)
+        {
+            this.StartScene(this.callibration);
+        }
+        else
+        {
+            this.StartScene(this.glideTutorial);
+        }
+    }
 	
 	public void ClickNoCallibratie()
 	{
