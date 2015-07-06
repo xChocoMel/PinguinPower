@@ -78,6 +78,7 @@ public class LeapCallibration : MonoBehaviour {
                 {
                     print("Callibratie speed: " + CallibrationData.maxSpeedZ);
                     CallibrationData.callibrated = true;
+                    SaveCallibration.saveCallibration();
                     callibrateKick = false;
 
                     Application.LoadLevel(glideTutorial);
